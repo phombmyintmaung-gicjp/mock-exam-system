@@ -1,0 +1,288 @@
+{
+  "app": {
+    "title": "Mock Exam System",
+    "subtitle": "模擬試験システム"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "submit": "提出する",
+    "cancel": "キャンセル",
+    "save": "保存する",
+    "delete": "削除する",
+    "edit": "編集する",
+    "confirm": "確認",
+    "confirmDelete": "本当に削除しますか？",
+    "saving": "保存中...",
+    "or": "または",
+    "noData": "データがありません",
+    "difficulty": {
+      "easy": "初級",
+      "medium": "中級",
+      "hard": "上級"
+    }
+  },
+  "auth": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "loggingIn": "ログイン中...",
+    "invalidCredentials": "メールアドレスまたはパスワードが正しくありません",
+    "register": "アカウント登録",
+    "name": "氏名",
+    "namePlaceholder": "氏名を入力してください",
+    "confirmPassword": "パスワード（確認）",
+    "registerButton": "アカウントを作成する",
+    "registering": "作成中...",
+    "emailDomainError": "メールアドレスは @gicjp.com で終わる必要があります",
+    "passwordMismatch": "パスワードが一致しません",
+    "passwordTooShort": "パスワードは8文字以上で入力してください",
+    "alreadyHaveAccount": "すでにアカウントをお持ちの方は",
+    "noAccount": "アカウントをお持ちでない方は",
+    "signUpLink": "こちら"
+  },
+  "nav": {
+    "admin": "管理者",
+    "employee": "従業員",
+    "dashboard": "ダッシュボード",
+    "questions": "問題管理",
+    "users": "ユーザー管理",
+    "examSettings": "試験設定",
+    "reports": "レポート",
+    "examSelect": "試験を選ぶ",
+    "history": "受験履歴",
+    "weakAreas": "苦手分野",
+    "profile": "プロフィール"
+  },
+  "exam": {
+    "startButton": "試験を開始する",
+    "submitButton": "提出する",
+    "submitExam": "試験を提出する",
+    "timeRemaining": "残り時間",
+    "question": "問題",
+    "flag": "フラグ",
+    "flagQuestion": "フラグを立てる",
+    "nextQuestion": "次の問題",
+    "prevQuestion": "前の問題",
+    "next": "次へ →",
+    "prev": "← 前へ",
+    "selectCategory": "カテゴリを選択してください",
+    "examMode": "試験モード",
+    "studyMode": "学習モード",
+    "selectTitle": "試験を選ぶ",
+    "selectSubtitle": "カテゴリとモードを選択してください",
+    "studyModeTitle": "学習モード",
+    "questionOf": "問題 {{current}} / {{total}}",
+    "questionCount": "{{count}}問"
+  },
+  "result": {
+    "title": "試験結果",
+    "score": "スコア",
+    "pass": "合格",
+    "fail": "不合格",
+    "outOfCorrect": "{{total}}問中正解",
+    "scoreLabel": "スコア:",
+    "passingScore": "合格スコア:",
+    "reviewAnswers": "回答を確認する",
+    "exportPdf": "PDFをダウンロード",
+    "correct": "正解",
+    "incorrect": "不正解",
+    "retake": "もう一度受験する",
+    "review": {
+      "title": "回答レビュー",
+      "subtitle": "解説付きで全問題を確認する",
+      "noData": "レビューデータがありません",
+      "explanation": "解説"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "ダッシュボード",
+      "subtitle": "システムの概要と最近のアクティビティ",
+      "totalQuestions": "問題総数",
+      "totalUsers": "ユーザー総数",
+      "passRate": "合格率",
+      "examsToday": "本日の受験数",
+      "recentExams": "最近の試験",
+      "noData": "試験データがありません",
+      "columnUser": "ユーザー"
+    },
+    "examSettings": {
+      "title": "試験設定",
+      "subtitle": "カテゴリごとに制限時間、問題数、合格スコアを設定する",
+      "timeLimit": "制限時間（分）",
+      "questionCount": "問題数",
+      "passingScore": "合格スコア（%）",
+      "saveButton": "設定を保存する",
+      "saved": "設定を保存しました。"
+    },
+    "questionForm": {
+      "title": "新しい問題",
+      "subtitle": "試験問題を作成する",
+      "questionText": "問題文",
+      "questionTextPlaceholder": "問題文を入力してください...",
+      "category": "カテゴリ",
+      "categoryPlaceholder": "例: AWS SAA",
+      "difficulty": "難易度",
+      "explanation": "解説",
+      "explanationPlaceholder": "正解の解説を入力...",
+      "choices": "選択肢",
+      "choicesHint": "4つの選択肢を入力し、正解を1つマークしてください。",
+      "noCorrectAnswer": "正解の選択肢を1つマークしてください。",
+      "markCorrect": "正解にする",
+      "choicePlaceholder": "選択肢 {{number}}",
+      "saveButton": "問題を保存する"
+    },
+    "questionImport": {
+      "title": "問題をインポート",
+      "subtitle": "CSVまたはJSONで一括インポート",
+      "dropText": "CSVまたはJSONファイルをここにドロップ",
+      "browseButton": "ファイルを選択",
+      "uploadButton": "アップロード",
+      "success": "問題のインポートが完了しました。"
+    },
+    "questions": {
+      "title": "問題管理",
+      "subtitle": "試験問題を管理する",
+      "addNew": "問題を追加する",
+      "import": "一括インポート",
+      "newButton": "+ 新しい問題",
+      "importButton": "インポート",
+      "searchPlaceholder": "問題を検索...",
+      "allDifficulties": "全難易度",
+      "columnQuestion": "問題",
+      "columnCategory": "カテゴリ",
+      "columnDifficulty": "難易度",
+      "columnActions": "操作",
+      "noData": "問題がありません。最初の問題を追加してください。"
+    },
+    "reports": {
+      "title": "レポート",
+      "subtitle": "部門別の分析とCSVエクスポート",
+      "exportButton": "CSVをエクスポート",
+      "passByCategory": "カテゴリ別合格率",
+      "passByDepartment": "部門別合格率",
+      "examCount": "{{count}}件"
+    },
+    "users": {
+      "title": "ユーザー管理",
+      "subtitle": "従業員アカウントを管理する",
+      "newButton": "+ 新しいユーザー",
+      "searchPlaceholder": "ユーザーを検索...",
+      "columnName": "名前",
+      "columnEmail": "メールアドレス",
+      "columnDepartment": "部門",
+      "columnRole": "役割",
+      "columnActions": "操作",
+      "noData": "ユーザーがいません"
+    },
+    "userForm": {
+      "title": "新しいユーザー",
+      "subtitle": "新しい従業員アカウントを作成する",
+      "name": "名前",
+      "namePlaceholder": "氏名を入力してください",
+      "email": "メールアドレス",
+      "emailPlaceholder": "user@gicjp.com",
+      "department": "部門",
+      "departmentPlaceholder": "例: 情報システム部",
+      "role": "役割",
+      "password": "パスワード",
+      "passwordPlaceholder": "パスワードを入力してください",
+      "passwordOptional": "空白のままにすると既存のパスワードが維持されます",
+      "saveButton": "ユーザーを保存する"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "社内資格試験対策プラットフォーム",
+      "title": "模擬試験で資格合格を目指そう",
+      "subtitle": "本番さながらの模擬試験と学習モードで、確実に資格合格を目指しましょう。",
+      "cta": "ログインして始める",
+      "learnMore": "詳しく見る"
+    },
+    "stats": {
+      "categories": "試験カテゴリ",
+      "modes": "学習モード",
+      "questions": "問題数",
+      "attempts": "受験回数無制限"
+    },
+    "features": {
+      "title": "合格に必要なすべてが揃う",
+      "subtitle": "試験対策と深い学習のために設計された2つのモード",
+      "exam": {
+        "title": "試験モード",
+        "desc": "制限時間付きの本番環境を再現し、合否判定もリアルタイムで確認できます。"
+      },
+      "study": {
+        "title": "学習モード",
+        "desc": "自分のペースで学習しながら、各問題の解答後に即時フィードバックと解説を確認できます。"
+      },
+      "analytics": {
+        "title": "進捗分析",
+        "desc": "スコアの推移を追跡し、苦手分野を把握して効率的な学習計画を立てましょう。"
+      }
+    },
+    "categories": {
+      "title": "対応試験カテゴリ",
+      "subtitle": "業界認定資格のさまざまなカテゴリで練習できます",
+      "aws": "AWSクラウドサービスとアーキテクチャ",
+      "network": "ネットワークの基礎とプロトコル",
+      "security": "情報セキュリティとリスク管理",
+      "linux": "Linuxシステム管理とコマンド"
+    },
+    "howItWorks": {
+      "title": "使い方",
+      "step1": { "title": "ログイン", "desc": "会社のアカウントでログインします。" },
+      "step2": { "title": "カテゴリを選ぶ", "desc": "練習したい試験カテゴリを選択します。" },
+      "step3": { "title": "試験を受ける", "desc": "時間制限ありの試験モードまたは自分のペースで学習できる学習モードに挑戦します。" }
+    },
+    "cta": {
+      "title": "さっそく始めよう",
+      "subtitle": "ログインしてパーソナライズされた試験ダッシュボードにアクセスしましょう。",
+      "button": "ログインする",
+      "noAccount": "アカウントをお持ちでない方は",
+      "signUp": "こちらから登録"
+    },
+    "footer": {
+      "copyright": "© 2026 Mock Exam System. All rights reserved."
+    }
+  },
+  "profile": {
+    "title": "プロフィール",
+    "subtitle": "個人情報と設定",
+    "nameLabel": "名前",
+    "certificationLabel": "目標資格",
+    "saveButton": "変更を保存する",
+    "saved": "プロフィールを保存しました。",
+    "changePassword": {
+      "title": "パスワード変更",
+      "subtitle": "ログインパスワードを更新する",
+      "currentPassword": "現在のパスワード",
+      "newPassword": "新しいパスワード",
+      "confirmNewPassword": "新しいパスワード（確認）",
+      "saveButton": "パスワードを更新する",
+      "saved": "パスワードを更新しました。",
+      "wrongCurrent": "現在のパスワードが正しくありません。",
+      "passwordTooShort": "新しいパスワードは8文字以上で入力してください。",
+      "passwordMismatch": "パスワードが一致しません。"
+    },
+    "history": {
+      "nav": "受験履歴",
+      "title": "受験履歴",
+      "subtitle": "過去の受験履歴",
+      "columnDate": "日付",
+      "columnCategory": "カテゴリ",
+      "columnScore": "スコア",
+      "columnResult": "結果"
+    },
+    "weakAreas": {
+      "nav": "苦手分野",
+      "title": "苦手分野",
+      "subtitle": "練習が必要なカテゴリ",
+      "accuracy": "{{value}}% 正解率",
+      "wrong": "不正解",
+      "total": "合計"
+    }
+  }
+}
