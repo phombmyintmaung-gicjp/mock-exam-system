@@ -1,21 +1,27 @@
 import api from './api';
 import type { ExamResult, HistoryItem, PassFailStatus } from '@/types/result';
+import type { PaginatedResponse } from '@/types/api';
 
 export const getResult = async (resultId: number): Promise<ExamResult> => {
   const res = await api.get(`/results/${resultId}`);
   return mapResult(res.data.data as Record<string, unknown>);
 };
 
-export const getResultHistory = async (): Promise<HistoryItem[]> => {
-  const res = await api.get('/results');
-  return (res.data.data ?? []).map((d: Record<string, unknown>) => ({
-    id: d.id as number,
-    category: ((d.session as Record<string, unknown> | null)?.category as string) ?? '',
-    score: d.score as number,
-    totalQuestions: d.total_questions as number,
-    status: d.status as PassFailStatus,
-    completedAt: d.completed_at as string,
-  }));
+export const getResultHistory = async (page = 1): Promise<PaginatedResponse<HistoryItem>> => {
+  const res = await api.get('/results', { params: { page } });
+  const items = (res.data.data ?? []).map((d: Record<string, unknown>) => {
+    const session = d.session as Record<string, unknown> | null;
+    return {
+      id: d.id as number,
+      category: (session?.category as string) ?? '',
+      mode: (session?.mode as string) ?? '',
+      score: d.score as number,
+      totalQuestions: d.total_questions as number,
+      status: d.status as PassFailStatus,
+      completedAt: d.completed_at as string,
+    };
+  });
+  return { data: items, count: res.data.count as number, next: res.data.next as string | null, previous: res.data.previous as string | null };
 };
 
 export const exportResultPdf = async (resultId: number): Promise<void> => {

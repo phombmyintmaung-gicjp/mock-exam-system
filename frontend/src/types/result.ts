@@ -26,6 +26,7 @@ export interface ExamResult {
 export interface HistoryItem {
   id: number;
   category: string;
+  mode: string;
   score: number;
   totalQuestions: number;
   status: PassFailStatus;

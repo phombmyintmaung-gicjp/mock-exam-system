@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\ResultController;
 use App\Http\Controllers\Api\V1\AnalyticsController;
 use App\Http\Controllers\Api\V1\Admin\QuestionAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
+use App\Http\Controllers\Api\V1\Admin\DepartmentController;
 use App\Http\Controllers\Api\V1\Admin\ExamSettingController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
@@ -78,6 +79,9 @@ Route::prefix('v1')->group(function () {
             Route::get('questions/{id}', [QuestionAdminController::class, 'show'])->name('admin.questions.show');
             Route::put('questions/{id}', [QuestionAdminController::class, 'update'])->name('admin.questions.update');
             Route::delete('questions/{id}', [QuestionAdminController::class, 'destroy'])->name('admin.questions.destroy');
+
+            // Departments
+            Route::get('departments', [DepartmentController::class, 'index'])->name('admin.departments.index');
 
             // User management
             Route::get('users', [UserAdminController::class, 'index'])->name('admin.users.index');

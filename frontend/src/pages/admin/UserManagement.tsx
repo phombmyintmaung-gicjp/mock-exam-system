@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
+import { Pagination } from '@/components/ui/Pagination';
 import { TableRowSkeleton } from '@/components/ui/Shimmer';
 import { getAdminUsers } from '@/services/userService';
 import type { User } from '@/types/user';
+
+const PER_PAGE = 25;
 
 const UserManagement = () => {
   const { t } = useTranslation();
@@ -13,14 +16,18 @@ const UserManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     setFetchError(null);
     try {
-      const res = await getAdminUsers();
+      const params: Record<string, string> = { page: String(page) };
+      const res = await getAdminUsers(params);
       setUsers(res.data);
+      setTotalCount(res.count);
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { error?: string }; status?: number } })
@@ -31,9 +38,15 @@ const UserManagement = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => { fetchUsers(); }, [fetchUsers]);
+
+  // Reset to page 1 when search changes
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
 
   const filtered = search
     ? users.filter(
@@ -42,6 +55,8 @@ const UserManagement = () => {
           u.email.toLowerCase().includes(search.toLowerCase()),
       )
     : users;
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PER_PAGE));
 
   const roleLabel: Record<string, string> = {
     admin: t('nav.admin'),
@@ -68,7 +83,7 @@ const UserManagement = () => {
         <input
           type="search"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           placeholder={t('admin.users.searchPlaceholder')}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:max-w-sm"
         />
@@ -126,6 +141,9 @@ const UserManagement = () => {
             </tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+        )}
       </div>
     </PageShell>
   );

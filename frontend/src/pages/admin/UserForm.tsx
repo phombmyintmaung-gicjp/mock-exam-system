@@ -4,7 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
-import { getAdminUser, createAdminUser, updateAdminUser } from '@/services/userService';
+import { getAdminUser, createAdminUser, updateAdminUser, getDepartments } from '@/services/userService';
+import type { Department } from '@/types/user';
 
 const UserForm = () => {
   const { t } = useTranslation();
@@ -20,6 +21,14 @@ const UserForm = () => {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<'employee' | 'admin'>('employee');
   const [password, setPassword] = useState('');
+  const [departmentId, setDepartmentId] = useState<string>('');
+  const [departments, setDepartments] = useState<Department[]>([]);
+
+  useEffect(() => {
+    getDepartments()
+      .then(setDepartments)
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!isEdit || !id) return;
@@ -28,6 +37,7 @@ const UserForm = () => {
         setName(u.name);
         setEmail(u.email);
         setRole(u.role);
+        setDepartmentId(u.department?.id != null ? String(u.department.id) : '');
       })
       .catch(() => setError(t('common.error')))
       .finally(() => setIsLoading(false));
@@ -37,7 +47,12 @@ const UserForm = () => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
-    const payload: Record<string, unknown> = { name, email, role };
+    const payload: Record<string, unknown> = {
+      name,
+      email,
+      role,
+      department_id: departmentId ? Number(departmentId) : null,
+    };
     if (password) payload.password = password;
 
     try {
@@ -67,8 +82,12 @@ const UserForm = () => {
   return (
     <PageShell>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('admin.userForm.title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('admin.userForm.subtitle')}</p>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isEdit ? t('admin.userForm.editTitle') : t('admin.userForm.title')}
+        </h1>
+        <p className="mt-1 text-sm text-gray-500">
+          {isEdit ? t('admin.userForm.editSubtitle') : t('admin.userForm.subtitle')}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="w-full max-w-2xl rounded-xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
@@ -100,16 +119,31 @@ const UserForm = () => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">{t('admin.userForm.role')}</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'employee' | 'admin')}
-              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="employee">{t('nav.employee')}</option>
-              <option value="admin">{t('nav.admin')}</option>
-            </select>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">{t('admin.userForm.department')}</label>
+              <select
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none"
+              >
+                <option value="">{t('admin.userForm.noDepartment')}</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={String(d.id)}>{d.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">{t('admin.userForm.role')}</label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value as 'employee' | 'admin')}
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none"
+              >
+                <option value="employee">{t('nav.employee')}</option>
+                <option value="admin">{t('nav.admin')}</option>
+              </select>
+            </div>
           </div>
 
           <div>
@@ -129,7 +163,7 @@ const UserForm = () => {
 
           <div className="flex flex-wrap justify-end gap-3">
             <Button label={t('common.cancel')} variant="secondary" type="button" onClick={() => navigate('/admin/users')} />
-            <Button label={isSaving ? t('common.saving') : t('admin.userForm.saveButton')} disabled={isSaving} />
+            <Button label={isSaving ? t('common.saving') : t('admin.userForm.saveButton')} disabled={isSaving} type="submit" />
           </div>
         </div>
       </form>
