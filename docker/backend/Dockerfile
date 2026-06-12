@@ -25,11 +25,12 @@ RUN composer install --no-scripts --no-autoloader --prefer-dist
 # Copy application source
 COPY . .
 
-# Complete autoloader + run post-install scripts
-RUN composer dump-autoload --optimize
-
+# Create required directories before autoloader runs
 RUN mkdir -p storage/logs storage/framework/{cache,sessions,views} bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
+
+# Complete autoloader + run post-install scripts
+RUN composer dump-autoload --optimize
 
 EXPOSE 8000
 

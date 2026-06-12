@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { logout as logoutApi } from '@/services/authService';
@@ -9,16 +9,72 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
-    isActive
-      ? 'bg-blue-50 text-blue-600'
-      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-  }`;
+const DashboardIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+  </svg>
+);
+
+const QuestionsIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+const UsersIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+  </svg>
+);
+
+const SettingsIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
+
+const ReportsIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+  </svg>
+);
+
+const ExamIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+  </svg>
+);
+
+const HistoryIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+const WeakAreasIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+  </svg>
+);
+
+const ProfileIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+  </svg>
+);
+
+interface NavLinkItem {
+  to: string;
+  label: string;
+  icon: React.ReactNode;
+  end?: boolean;
+}
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuthStore();
 
   const handleLogout = async () => {
@@ -27,36 +83,51 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     navigate('/');
   };
 
-  const adminLinks = [
-    { to: '/admin/dashboard', label: t('nav.dashboard') },
-    { to: '/admin/questions', label: t('nav.questions') },
-    { to: '/admin/users', label: t('nav.users') },
-    { to: '/admin/exams', label: t('nav.examSettings') },
-    { to: '/admin/reports', label: t('nav.reports') },
+  const adminLinks: NavLinkItem[] = [
+    { to: '/admin/dashboard', label: t('nav.dashboard'), icon: <DashboardIcon /> },
+    { to: '/admin/questions', label: t('nav.questions'), icon: <QuestionsIcon /> },
+    { to: '/admin/users', label: t('nav.users'), icon: <UsersIcon /> },
+    { to: '/admin/exams', label: t('nav.examSettings'), icon: <SettingsIcon /> },
+    { to: '/admin/reports', label: t('nav.reports'), icon: <ReportsIcon /> },
   ];
 
-  const clientLinks = [
-    { to: '/exam/select', label: t('nav.examSelect') },
-    { to: '/profile/history', label: t('nav.history') },
-    { to: '/profile/weak-areas', label: t('nav.weakAreas') },
-    { to: '/profile', label: t('nav.profile') },
+  const clientLinks: NavLinkItem[] = [
+    { to: '/exam/select', label: t('nav.examSelect'), icon: <ExamIcon /> },
+    { to: '/profile/history', label: t('nav.history'), icon: <HistoryIcon /> },
+    { to: '/profile/weak-areas', label: t('nav.weakAreas'), icon: <WeakAreasIcon /> },
+    { to: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, end: true },
   ];
 
   const isAdmin = user?.role === 'admin';
 
-  const renderSection = (label: string, links: { to: string; label: string }[]) => (
+  const renderSection = (label: string, links: NavLinkItem[]) => (
     <div>
-      <p className="mb-1 px-4 text-xs font-semibold uppercase tracking-wider text-gray-400">
+      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-slate-500">
         {label}
       </p>
       <ul className="space-y-0.5">
-        {links.map((link) => (
-          <li key={link.to}>
-            <NavLink to={link.to} className={linkClass} onClick={onClose}>
-              {link.label}
-            </NavLink>
-          </li>
-        ))}
+        {links.map((link) => {
+          const isActive = link.end
+            ? location.pathname === link.to
+            : location.pathname === link.to || location.pathname.startsWith(link.to + '/');
+          return (
+            <li key={link.to}>
+              <Link
+                to={link.to}
+                onClick={onClose}
+                className={clsx(
+                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                  isActive
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-500/30'
+                    : 'text-slate-400 hover:bg-white/5 hover:text-white',
+                )}
+              >
+                {link.icon}
+                {link.label}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -65,27 +136,28 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-10 bg-black/30 lg:hidden"
+          className="fixed inset-0 z-10 bg-black/60 lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
       <aside
         className={clsx(
-          'fixed inset-y-0 left-0 top-16 z-20 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform duration-200',
+          'bg-gradient-dark fixed inset-y-0 left-0 top-16 z-20 flex w-64 flex-col border-r border-white/10 transition-transform duration-200',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         )}
       >
-        <nav className="flex-1 overflow-y-auto p-4 space-y-6 pb-2">
+        <nav className="flex-1 overflow-y-auto p-3 pt-4 space-y-6 pb-2">
           {isAdmin && renderSection(t('nav.admin'), adminLinks)}
           {renderSection(t('nav.employee'), clientLinks)}
         </nav>
-        <div className="border-t border-gray-200 p-4">
+
+        <div className="border-t border-white/10 p-3">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             {t('auth.logout')}
