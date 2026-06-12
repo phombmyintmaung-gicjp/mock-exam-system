@@ -1,29 +1,35 @@
 import { create } from 'zustand';
-import type { Question } from '@/types/exam';
+import type { ExamMode, Question } from '@/types/exam';
 
 interface ExamSession {
   sessionId: number | null;
+  mode: ExamMode;
   questions: Question[];
   currentIndex: number;
   answers: Record<number, number>;
   flagged: Set<number>;
   secondsRemaining: number;
+  questionElapsedSeconds: number;
 }
+
+type NewSession = Omit<ExamSession, 'questionElapsedSeconds'>;
 
 interface ExamSessionState {
   session: ExamSession | null;
-  setSession: (session: ExamSession) => void;
+  setSession: (session: NewSession) => void;
   setAnswer: (questionId: number, choiceId: number) => void;
   toggleFlag: (questionId: number) => void;
   nextQuestion: () => void;
   prevQuestion: () => void;
   tickTimer: () => void;
+  tickQuestionTimer: () => void;
+  resetQuestionTimer: () => void;
   resetSession: () => void;
 }
 
 export const useExamSessionStore = create<ExamSessionState>((set) => ({
   session: null,
-  setSession: (session) => set({ session }),
+  setSession: (session) => set({ session: { ...session, questionElapsedSeconds: 0 } }),
   setAnswer: (questionId, choiceId) =>
     set((state) => {
       if (!state.session) return state;
@@ -50,6 +56,16 @@ export const useExamSessionStore = create<ExamSessionState>((set) => ({
     set((state) => {
       if (!state.session) return state;
       return { session: { ...state.session, secondsRemaining: state.session.secondsRemaining - 1 } };
+    }),
+  tickQuestionTimer: () =>
+    set((state) => {
+      if (!state.session) return state;
+      return { session: { ...state.session, questionElapsedSeconds: state.session.questionElapsedSeconds + 1 } };
+    }),
+  resetQuestionTimer: () =>
+    set((state) => {
+      if (!state.session) return state;
+      return { session: { ...state.session, questionElapsedSeconds: 0 } };
     }),
   resetSession: () => set({ session: null }),
 }));

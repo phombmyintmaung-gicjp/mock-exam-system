@@ -86,7 +86,7 @@ const ExamSession = () => {
               </span>
               <div className="flex items-center gap-3">
                 {session.secondsRemaining > 0 && (
-                  <Timer secondsRemaining={session.secondsRemaining} />
+                  <Timer seconds={session.secondsRemaining} mode="countdown" />
                 )}
                 <button
                   onClick={() => currentQ && toggleFlag(currentQ.id)}

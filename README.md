@@ -3,7 +3,7 @@
 ## Overview
 
 A web-based mock exam platform designed for company employees in Japan.  
-Users can practice certification exams such as **AWS**, **Network**, **Security**, and **Linux** in a simulated real-exam environment.
+Users can practice certification exams (**AWS**, **Network**, **Security**, **Linux**) and **JLPT** (Japanese Language Proficiency Test N1–N5) in a simulated real-exam environment.
 
 The system supports two modes: a timed **Exam Mode** that mirrors real certification conditions, and a **Study Mode** for learning at your own pace with immediate feedback.
 
@@ -14,7 +14,7 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 | Role | Description |
 |------|-------------|
 | Employee (受験者) | Takes mock exams, reviews results, tracks progress |
-| Admin (教育委員会メンバー) | Manages questions, exams, settings, and monitors all users. Admins can also take exams as employees. |
+| Admin (教育委員会メンバー) | Manages questions, passages, exam settings, and monitors all users |
 
 ---
 
@@ -22,14 +22,14 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 
 - UI defaults to **Japanese**, with English toggle available
 - Language switching applies to UI elements only (labels, buttons, messages)
-- All exam questions and answer choices are in **English**
+- All exam questions and answer choices are in **Japanese** (JLPT) or **English** (IT certifications)
 
 ---
 
 ## Features
 
 ### Authentication & Authorization
-- JWT-based authentication
+- JWT-based authentication (email domain restricted to `@gicjp.com`)
 - Role-based access control (Admin / Employee)
 - Session persistence with token refresh
 
@@ -44,17 +44,21 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 - Recent exam activity feed
 
 **Question Management**
-- Create / update / delete questions
+- Create / update / soft-delete questions
 - Assign category and difficulty level (Easy / Medium / Hard)
-- Add explanation per question (shown to users during answer review)
+- Assign `question_type` sub-label for JLPT ordering (問題1–5 / もんだい１–６)
+- Add explanation per question (shown during answer review)
 - Bulk import questions from CSV or JSON
 - Search and filter by category, difficulty, keyword
 
+**Passage Management**
+- Create / update / delete reading passages used by JLPT 文法読解 questions
+- Assign JLPT level (N1–N5)
+- Passages with Ⓐ/Ⓑ blanks (もんだい３), short readings (もんだい４/５), and notices (もんだい６)
+
 **Exam Settings**
-- Configured **per exam category** (AWS, Network, Security, Linux)
-- Number of questions per exam
-- Time limit (minutes; 0 = no limit)
-- Passing score threshold (%)
+- Configured **per exam category**
+- Number of questions per exam, time limit (0 = no limit), passing score threshold (%)
 
 **User Management**
 - Create and update employee accounts
@@ -64,16 +68,21 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 
 ### Client Site (Employees)
 
-**User Profile**
-- Personal information (name, email, department)
-- Target exam / certification goal
-- Exam history and score trends
+**JLPT Practice** (`/exam/select`)
+- Level selector: N1 / N2 / N3 / N4 / N5
+- Two sections per level:
+  - **言語知識（文字・語彙）** — 問題1 (kanji reading), 問題2 (kanji writing), 問題3 (fill-in vocab), 問題4 (paraphrase), 問題5 (usage)
+  - **言語知識（文法）・読解** — もんだい１ (grammar fill-in), もんだい２ (★ sentence ordering), もんだい３ (Ⓐ/Ⓑ passage), もんだい４ (short reading), もんだい５ (medium reading), もんだい６ (information retrieval / notices)
+- Questions display in official JLPT sub-type order
+- 読解 section uses a split-screen layout: passage panel on the left, question on the right
+
+**IT Certification Practice** (separate category selection)
+- Categories: AWS, Network, Security, Linux
+- Difficulty-balanced question selection (Easy / Medium / Hard)
 
 **Exam Mode**
-- Select category
 - Timed exam with countdown timer
 - Multiple-choice questions (4 options)
-- Randomized question and answer order
 - Progress indicator and question navigation
 - Flag / bookmark uncertain questions to revisit before submitting
 - Auto-submit when time expires
@@ -90,15 +99,11 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 - Full answer review with explanations
 - Export result as PDF
 
----
-
-### Exam System
-
-- Randomized question order per attempt
-- Randomized answer choices per question
-- Auto-submit on time expiry
-- Persistent exam results across sessions
-- Attempt history stored per user
+**User Profile**
+- Personal information (name, email, department)
+- Target exam / certification goal
+- Exam history and score trends
+- Weak area analysis
 
 ---
 
@@ -116,11 +121,12 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React (TypeScript), Tailwind CSS |
+| Frontend | React (TypeScript), Tailwind CSS, Zustand, react-i18next |
 | Backend | Laravel 11 (PHP 8.2) |
 | Database | MySQL 8.0 |
 | Authentication | JWT (`tymon/jwt-auth`) |
-| i18n | React i18next (Japanese / English) |
+| Containerization | Docker / Docker Compose |
+| i18n | react-i18next (Japanese default / English toggle) |
 
 ---
 
@@ -129,18 +135,35 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 ```
 React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
      │                              │
-     │                         ┌────┴────────────────┐
-     │                         │  auth      (JWT)     │
-     │                         │  exams     (logic)   │
-     │                         │  results   (scores)  │
-     │                         │  analytics (stats)   │
+     │                         ┌────┴────────────────────┐
+     │                         │  auth        (JWT)       │
+     │                         │  exams       (logic)     │
+     │                         │  passages    (JLPT)      │
+     │                         │  results     (scores)    │
+     │                         │  analytics   (stats)     │
      └─────────────────────────┘
 ```
 
 - Frontend communicates with backend exclusively via REST API (`/api/v1/`)
 - Backend enforces all business logic and access control
 - JWT tokens are issued on login and required for all protected endpoints
-- API documentation available at `http://localhost:8000/api/docs/` (Swagger UI)
+- API documentation: `http://localhost:8000/api/docs/` (Swagger UI)
+
+---
+
+## Database Schema (Key Tables)
+
+| Table | Purpose |
+|-------|---------|
+| `users` | Employee and admin accounts |
+| `departments` | Organisational units |
+| `questions` | Exam questions with `question_type` for JLPT sub-types |
+| `choices` | Answer choices (exactly one `is_correct` per question) |
+| `passages` | JLPT reading passages (level, title, content) |
+| `exam_sessions` | One record per attempt (mode, category, time limit) |
+| `exam_results` | Score, status (pass/fail), denormalised `user_id` |
+| `answer_records` | Per-question answer with pre-computed `is_correct` |
+| `exam_settings` | Per-category question count, time limit, passing score |
 
 ---
 
@@ -149,85 +172,80 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
 ```
 mock-exam-system/
 ├── frontend/                   # React (TypeScript) + Tailwind CSS
-│   ├── public/
 │   ├── src/
-│   │   ├── assets/             # Images, icons, fonts
-│   │   ├── components/         # Reusable UI components
+│   │   ├── components/         # ui/, layout/, shared/
 │   │   ├── pages/
-│   │   │   ├── admin/          # Admin site pages
-│   │   │   └── client/         # Employee site pages
+│   │   │   ├── admin/          # Dashboard, Questions, Passages, Users, Settings
+│   │   │   └── client/         # ExamSelect, ExamSession, StudySession,
+│   │   │                       #   ReadingSession, Results, Review, History,
+│   │   │                       #   Profile, WeakAreas
 │   │   ├── hooks/              # Custom React hooks
-│   │   ├── services/           # API call functions
-│   │   ├── store/              # Zustand state (auth, exam session)
-│   │   ├── types/              # TypeScript type definitions
-│   │   ├── i18n/               # Japanese / English translations
-│   │   └── App.tsx
-│   ├── package.json
-│   └── tsconfig.json
+│   │   ├── services/           # API call functions (examService, authService, …)
+│   │   ├── store/              # Zustand: authStore, examSessionStore
+│   │   ├── types/              # TypeScript interfaces (exam, user, result, …)
+│   │   └── i18n/               # ja.json, en.json
+│   └── package.json
 │
 ├── backend/                    # Laravel 11 (PHP 8.2)
 │   ├── app/
-│   │   ├── Models/             # Eloquent models
+│   │   ├── Models/             # User, Question, Passage, ExamSession, …
 │   │   ├── Http/
-│   │   │   ├── Controllers/
-│   │   │   │   └── Api/V1/     # Thin API controllers
-│   │   │   ├── Requests/       # FormRequest validation
-│   │   │   └── Middleware/     # e.g. AdminOnly
-│   │   └── Services/           # Business logic
+│   │   │   ├── Controllers/Api/V1/  # Thin controllers
+│   │   │   ├── Requests/            # FormRequest validation
+│   │   │   └── Middleware/          # AdminOnly
+│   │   └── Services/           # ExamService, ResultService, AnalyticsService,
+│   │                           #   PassageService
 │   ├── database/
 │   │   ├── migrations/         # Schema migrations
-│   │   └── seeders/            # Sample data seeders
-│   ├── routes/
-│   │   └── api.php             # All API routes
-│   ├── config/
-│   │   └── exam.php            # Exam defaults (fallback)
-│   └── composer.json
+│   │   └── seeders/            # DepartmentSeeder, UserSeeder,
+│   │                           #   ExamSettingSeeder, QuestionSeeder,
+│   │                           #   PassageSeeder, JLPTQuestionSeeder,
+│   │                           #   ExamHistorySeeder
+│   └── routes/api.php
 │
+├── docker-compose.yml
 └── README.md
 ```
 
 ---
 
-## Getting Started
+## Getting Started (Docker — recommended)
+
+```bash
+docker compose up --build
+```
+
+Seeds are run automatically on first start. Default accounts:
+
+| Email | Password | Role |
+|-------|----------|------|
+| `admin@gicjp.com` | `password` | Admin |
+| `moepyaesonewai@gicjp.com` | `password` | Employee |
+
+App: `http://localhost:5173`  
+API docs: `http://localhost:8000/api/docs/`
+
+---
+
+## Getting Started (Local)
 
 ### Prerequisites
-- Node.js 18+
-- PHP 8.2+
-- Composer 2+
-- MySQL 8.0+
+- Node.js 18+, PHP 8.2+, Composer 2+, MySQL 8.0+
 
-### 1. Clone the repository
-
-```bash
-git clone <repository-url>
-cd mock-exam-system
-```
-
-### 2. Configure environment variables
-
-```bash
-cd backend
-cp .env.example .env
-```
-
-Edit `.env` with your database credentials, then generate keys:
-
-```bash
-php artisan key:generate
-php artisan jwt:secret
-```
-
-### 3. Start the backend
+### Backend
 
 ```bash
 cd backend
 composer install
+cp .env.example .env   # fill in DB credentials
+php artisan key:generate
+php artisan jwt:secret
 php artisan migrate
-php artisan db:seed        # optional: seed sample questions
+php artisan db:seed
 php artisan serve
 ```
 
-### 4. Start the frontend
+### Frontend
 
 ```bash
 cd frontend
@@ -235,21 +253,18 @@ npm install
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`  
-API documentation: `http://localhost:8000/api/docs/`
-
 ---
 
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
-| `APP_KEY` | Laravel application key (generated by `artisan key:generate`) |
+| `APP_KEY` | Laravel application key (`artisan key:generate`) |
 | `DB_HOST` | MySQL host |
 | `DB_DATABASE` | MySQL database name |
 | `DB_USERNAME` | MySQL username |
 | `DB_PASSWORD` | MySQL password |
-| `JWT_SECRET` | JWT signing secret (generated by `artisan jwt:secret`) |
-| `EXAM_PASSING_SCORE` | Default passing score % — fallback if no per-category setting exists (default: `70`) |
-| `EXAM_DEFAULT_QUESTION_COUNT` | Default number of questions — fallback (default: `20`) |
-| `EXAM_DEFAULT_TIME_LIMIT` | Default time limit in seconds — fallback (default: `3600`) |
+| `JWT_SECRET` | JWT signing secret (`artisan jwt:secret`) |
+| `EXAM_PASSING_SCORE` | Default passing score % fallback (default: `70`) |
+| `EXAM_DEFAULT_QUESTION_COUNT` | Default question count fallback (default: `20`) |
+| `EXAM_DEFAULT_TIME_LIMIT` | Default time limit in seconds fallback (default: `3600`) |

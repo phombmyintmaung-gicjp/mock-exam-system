@@ -56,7 +56,8 @@
     "examSelect": "試験を選ぶ",
     "history": "受験履歴",
     "weakAreas": "苦手分野",
-    "profile": "プロフィール"
+    "profile": "プロフィール",
+    "passages": "文章管理"
   },
   "exam": {
     "startButton": "試験を開始する",
@@ -80,7 +81,16 @@
     "selectSubtitle": "カテゴリとモードを選択してください",
     "studyModeTitle": "学習モード",
     "questionOf": "問題 {{current}} / {{total}}",
-    "questionCount": "{{count}}問"
+    "questionCount": "{{count}}問",
+    "jlpt": {
+      "title": "JLPT 練習",
+      "subtitle": "レベルとセクションを選んで練習しましょう",
+      "mojiGoi": "言語知識（文字・語彙）",
+      "mojiGoiDesc": "問題1〜5：漢字・語彙・文字の知識",
+      "bunpoKaido": "言語知識（文法）・読解",
+      "bunpoKaidoDesc": "もんだい1〜6：文法・文章読解",
+      "levelSelected": "{{level}} レベルを選択中"
+    }
   },
   "result": {
     "title": "試験結果",
@@ -200,6 +210,21 @@
       "passwordPlaceholder": "パスワードを入力してください",
       "passwordOptional": "空白のままにすると既存のパスワードが維持されます",
       "saveButton": "ユーザーを保存する"
+    },
+    "passages": {
+      "title": "文章管理",
+      "subtitle": "JLPT 読解問題の文章を管理する",
+      "newButton": "+ 新しい文章",
+      "allLevels": "全レベル",
+      "colTitle": "タイトル",
+      "colLevel": "レベル",
+      "colQuestions": "問題数",
+      "colActions": "操作",
+      "newTitle": "新しい文章",
+      "editTitle": "文章を編集する",
+      "fieldTitle": "タイトル",
+      "fieldLevel": "レベル",
+      "fieldContent": "本文"
     }
   },
   "home": {

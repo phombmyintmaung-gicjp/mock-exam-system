@@ -8,18 +8,18 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  pass: 'bg-green-100 text-green-700 ring-green-600/20',
-  fail: 'bg-red-100 text-red-700 ring-red-600/20',
-  easy: 'bg-blue-100 text-blue-700 ring-blue-600/20',
-  medium: 'bg-yellow-100 text-yellow-700 ring-yellow-600/20',
-  hard: 'bg-red-100 text-red-700 ring-red-600/20',
+  pass: 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30',
+  fail: 'bg-rose-500 text-white shadow-sm shadow-rose-500/30',
+  easy: 'bg-sky-500 text-white shadow-sm shadow-sky-500/30',
+  medium: 'bg-amber-500 text-white shadow-sm shadow-amber-500/30',
+  hard: 'bg-red-600 text-white shadow-sm shadow-red-600/30',
 };
 
 const Badge = ({ label, variant }: BadgeProps) => {
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset',
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide',
         variantClasses[variant],
       )}
     >

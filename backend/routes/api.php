@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Admin\QuestionAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentController;
 use App\Http\Controllers\Api\V1\Admin\ExamSettingController;
+use App\Http\Controllers\Api\V1\Admin\PassageController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
@@ -92,6 +93,13 @@ Route::prefix('v1')->group(function () {
             // Exam settings (per-category)
             Route::get('exam-settings', [ExamSettingController::class, 'index'])->name('admin.exam-settings.index');
             Route::put('exam-settings/{category}', [ExamSettingController::class, 'update'])->name('admin.exam-settings.update');
+
+            // Reading passages
+            Route::get('passages', [PassageController::class, 'index'])->name('admin.passages.index');
+            Route::post('passages', [PassageController::class, 'store'])->name('admin.passages.store');
+            Route::get('passages/{id}', [PassageController::class, 'show'])->name('admin.passages.show');
+            Route::put('passages/{id}', [PassageController::class, 'update'])->name('admin.passages.update');
+            Route::delete('passages/{id}', [PassageController::class, 'destroy'])->name('admin.passages.destroy');
         });
     });
 });

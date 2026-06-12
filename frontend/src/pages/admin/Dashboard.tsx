@@ -38,42 +38,45 @@ const Dashboard = () => {
   const passRate = totalExams > 0 ? Math.round((overallPass / totalExams) * 100) : 0;
 
   const statCards = [
-    { labelKey: 'admin.dashboard.totalQuestions', value: totalQuestions !== null ? String(totalQuestions) : '—', color: 'text-blue-600' },
-    { labelKey: 'admin.dashboard.totalUsers',     value: totalUsers !== null ? String(totalUsers) : '—',         color: 'text-green-600' },
-    { labelKey: 'admin.dashboard.passRate',       value: totalExams ? `${passRate}%` : '—',                     color: 'text-purple-600' },
-    { labelKey: 'admin.dashboard.examsToday',     value: String(recentExams.length || '—'),                     color: 'text-orange-500' },
+    { labelKey: 'admin.dashboard.totalQuestions', value: totalQuestions !== null ? String(totalQuestions) : '—', color: 'text-indigo-600', accent: 'from-indigo-500 to-violet-500' },
+    { labelKey: 'admin.dashboard.totalUsers',     value: totalUsers !== null ? String(totalUsers) : '—',         color: 'text-emerald-600', accent: 'from-emerald-500 to-teal-500' },
+    { labelKey: 'admin.dashboard.passRate',       value: totalExams ? `${passRate}%` : '—',                     color: 'text-violet-600', accent: 'from-violet-500 to-purple-500' },
+    { labelKey: 'admin.dashboard.examsToday',     value: String(recentExams.length || '—'),                     color: 'text-orange-500', accent: 'from-orange-500 to-amber-500' },
   ];
 
   return (
     <PageShell>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('admin.dashboard.title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('admin.dashboard.subtitle')}</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t('admin.dashboard.title')}</h1>
+        <p className="mt-1 text-sm text-slate-500">{t('admin.dashboard.subtitle')}</p>
       </div>
 
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
           : statCards.map((stat) => (
-              <div key={stat.labelKey} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                <p className="text-sm font-medium text-gray-500">{t(stat.labelKey)}</p>
-                <p className={`mt-2 text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+              <div key={stat.labelKey} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className={`h-1 bg-gradient-to-r ${stat.accent}`} />
+                <div className="p-5">
+                  <p className="text-sm font-medium text-slate-500">{t(stat.labelKey)}</p>
+                  <p className={`mt-2 text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+                </div>
               </div>
             ))}
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 px-6 py-4">
-          <h2 className="text-base font-semibold text-gray-900">{t('admin.dashboard.recentExams')}</h2>
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 px-6 py-4">
+          <h2 className="text-base font-semibold text-slate-900">{t('admin.dashboard.recentExams')}</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.questions.columnCategory')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnScore')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnResult')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnDate')}</th>
+              <tr className="border-b border-slate-100 bg-slate-50">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">{t('admin.questions.columnCategory')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">{t('profile.history.columnScore')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">{t('profile.history.columnResult')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">{t('profile.history.columnDate')}</th>
               </tr>
             </thead>
             <tbody>
@@ -82,15 +85,15 @@ const Dashboard = () => {
                 : recentExams.length === 0
                 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-sm text-gray-400">
+                      <td colSpan={4} className="px-6 py-8 text-center text-sm text-slate-400">
                         {t('common.noData')}
                       </td>
                     </tr>
                   )
                 : recentExams.map((exam) => (
-                    <tr key={exam.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-700">{exam.category || '—'}</td>
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                    <tr key={exam.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+                      <td className="px-6 py-4 text-slate-700">{exam.category || '—'}</td>
+                      <td className="px-6 py-4 font-medium text-slate-900">
                         {exam.totalQuestions > 0
                           ? `${Math.round((exam.score / exam.totalQuestions) * 100)}%`
                           : '—'}
@@ -101,7 +104,7 @@ const Dashboard = () => {
                           variant={exam.status}
                         />
                       </td>
-                      <td className="px-6 py-4 text-gray-500">
+                      <td className="px-6 py-4 text-slate-500">
                         {exam.completedAt ? new Date(exam.completedAt).toLocaleDateString() : '—'}
                       </td>
                     </tr>

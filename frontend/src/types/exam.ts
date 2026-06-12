@@ -1,10 +1,19 @@
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type ExamMode = 'exam' | 'study';
+export type JLPTLevel = 'N1' | 'N2' | 'N3' | 'N4' | 'N5';
+export type JLPTTestType = '文字語彙' | '文法読解';
 
 export interface Choice {
   id: number;
   text: string;
   isCorrect?: boolean;
+}
+
+export interface Passage {
+  id: number;
+  title: string;
+  content: string;
+  level: JLPTLevel;
 }
 
 export interface Question {
@@ -13,7 +22,9 @@ export interface Question {
   choices: Choice[];
   difficulty: Difficulty;
   category: string;
+  questionType?: string;
   explanation?: string;
+  passage?: Passage;
 }
 
 export interface ExamSession {

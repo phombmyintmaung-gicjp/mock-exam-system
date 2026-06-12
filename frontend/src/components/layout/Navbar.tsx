@@ -27,30 +27,39 @@ const Navbar = ({ onMenuToggle }: NavbarProps) => {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center border-b border-gray-200 bg-white px-4 shadow-sm">
+      <header className="bg-gradient-dark fixed inset-x-0 top-0 z-30 flex h-16 items-center border-b border-white/10 px-4 shadow-lg">
         <button
           onClick={onMenuToggle}
-          className="mr-3 rounded-md p-2 text-gray-500 hover:bg-gray-100 focus:outline-none lg:hidden"
+          className="mr-3 rounded-lg p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white focus:outline-none lg:hidden"
           aria-label="Toggle menu"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <span className="flex-1 text-lg font-bold text-blue-600">Mock Exam System</span>
-        <div className="flex items-center gap-3">
-          <LanguageToggle />
-          <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+
+        <div className="flex flex-1 items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-rose-600 shadow-md shadow-rose-500/30">
+            <span className="text-xs font-bold text-white">試</span>
+          </div>
+          <span className="text-gradient-brand text-lg font-bold tracking-tight">
+            {t('app.title')}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <LanguageToggle variant="dark" />
+          <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 text-xs font-bold text-white shadow-sm">
               {initial}
             </div>
-            <span className="hidden max-w-[120px] truncate text-sm font-medium text-gray-700 sm:inline">
+            <span className="hidden max-w-[120px] truncate text-sm font-medium text-white/90 sm:inline">
               {user?.name ?? 'User'}
             </span>
           </div>
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-white/60 transition-colors hover:bg-rose-500/20 hover:text-rose-300"
           >
             {t('auth.logout')}
           </button>

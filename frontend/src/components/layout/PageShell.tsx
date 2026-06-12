@@ -11,7 +11,7 @@ const PageShell = ({ children }: PageShellProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 bg-dot-pattern">
       <Navbar onMenuToggle={() => setIsSidebarOpen((v) => !v)} />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <main className="pt-16 lg:ml-64">

@@ -1,5 +1,5 @@
 import api from './api';
-import type { ExamSession, Question, ExamMode } from '@/types/exam';
+import type { ExamSession, Passage, Question, ExamMode } from '@/types/exam';
 
 export const fetchExamQuestions = async (category: string): Promise<Question[]> => {
   const res = await api.get('/exams/questions', { params: { category } });
@@ -20,18 +20,27 @@ export const startExamSession = async (
     sessionId: session.id as number,
     timeLimitSeconds: session.time_limit_seconds as number,
     mode: session.mode as ExamMode,
-    questions: questions.map((q) => ({
-      id: q.id as number,
-      text: q.text as string,
-      difficulty: q.difficulty as Question['difficulty'],
-      category: q.category as string,
-      explanation: q.explanation as string | undefined,
-      choices: ((q.choices ?? []) as Record<string, unknown>[]).map((c) => ({
-        id: c.id as number,
-        text: c.text as string,
-        isCorrect: c.is_correct as boolean | undefined,
-      })),
-    })),
+    questions: questions.map((q) => {
+      const raw = q as Record<string, unknown>;
+      const passageRaw = raw.passage as Record<string, unknown> | null | undefined;
+      const passage: Passage | undefined = passageRaw
+        ? { id: passageRaw.id as number, title: passageRaw.title as string, content: passageRaw.content as string, level: passageRaw.level as Passage['level'] }
+        : undefined;
+      return {
+        id: raw.id as number,
+        text: raw.text as string,
+        difficulty: raw.difficulty as Question['difficulty'],
+        category: raw.category as string,
+        questionType: raw.question_type as string | undefined,
+        explanation: raw.explanation as string | undefined,
+        passage,
+        choices: ((raw.choices ?? []) as Record<string, unknown>[]).map((c) => ({
+          id: c.id as number,
+          text: c.text as string,
+          isCorrect: c.is_correct as boolean | undefined,
+        })),
+      };
+    }),
   };
 };
 

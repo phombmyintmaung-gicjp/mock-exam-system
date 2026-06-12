@@ -1,7 +1,8 @@
 import { clsx } from 'clsx';
 
 interface TimerProps {
-  secondsRemaining: number;
+  seconds: number;
+  mode?: 'countdown' | 'elapsed';
 }
 
 const formatTime = (seconds: number): string => {
@@ -10,19 +11,26 @@ const formatTime = (seconds: number): string => {
   return `${m}:${s}`;
 };
 
-const Timer = ({ secondsRemaining }: TimerProps) => {
-  const isWarning = secondsRemaining <= 60;
+const Timer = ({ seconds, mode = 'countdown' }: TimerProps) => {
+  const isWarning = mode === 'countdown' && seconds <= 60;
 
   return (
     <div
       className={clsx(
-        'flex items-center gap-2 rounded-lg border px-4 py-2 font-mono text-lg font-semibold tabular-nums',
+        'flex items-center gap-2 rounded-xl border px-4 py-2 font-mono text-lg font-semibold tabular-nums shadow-sm',
         isWarning
-          ? 'border-red-200 bg-red-50 text-red-600'
-          : 'border-gray-200 bg-white text-gray-900',
+          ? 'border-rose-300 bg-rose-50 text-rose-600 shadow-rose-100'
+          : mode === 'elapsed'
+            ? 'border-blue-200 bg-blue-50 text-blue-700'
+            : 'border-slate-200 bg-white text-slate-800',
       )}
     >
-      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg
+        className={clsx('h-5 w-5', isWarning ? 'text-rose-500' : mode === 'elapsed' ? 'text-blue-500' : 'text-indigo-500')}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -30,7 +38,7 @@ const Timer = ({ secondsRemaining }: TimerProps) => {
           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      {formatTime(secondsRemaining)}
+      {formatTime(seconds)}
     </div>
   );
 };

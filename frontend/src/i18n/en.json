@@ -56,7 +56,8 @@
     "examSelect": "Take Exam",
     "history": "History",
     "weakAreas": "Weak Areas",
-    "profile": "Profile"
+    "profile": "Profile",
+    "passages": "Passages"
   },
   "exam": {
     "startButton": "Start Exam",
@@ -80,7 +81,16 @@
     "selectSubtitle": "Select a category and mode to begin",
     "studyModeTitle": "Study Mode",
     "questionOf": "Question {{current}} of {{total}}",
-    "questionCount": "{{count}} questions"
+    "questionCount": "{{count}} questions",
+    "jlpt": {
+      "title": "JLPT Practice",
+      "subtitle": "Choose a level and section to start practicing",
+      "mojiGoi": "Language Knowledge (Vocab)",
+      "mojiGoiDesc": "Q1–5: Kanji, vocabulary, characters",
+      "bunpoKaido": "Language Knowledge (Grammar) & Reading",
+      "bunpoKaidoDesc": "Q1–6: Grammar and reading comprehension",
+      "levelSelected": "{{level}} selected"
+    }
   },
   "result": {
     "title": "Exam Results",
@@ -200,6 +210,21 @@
       "passwordPlaceholder": "Enter password",
       "passwordOptional": "Leave blank to keep existing password",
       "saveButton": "Save User"
+    },
+    "passages": {
+      "title": "Passage Management",
+      "subtitle": "Manage reading passages for JLPT comprehension questions",
+      "newButton": "+ New Passage",
+      "allLevels": "All Levels",
+      "colTitle": "Title",
+      "colLevel": "Level",
+      "colQuestions": "Questions",
+      "colActions": "Actions",
+      "newTitle": "New Passage",
+      "editTitle": "Edit Passage",
+      "fieldTitle": "Title",
+      "fieldLevel": "Level",
+      "fieldContent": "Content"
     }
   },
   "home": {

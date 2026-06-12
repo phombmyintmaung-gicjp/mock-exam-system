@@ -13,6 +13,7 @@ import ExamSettings from '@/pages/admin/ExamSettings';
 import UserManagement from '@/pages/admin/UserManagement';
 import UserForm from '@/pages/admin/UserForm';
 import Reports from '@/pages/admin/Reports';
+import Passages from '@/pages/admin/Passages';
 
 import ExamSelect from '@/pages/client/ExamSelect';
 import ExamSession from '@/pages/client/ExamSession';
@@ -22,6 +23,7 @@ import Review from '@/pages/client/Review';
 import History from '@/pages/client/History';
 import Profile from '@/pages/client/Profile';
 import WeakAreas from '@/pages/client/WeakAreas';
+import ReadingSession from '@/pages/client/ReadingSession';
 
 const App = () => {
   return (
@@ -43,6 +45,7 @@ const App = () => {
           <Route path="/admin/users/new" element={<UserForm />} />
           <Route path="/admin/users/:id/edit" element={<UserForm />} />
           <Route path="/admin/reports" element={<Reports />} />
+          <Route path="/admin/passages" element={<Passages />} />
         </Route>
 
         {/* Client routes — require employee role */}
@@ -55,6 +58,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/history" element={<History />} />
           <Route path="/profile/weak-areas" element={<WeakAreas />} />
+          <Route path="/reading/session" element={<ReadingSession />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

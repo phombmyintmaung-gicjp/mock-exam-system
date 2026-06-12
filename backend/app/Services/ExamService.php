@@ -9,14 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ExamService
 {
-    /**
-     * Create a new exam session for the given user.
-     *
-     * @param  User                   $user
-     * @param  array<string, mixed>   $data  Validated data from StartSessionRequest.
-     *                                       Keys: category, mode, time_limit_seconds?, question_count?
-     * @return ExamSession
-     */
     public function createSession(User $user, array $data): ExamSession
     {
         return ExamSession::create([
@@ -28,27 +20,57 @@ class ExamService
         ]);
     }
 
-    /**
-     * Fetch a balanced set of questions from the session's category.
-     *
-     * Questions are distributed evenly across easy / medium / hard difficulty.
-     * If a difficulty tier has fewer questions than its allocated share, the
-     * shortfall is filled from the remaining pool so the total always equals
-     * $count (or the total available if there are not enough questions).
-     *
-     * @param  ExamSession $session
-     * @param  int         $count   Target number of questions (default 20).
-     * @return Collection<int, Question>
-     */
     public function getSessionQuestions(ExamSession $session, int $count = 20): Collection
     {
+        if (str_starts_with($session->category, 'JLPT-')) {
+            return $this->getJLPTQuestions($session, $count);
+        }
+        return $this->getBalancedQuestions($session, $count);
+    }
+
+    private function getJLPTQuestions(ExamSession $session, int $count): Collection
+    {
+        $needsPassage = str_ends_with($session->category, '-文法読解')
+                     || str_ends_with($session->category, '-Reading');
+        $with = $needsPassage ? ['choices', 'passage'] : ['choices'];
+
+        $questions = Question::with($with)
+            ->byCategory($session->category)
+            ->orderByRaw("CASE question_type
+                WHEN '問題1'     THEN 1
+                WHEN '問題2'     THEN 2
+                WHEN '問題3'     THEN 3
+                WHEN '問題4'     THEN 4
+                WHEN '問題5'     THEN 5
+                WHEN 'もんだい１' THEN 1
+                WHEN 'もんだい２' THEN 2
+                WHEN 'もんだい３' THEN 3
+                WHEN 'もんだい４' THEN 4
+                WHEN 'もんだい５' THEN 5
+                WHEN 'もんだい６' THEN 6
+                ELSE 99 END, id ASC")
+            ->limit($count)
+            ->get();
+
+        if ($needsPassage) {
+            $noPassage  = $questions->filter(fn ($q) => is_null($q->passage_id));
+            $hasPassage = $questions->filter(fn ($q) => !is_null($q->passage_id));
+            $grouped    = $hasPassage->groupBy(fn ($q) => $q->passage_id)->values()->flatten(1);
+            return $noPassage->concat($grouped)->values();
+        }
+
+        return $questions;
+    }
+
+    private function getBalancedQuestions(ExamSession $session, int $count): Collection
+    {
+        $isReading = str_ends_with($session->category, '-Reading');
+        $with      = $isReading ? ['choices', 'passage'] : ['choices'];
+
         $difficulties = ['easy', 'medium', 'hard'];
-        $tiers        = count($difficulties);
+        $base         = intdiv($count, count($difficulties));
+        $remainder    = $count % count($difficulties);
 
-        $base      = intdiv($count, $tiers);
-        $remainder = $count % $tiers;
-
-        // Distribute the remainder to the first N tiers.
         $allocations = [];
         foreach ($difficulties as $i => $diff) {
             $allocations[$diff] = $base + ($i < $remainder ? 1 : 0);
@@ -57,37 +79,36 @@ class ExamService
         $selected   = new Collection();
         $shortfalls = [];
 
-        // First pass: fetch what each tier can supply.
         foreach ($allocations as $diff => $needed) {
-            $fetched = Question::with('choices')
+            $fetched = Question::with($with)
                 ->byCategory($session->category)
                 ->where('difficulty', $diff)
                 ->inRandomOrder()
                 ->limit($needed)
                 ->get();
 
-            $selected   = $selected->concat($fetched);
-            $shortfall  = $needed - $fetched->count();
+            $selected  = $selected->concat($fetched);
+            $shortfall = $needed - $fetched->count();
             if ($shortfall > 0) {
                 $shortfalls[$diff] = $shortfall;
             }
         }
 
-        // Second pass: fill shortfalls from the unrestricted pool.
-        $totalShortfall = array_sum($shortfalls);
-        if ($totalShortfall > 0) {
+        if (array_sum($shortfalls) > 0) {
             $excludeIds = $selected->pluck('id')->all();
-            $filler = Question::with('choices')
+            $filler = Question::with($with)
                 ->byCategory($session->category)
                 ->whereNotIn('id', $excludeIds)
                 ->inRandomOrder()
-                ->limit($totalShortfall)
+                ->limit(array_sum($shortfalls))
                 ->get();
-
             $selected = $selected->concat($filler);
         }
 
-        // Shuffle so tiers are not grouped.
+        if ($isReading) {
+            return $selected->groupBy(fn ($q) => $q->passage_id ?? 0)->shuffle()->flatten(1)->values();
+        }
+
         return $selected->shuffle()->values();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,15 +19,22 @@ class Question extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'passage_id',
         'text',
         'difficulty',
         'category',
+        'question_type',
         'explanation',
     ];
 
     // -------------------------------------------------------------------------
     // Relationships
     // -------------------------------------------------------------------------
+
+    public function passage(): BelongsTo
+    {
+        return $this->belongsTo(Passage::class);
+    }
 
     public function choices(): HasMany
     {

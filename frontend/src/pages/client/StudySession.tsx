@@ -5,22 +5,26 @@ import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { ProgressBar } from '@/components/shared/ProgressBar';
 import { QuestionCard } from '@/components/shared/QuestionCard';
+import { Timer } from '@/components/shared/Timer';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { useExamSessionStore } from '@/store/examSessionStore';
+import useElapsedTimer from '@/hooks/useElapsedTimer';
 import { submitExam } from '@/services/examService';
 
 const StudySession = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const session      = useExamSessionStore((s) => s.session);
-  const setAnswer    = useExamSessionStore((s) => s.setAnswer);
-  const nextQuestion = useExamSessionStore((s) => s.nextQuestion);
-  const prevQuestion = useExamSessionStore((s) => s.prevQuestion);
-  const resetSession = useExamSessionStore((s) => s.resetSession);
+  const session               = useExamSessionStore((s) => s.session);
+  const setAnswer             = useExamSessionStore((s) => s.setAnswer);
+  const nextQuestion          = useExamSessionStore((s) => s.nextQuestion);
+  const prevQuestion          = useExamSessionStore((s) => s.prevQuestion);
+  const resetSession          = useExamSessionStore((s) => s.resetSession);
 
   const [revealed, setRevealed] = useState(false);
+
+  useElapsedTimer(session?.currentIndex ?? 0);
 
   useEffect(() => {
     if (!session) navigate('/exam/select', { replace: true });
@@ -67,9 +71,12 @@ const StudySession = () => {
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between">
             <h1 className="text-xl font-bold text-gray-900">{t('exam.studyModeTitle')}</h1>
-            <span className="text-sm text-gray-500">
-              {t('exam.questionOf', { current: session.currentIndex + 1, total: session.questions.length })}
-            </span>
+            <div className="flex items-center gap-3">
+              <Timer seconds={session.questionElapsedSeconds} mode="elapsed" />
+              <span className="text-sm text-gray-500">
+                {t('exam.questionOf', { current: session.currentIndex + 1, total: session.questions.length })}
+              </span>
+            </div>
           </div>
           <ProgressBar current={session.currentIndex + 1} total={session.questions.length} />
         </div>

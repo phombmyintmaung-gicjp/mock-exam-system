@@ -11,7 +11,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DepartmentSeeder::class,
             UserSeeder::class,
+            ExamSettingSeeder::class,
             QuestionSeeder::class,
+            PassageSeeder::class,
+            JLPTQuestionSeeder::class,
+            ExamHistorySeeder::class,
         ]);
     }
 }
