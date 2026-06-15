@@ -27,6 +27,7 @@ frontend/.env.*.local
 # ============================================================
 backend/bootstrap/cache/*.php
 backend/storage/app/public/*
+backend/storage/app/mpdf_tmp/
 backend/storage/framework/cache/*
 backend/storage/framework/sessions/*
 backend/storage/framework/views/*

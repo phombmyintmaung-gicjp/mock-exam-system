@@ -13,6 +13,7 @@ Supports IT certification categories (AWS, Network, Security, Linux) and **JLPT 
 - Backend: Laravel 11 (PHP 8.2)
 - Database: MySQL 8.0
 - Authentication: JWT (tymon/jwt-auth)
+- PDF Generation: mPDF 8.x (`mpdf/mpdf`) with IPAex Gothic TTF for Japanese
 - Containerization: Docker / Docker Compose
 
 ## Dev Commands
@@ -77,12 +78,14 @@ Detailed conventions are in `.claude/rules/`:
 | `frontend/src/services/api.ts` | Axios instance with JWT interceptor |
 | `frontend/src/store/` | Global state (authStore, examSessionStore) |
 | `frontend/src/i18n/` | Translation files (ja.json, en.json) |
+| `frontend/src/components/shared/QuestionCard.tsx` | Choice card — accepts `revealed` prop for inline study-mode feedback |
 | `backend/routes/api.php` | All API route definitions |
 | `backend/app/Models/` | Eloquent models (User, Question, Passage, ExamSession, …) |
 | `backend/app/Services/` | Business logic (ExamService, ResultService, AnalyticsService, PassageService) |
 | `backend/app/Http/Controllers/Api/V1/` | Thin API controllers |
 | `backend/database/migrations/` | Database schema migrations |
 | `backend/database/seeders/` | Sample data (departments, users, questions, passages, JLPT questions, exam history) |
+| `backend/resources/views/pdf/result.blade.php` | Blade template for PDF export (mPDF) |
 | `backend/config/` | Laravel configuration files |
 
 ## JLPT Structure
@@ -108,6 +111,32 @@ DepartmentSeeder → UserSeeder → ExamSettingSeeder → QuestionSeeder
 
 JLPTQuestionSeeder clears old JLPT questions before re-inserting, making it safe to re-run.
 
+## Study Mode Behaviour
+
+- `StudySession` and `ReadingSession` show inline feedback on the `QuestionCard` via `revealed={true}` after the user answers
+- Correct choice → emerald green + ✓ badge; selected wrong choice → rose red + ✗ badge; others → dimmed
+- Explanation (`解説`) shown below choices after answering
+- On finish, `StudySession` navigates to `/exam/results/:id` (score page), not back to exam select
+- Guard pattern: `isFinishing = useRef(false)` prevents the `useEffect` session-null guard from firing during intentional submit/navigate
+
+## PDF Export
+
+- Endpoint: `GET /api/v1/results/{id}/export` — returns a real PDF blob
+- Library: `mpdf/mpdf ^8.3` (not dompdf)
+- Japanese font: IPAex Gothic TTF at `/usr/share/fonts/opentype/ipaexfont-gothic/ipaexg.ttf`
+  - Installed in Docker via `fonts-ipaexfont-gothic` (apt)
+  - Do **not** use NotoSansCJK — it is a TTC collection and mPDF's TTFontFile parser fails on it
+- Template: `backend/resources/views/pdf/result.blade.php`
+- Filename format: `Result_{category}_{userName}.pdf` (sanitised — spaces → `_`, special chars stripped)
+- mPDF temp/font cache: `backend/storage/app/mpdf_tmp/` — excluded from git via `.gitignore`
+- Use plain ASCII characters in the Blade template for special symbols (e.g., `X` not `✗`) — Unicode glyphs outside the font's coverage render as blank squares
+
+## Exam Session Exit Guard
+
+- `ExamSession` does **not** use `useBlocker` — it is incompatible with `BrowserRouter` (requires a data router)
+- Exit is guarded by: local `showExitModal` state + `window.beforeunload` listener + an explicit Exit button
+- `handleSubmit` sets `isFinishing.current = true` before calling `resetSession()` to prevent the session-null guard from redirecting to `/exam/select`
+
 ## Do NOT
 
 - Run `php artisan migrate:fresh` on production — wipes the entire database
@@ -118,6 +147,9 @@ JLPTQuestionSeeder clears old JLPT questions before re-inserting, making it safe
 - Use `env()` directly in application code — always go through `config()`
 - Hard-delete questions that have `answer_records` — use SoftDeletes
 - Call `forceDelete()` on the query builder — it is an Eloquent-only method
+- Use `useBlocker` — the app uses `BrowserRouter`, not a data router; `useBlocker` will crash at runtime
+- Use NotoSansCJK (TTC format) with mPDF — use IPAex Gothic (single TTF) instead
+- Use Unicode special characters (`✗`, `✓`, etc.) in Blade PDF templates without verifying the font covers those code points
 
 ## Notes
 

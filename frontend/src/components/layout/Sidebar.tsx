@@ -2,6 +2,7 @@ import { clsx } from 'clsx';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
+import { useExamGuardStore } from '@/store/examGuardStore';
 import { logout as logoutApi } from '@/services/authService';
 
 interface SidebarProps {
@@ -89,6 +90,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+  const isExamActive   = useExamGuardStore((s) => s.isActive);
+  const setPendingPath = useExamGuardStore((s) => s.setPendingPath);
 
   const handleLogout = async () => {
     try { await logoutApi(); } catch {}
@@ -136,23 +139,30 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             ? location.search === link.search
             : location.search !== '?type=jlpt';
           const isActive = pathMatch && searchMatch;
+          const linkClass = clsx(
+            'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all w-full text-left',
+            isActive && accent === 'rose'
+              ? 'border border-rose-200 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 shadow-sm shadow-rose-200/50 dark:border-rose-400/30 dark:from-rose-500/25 dark:to-pink-500/25 dark:text-white dark:shadow-rose-500/10'
+              : isActive
+              ? 'border border-indigo-200 bg-gradient-to-r from-indigo-100 to-violet-100 text-indigo-700 shadow-sm shadow-indigo-200/50 dark:border-indigo-400/30 dark:from-indigo-500/30 dark:to-violet-500/30 dark:text-white dark:shadow-indigo-500/10'
+              : 'text-slate-600 hover:bg-black/5 hover:text-slate-900 dark:text-white/55 dark:hover:bg-white/8 dark:hover:text-white/90',
+          );
           return (
             <li key={href}>
-              <Link
-                to={href}
-                onClick={onClose}
-                className={clsx(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
-                  isActive && accent === 'rose'
-                    ? 'border border-rose-200 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 shadow-sm shadow-rose-200/50 dark:border-rose-400/30 dark:from-rose-500/25 dark:to-pink-500/25 dark:text-white dark:shadow-rose-500/10'
-                    : isActive
-                    ? 'border border-indigo-200 bg-gradient-to-r from-indigo-100 to-violet-100 text-indigo-700 shadow-sm shadow-indigo-200/50 dark:border-indigo-400/30 dark:from-indigo-500/30 dark:to-violet-500/30 dark:text-white dark:shadow-indigo-500/10'
-                    : 'text-slate-600 hover:bg-black/5 hover:text-slate-900 dark:text-white/55 dark:hover:bg-white/8 dark:hover:text-white/90',
-                )}
-              >
-                {link.icon}
-                {link.label}
-              </Link>
+              {isExamActive ? (
+                <button
+                  onClick={() => { onClose(); setPendingPath(href); }}
+                  className={linkClass}
+                >
+                  {link.icon}
+                  {link.label}
+                </button>
+              ) : (
+                <Link to={href} onClick={onClose} className={linkClass}>
+                  {link.icon}
+                  {link.label}
+                </Link>
+              )}
             </li>
           );
         })}

@@ -5,7 +5,7 @@
 A web-based mock exam platform designed for company employees in Japan.  
 Users can practice certification exams (**AWS**, **Network**, **Security**, **Linux**) and **JLPT** (Japanese Language Proficiency Test N1–N5) in a simulated real-exam environment.
 
-The system supports two modes: a timed **Exam Mode** that mirrors real certification conditions, and a **Study Mode** for learning at your own pace with immediate feedback.
+The system supports two modes: a timed **Exam Mode** that mirrors real certification conditions, and a **Study Mode** for learning at your own pace with immediate inline feedback per question.
 
 ---
 
@@ -85,19 +85,25 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 - Multiple-choice questions (4 options)
 - Progress indicator and question navigation
 - Flag / bookmark uncertain questions to revisit before submitting
+- Explicit exit button with confirmation modal (guards against accidental exit)
 - Auto-submit when time expires
 
 **Study Mode**
 - Untimed practice session
-- Immediate feedback after each question (correct / incorrect)
-- Explanation shown per question
-- No score pressure — focus on learning
+- Immediate inline feedback after answering each question:
+  - Correct choice highlighted in green with ✓ badge
+  - Wrong selection highlighted in red with ✗ badge
+  - Unchosen options dimmed
+- Explanation displayed below choices after answering
+- After completing all questions, navigates to the **Results page** (score displayed)
 
 **Results & Review**
 - Score calculation with pass / fail status
-- Correct / incorrect answer breakdown
-- Full answer review with explanations
-- Export result as PDF
+- Score percentage vs passing threshold
+- Full answer review with explanations (back button returns to result summary)
+- Export result as **PDF** — filename format: `Result_ExamName_UserName.pdf`
+  - PDF includes candidate info, score box, full answer review with highlighted correct/wrong choices, and explanations
+  - Japanese characters rendered correctly via IPAex Gothic font
 
 **User Profile**
 - Personal information (name, email, department)
@@ -125,6 +131,7 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 | Backend | Laravel 11 (PHP 8.2) |
 | Database | MySQL 8.0 |
 | Authentication | JWT (`tymon/jwt-auth`) |
+| PDF Generation | mPDF 8.x with IPAex Gothic TTF (Japanese support) |
 | Containerization | Docker / Docker Compose |
 | i18n | react-i18next (Japanese default / English toggle) |
 
@@ -141,6 +148,7 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
      │                         │  passages    (JLPT)      │
      │                         │  results     (scores)    │
      │                         │  analytics   (stats)     │
+     │                         │  pdf         (mPDF)      │
      └─────────────────────────┘
 ```
 
@@ -201,6 +209,7 @@ mock-exam-system/
 │   │                           #   ExamSettingSeeder, QuestionSeeder,
 │   │                           #   PassageSeeder, JLPTQuestionSeeder,
 │   │                           #   ExamHistorySeeder
+│   ├── resources/views/pdf/    # Blade PDF templates (result.blade.php)
 │   └── routes/api.php
 │
 ├── docker-compose.yml
@@ -231,6 +240,7 @@ API docs: `http://localhost:8000/api/docs/`
 
 ### Prerequisites
 - Node.js 18+, PHP 8.2+, Composer 2+, MySQL 8.0+
+- For PDF export (Japanese): `fonts-ipaexfont-gothic` system package (provides `/usr/share/fonts/opentype/ipaexfont-gothic/ipaexg.ttf`)
 
 ### Backend
 

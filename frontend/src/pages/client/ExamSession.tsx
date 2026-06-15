@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { useExamSessionStore } from '@/store/examSessionStore';
+import { useExamGuardStore } from '@/store/examGuardStore';
 import useTimer from '@/hooks/useTimer';
 import { submitExam } from '@/services/examService';
 
@@ -24,32 +25,73 @@ const ExamSession = () => {
   const prevQuestion   = useExamSessionStore((s) => s.prevQuestion);
   const resetSession   = useExamSessionStore((s) => s.resetSession);
 
+  const activateGuard   = useExamGuardStore((s) => s.activate);
+  const deactivateGuard = useExamGuardStore((s) => s.deactivate);
+  const pendingPath     = useExamGuardStore((s) => s.pendingPath);
+  const setPendingPath  = useExamGuardStore((s) => s.setPendingPath);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [unansweredCount, setUnansweredCount] = useState(0);
   const isFinishing = useRef(false);
+
+  useEffect(() => {
+    activateGuard();
+    return () => { deactivateGuard(); };
+  }, [activateGuard, deactivateGuard]);
+
+  // Open modal when Sidebar intercepted a navigation attempt
+  useEffect(() => {
+    if (pendingPath !== null) setShowExitModal(true);
+  }, [pendingPath]);
 
   useEffect(() => {
     if (!session && !isFinishing.current) navigate('/exam/select', { replace: true });
   }, [session, navigate]);
 
+  // Browser tab close / refresh
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
   }, []);
 
+  // Browser back button — push a sentinel so popstate fires instead of leaving
+  useEffect(() => {
+    window.history.pushState(null, '', window.location.href);
+    const handler = () => {
+      window.history.pushState(null, '', window.location.href);
+      setShowExitModal(true);
+    };
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
+  }, []);
+
   const handleConfirmExit = () => {
+    isFinishing.current = true;
     resetSession();
+    deactivateGuard();
     setShowExitModal(false);
-    navigate('/exam/select');
+    navigate(pendingPath ?? '/exam/select');
+    setPendingPath(null);
   };
 
   const handleCancelExit = () => {
     setShowExitModal(false);
+    setPendingPath(null);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    if (!session || isSubmitting) return;
+    const unanswered = session.questions.filter((q) => !(q.id in session.answers)).length;
+    setUnansweredCount(unanswered);
+    setShowSubmitModal(true);
+  };
+
+  const handleSubmitConfirmed = async () => {
     if (!session?.sessionId || isSubmitting) return;
+    setShowSubmitModal(false);
     setIsSubmitting(true);
     const questionIds = session.questions.map((q) => q.id);
     try {
@@ -63,7 +105,7 @@ const ExamSession = () => {
     }
   };
 
-  useTimer(session?.secondsRemaining ?? 0, () => { handleSubmit(); });
+  useTimer(session?.secondsRemaining ?? 0, () => { handleSubmitConfirmed(); });
 
   if (!session) {
     return (
@@ -145,6 +187,35 @@ const ExamSession = () => {
           <Button label={t('common.cancel')} variant="secondary" onClick={handleCancelExit} />
           <Button label={t('exam.exitConfirmButton')} variant="danger" onClick={handleConfirmExit} />
         </div>
+      </Modal>
+
+      <Modal
+        isOpen={showSubmitModal}
+        title={unansweredCount > 0 ? t('exam.unansweredWarningTitle') : t('exam.submitConfirmTitle')}
+        onClose={() => setShowSubmitModal(false)}
+      >
+        {unansweredCount > 0 ? (
+          <>
+            <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-300 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-4">
+              <span className="mt-0.5 text-lg leading-none">⚠️</span>
+              <p className="text-sm text-amber-800 dark:text-amber-200">
+                {t('exam.unansweredWarningMessage_other', { count: unansweredCount })}
+              </p>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button label={t('exam.goBack')} variant="secondary" onClick={() => setShowSubmitModal(false)} />
+              <Button label={t('exam.submitAnyway')} variant="danger" onClick={handleSubmitConfirmed} />
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="mb-6 text-slate-600 dark:text-white/75">{t('exam.submitConfirmMessage')}</p>
+            <div className="flex justify-end gap-3">
+              <Button label={t('common.cancel')} variant="secondary" onClick={() => setShowSubmitModal(false)} />
+              <Button label={t('exam.submitConfirmButton')} onClick={handleSubmitConfirmed} />
+            </div>
+          </>
+        )}
       </Modal>
     </>
   );
