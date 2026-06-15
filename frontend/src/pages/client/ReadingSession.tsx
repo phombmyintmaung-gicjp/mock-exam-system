@@ -79,10 +79,10 @@ const ReadingSession = () => {
       {/* Header bar */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
-            {t('exam.jlpt.reading')}
+          <span className="rounded-full border border-purple-400/30 bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-300">
+            {t('exam.jlpt.bunpoKaido')}
           </span>
-          <span className="text-sm text-slate-500">
+          <span className="text-sm text-slate-500 dark:text-white/50">
             {t('exam.questionOf', { current: session.currentIndex + 1, total: session.questions.length })}
           </span>
         </div>
@@ -104,16 +104,16 @@ const ReadingSession = () => {
 
         {/* Passage panel */}
         <div className="lg:w-1/2">
-          <div className="sticky top-20 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="sticky top-20 glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
             {passage ? (
               <>
-                <h2 className="mb-3 text-base font-semibold text-slate-800">{passage.title}</h2>
-                <div className="max-h-[60vh] overflow-y-auto text-sm leading-7 text-slate-700 whitespace-pre-wrap">
+                <h2 className="mb-3 text-base font-semibold text-slate-800 dark:text-white/90">{passage.title}</h2>
+                <div className="max-h-[60vh] overflow-y-auto text-sm leading-7 text-slate-600 dark:text-white/70 whitespace-pre-wrap scrollbar-thin">
                   {passage.content}
                 </div>
               </>
             ) : (
-              <p className="text-sm text-slate-400">{t('common.noData')}</p>
+              <p className="text-sm text-slate-300 dark:text-white/35">{t('common.noData')}</p>
             )}
           </div>
         </div>
@@ -121,8 +121,8 @@ const ReadingSession = () => {
         {/* Question panel */}
         <div className="lg:w-1/2">
           {currentQ && (
-            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="mb-4 text-base font-medium text-slate-900">{currentQ.text}</p>
+            <div className="glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
+              <p className="mb-4 text-base font-medium text-slate-800 dark:text-white/90">{currentQ.text}</p>
 
               <div className="space-y-2">
                 {currentQ.choices.map((choice) => {
@@ -136,14 +136,14 @@ const ReadingSession = () => {
                       onClick={() => handleSelect(choice.id)}
                       disabled={isStudy && revealed}
                       className={clsx(
-                        'w-full rounded-lg border px-4 py-3 text-left text-sm transition-all',
+                        'w-full rounded-xl border px-4 py-3 text-left text-sm transition-all',
                         showResult && isCorrect
-                          ? 'border-green-400 bg-green-50 font-semibold text-green-800'
+                          ? 'border-emerald-400/40 bg-emerald-500/20 font-semibold text-emerald-300'
                           : showResult && isSelected && !isCorrect
-                            ? 'border-red-400 bg-red-50 text-red-700'
+                            ? 'border-rose-400/40 bg-rose-500/15 text-rose-300'
                             : isSelected
-                              ? 'border-indigo-500 bg-indigo-50 text-indigo-800'
-                              : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50',
+                              ? 'border-indigo-400/50 bg-indigo-500/20 text-white'
+                              : 'border-slate-200 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:border-slate-300 dark:hover:border-white/25 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white/90',
                       )}
                     >
                       {choice.text}
@@ -152,17 +152,15 @@ const ReadingSession = () => {
                 })}
               </div>
 
-              {/* Study mode: explanation */}
               {isStudy && revealed && currentQ.explanation && (
-                <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-slate-700">
-                  <span className="mr-1 font-semibold text-blue-600">{t('result.review.explanation')}:</span>
+                <div className="mt-4 rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-200">
+                  <span className="mr-1 font-semibold text-blue-300">{t('result.review.explanation')}:</span>
                   {currentQ.explanation}
                 </div>
               )}
             </div>
           )}
 
-          {/* Navigation */}
           <div className="mt-4 flex justify-between gap-3">
             <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion} />
             {isLast ? (

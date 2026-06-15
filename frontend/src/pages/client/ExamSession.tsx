@@ -30,7 +30,6 @@ const ExamSession = () => {
     if (!session) navigate('/exam/select', { replace: true });
   }, [session, navigate]);
 
-  // Block in-app navigation while an exam is active
   const blocker = useBlocker(({ currentLocation, nextLocation }) =>
     !!session && currentLocation.pathname !== nextLocation.pathname,
   );
@@ -81,7 +80,7 @@ const ExamSession = () => {
         <div className="mx-auto max-w-3xl">
           <div className="mb-4">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-600">
+              <span className="text-sm font-medium text-slate-500 dark:text-white/55">
                 {t('exam.questionOf', { current: session.currentIndex + 1, total: session.questions.length })}
               </span>
               <div className="flex items-center gap-3">
@@ -91,10 +90,10 @@ const ExamSession = () => {
                 <button
                   onClick={() => currentQ && toggleFlag(currentQ.id)}
                   className={clsx(
-                    'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium',
+                    'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all',
                     isFlagged
-                      ? 'bg-orange-50 text-orange-600'
-                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800',
+                      ? 'bg-orange-500/20 text-orange-300 border border-orange-400/30'
+                      : 'border border-slate-200 dark:border-white/15 bg-black/5 dark:bg-white/8 text-slate-500 dark:text-white/50 hover:bg-black/8 dark:hover:bg-white/15 hover:text-slate-700 dark:hover:text-white/80',
                   )}
                 >
                   🚩 {t('exam.flag')}
@@ -128,7 +127,7 @@ const ExamSession = () => {
         title={t('exam.exitConfirmTitle')}
         onClose={handleCancelExit}
       >
-        <p className="mb-6">{t('exam.exitConfirmMessage')}</p>
+        <p className="mb-6 text-slate-600 dark:text-white/75">{t('exam.exitConfirmMessage')}</p>
         <div className="flex justify-end gap-3">
           <Button label={t('common.cancel')} variant="secondary" onClick={handleCancelExit} />
           <Button label={t('exam.exitConfirmButton')} variant="danger" onClick={handleConfirmExit} />

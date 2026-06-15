@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useThemeStore } from '@/store/themeStore';
 
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
@@ -26,6 +28,17 @@ import WeakAreas from '@/pages/client/WeakAreas';
 import ReadingSession from '@/pages/client/ReadingSession';
 
 const App = () => {
+  const theme = useThemeStore((s) => s.theme);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
   return (
     <BrowserRouter>
       <Routes>

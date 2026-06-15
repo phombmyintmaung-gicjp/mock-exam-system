@@ -229,24 +229,26 @@
   },
   "home": {
     "hero": {
-      "badge": "Company Exam Practice Platform",
-      "title": "Ace Your Certification Exams",
-      "subtitle": "Practice with realistic mock exams and study at your own pace to achieve your certification goals.",
+      "badge": "IT Certifications + JLPT N1–N5",
+      "titleLine1": "Master Your Exams,",
+      "titleLine2": "Your Way",
+      "subtitle": "Practice IT certifications and JLPT with realistic mock exams, instant feedback, and detailed analytics — all in one place.",
       "cta": "Sign In to Get Started",
-      "learnMore": "Learn More"
+      "explore": "Explore Categories",
+      "trustLine": "For GIC Japan employees"
     },
     "stats": {
-      "categories": "Exam Categories",
-      "modes": "Practice Modes",
+      "itCerts": "IT Categories",
+      "jlptLevels": "JLPT Levels",
       "questions": "Questions",
       "attempts": "Unlimited Attempts"
     },
     "features": {
       "title": "Everything you need to pass",
-      "subtitle": "Two powerful modes designed for exam prep and deep learning",
+      "subtitle": "Four powerful tools designed for serious exam preparation",
       "exam": {
         "title": "Exam Mode",
-        "desc": "Practice under real exam conditions with a countdown timer and instant pass/fail scoring."
+        "desc": "Simulate real exam conditions with a countdown timer and instant pass/fail scoring."
       },
       "study": {
         "title": "Study Mode",
@@ -255,21 +257,41 @@
       "analytics": {
         "title": "Progress Analytics",
         "desc": "Track score trends, identify weak areas, and focus your study where it matters most."
+      },
+      "jlpt": {
+        "title": "JLPT Reading",
+        "desc": "Split-screen reading sessions for N1–N5 with passage on the left and questions on the right."
       }
     },
     "categories": {
-      "title": "Exam Categories",
-      "subtitle": "Practice across a range of industry-recognized certification topics",
+      "title": "IT Exam Categories",
+      "subtitle": "Practice across industry-recognized certification topics",
+      "awsLabel": "AWS",
+      "networkLabel": "Network",
+      "securityLabel": "Security",
+      "linuxLabel": "Linux",
       "aws": "Amazon Web Services cloud services and architecture",
-      "network": "Networking fundamentals and protocols",
-      "security": "Information security and risk management",
-      "linux": "Linux system administration and commands"
+      "network": "Networking fundamentals, protocols, and infrastructure",
+      "security": "Information security, risk management, and compliance",
+      "linux": "Linux system administration and command-line tools"
+    },
+    "jlpt": {
+      "badge": "JLPT",
+      "title": "Japanese Language Practice",
+      "subtitle": "Comprehensive N1–N5 preparation covering vocabulary, grammar, and reading comprehension with realistic question sets.",
+      "mojiGoiShort": "Vocab & Kanji",
+      "bunpoShort": "Grammar & Reading",
+      "n1": "Advanced — nuanced and complex language",
+      "n2": "Upper-Intermediate — broad everyday topics",
+      "n3": "Intermediate — standard conversation & text",
+      "n4": "Elementary — basic grammar and vocabulary",
+      "n5": "Beginner — simple everyday Japanese"
     },
     "howItWorks": {
       "title": "How It Works",
-      "step1": { "title": "Sign In", "desc": "Log in with your company account credentials." },
-      "step2": { "title": "Choose a Category", "desc": "Select the certification topic you want to practice." },
-      "step3": { "title": "Start Practicing", "desc": "Take a timed exam or study at your own pace with instant feedback." }
+      "step1": { "title": "Sign In", "desc": "Log in with your GIC Japan company account credentials." },
+      "step2": { "title": "Choose Your Exam", "desc": "Pick an IT certification category or a JLPT level and section." },
+      "step3": { "title": "Practice & Improve", "desc": "Take timed exams or study at your pace, then review analytics to track progress." }
     },
     "cta": {
       "title": "Ready to start?",

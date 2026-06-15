@@ -1,19 +1,107 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Theme tokens ───────────────────────────────────────────── */
+:root {
+  --app-bg: #f5f3ff;
+  --app-gradient: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 45%, #e8f4fd 100%);
+  --dot-color: rgba(99, 102, 241, 0.06);
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(99, 102, 241, 0.13);
+  --glass-card-bg: rgba(255, 255, 255, 0.80);
+  --glass-card-border: rgba(99, 102, 241, 0.10);
+  --glass-card-shadow: 0 4px 32px rgba(99, 102, 241, 0.07);
+
+  --glass-input-bg: rgba(255, 255, 255, 0.92);
+  --glass-input-border: rgba(99, 102, 241, 0.22);
+  --glass-input-color: #0f172a;
+  --glass-input-placeholder: rgba(15, 23, 42, 0.35);
+  --glass-input-focus-border: rgba(99, 102, 241, 0.55);
+  --glass-input-focus-shadow: rgba(99, 102, 241, 0.12);
+
+  --brand-from: #a78bfa;
+  --brand-to: #c084fc;
+  --glow-near: rgba(99, 102, 241, 0.25);
+  --glow-far: rgba(99, 102, 241, 0.10);
+}
+
+/* Dark mode: "Midnight Rose" — deep wine/plum base with rose-amber accents */
+.dark {
+  --app-bg: #130810;
+  --app-gradient: linear-gradient(135deg, #130810 0%, #260d1e 28%, #1c0a2e 58%, #0f1528 100%);
+  --dot-color: rgba(251, 113, 133, 0.05);
+
+  --glass-bg: rgba(251, 113, 133, 0.07);
+  --glass-border: rgba(251, 113, 133, 0.14);
+  --glass-card-bg: rgba(251, 113, 133, 0.055);
+  --glass-card-border: rgba(251, 113, 133, 0.10);
+  --glass-card-shadow: 0 4px 40px rgba(251, 113, 133, 0.06);
+
+  --glass-input-bg: rgba(255, 200, 210, 0.07);
+  --glass-input-border: rgba(251, 113, 133, 0.22);
+  --glass-input-color: #fff;
+  --glass-input-placeholder: rgba(255, 255, 255, 0.35);
+  --glass-input-focus-border: rgba(251, 113, 133, 0.65);
+  --glass-input-focus-shadow: rgba(251, 113, 133, 0.18);
+
+  --brand-from: #fb7185;
+  --brand-to: #fbbf24;
+  --glow-near: rgba(251, 113, 133, 0.30);
+  --glow-far: rgba(251, 113, 133, 0.12);
+}
+
+/* ── Custom utilities ───────────────────────────────────────── */
 @layer utilities {
-  .bg-dot-pattern {
-    background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
-    background-size: 24px 24px;
+  .bg-app {
+    background-color: var(--app-bg);
+    background-image:
+      radial-gradient(circle, var(--dot-color) 1px, transparent 1px),
+      var(--app-gradient);
+    background-size: 28px 28px, 100% 100%;
   }
 
-  .bg-gradient-dark {
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-card {
+    background: var(--glass-card-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-card-border);
+    box-shadow: var(--glass-card-shadow);
+  }
+
+  .glass-input {
+    background: var(--glass-input-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-input-border);
+    color: var(--glass-input-color);
+  }
+
+  .glass-input::placeholder {
+    color: var(--glass-input-placeholder);
+  }
+
+  .glass-input:focus {
+    outline: none;
+    border-color: var(--glass-input-focus-border);
+    box-shadow: 0 0 0 3px var(--glass-input-focus-shadow);
   }
 
   .text-gradient-brand {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, var(--brand-from) 0%, var(--brand-to) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .glow-indigo {
+    box-shadow: 0 0 40px var(--glow-near), 0 0 80px var(--glow-far);
   }
 }

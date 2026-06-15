@@ -30,7 +30,6 @@ const StudySession = () => {
     if (!session) navigate('/exam/select', { replace: true });
   }, [session, navigate]);
 
-  // Reset revealed state when question changes
   useEffect(() => { setRevealed(false); }, [session?.currentIndex]);
 
   const handleSelect = (choiceId: number) => {
@@ -70,10 +69,10 @@ const StudySession = () => {
       <div className="mx-auto max-w-3xl">
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-900">{t('exam.studyModeTitle')}</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white">{t('exam.studyModeTitle')}</h1>
             <div className="flex items-center gap-3">
               <Timer seconds={session.questionElapsedSeconds} mode="elapsed" />
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-slate-500 dark:text-white/50">
                 {t('exam.questionOf', { current: session.currentIndex + 1, total: session.questions.length })}
               </span>
             </div>
@@ -99,8 +98,10 @@ const StudySession = () => {
                 <div
                   key={c.id}
                   className={clsx(
-                    'rounded-lg border px-4 py-2.5 text-sm font-medium',
-                    isCorrect ? 'border-green-400 bg-green-50 text-green-800' : 'border-red-400 bg-red-50 text-red-700',
+                    'rounded-xl border px-4 py-2.5 text-sm font-medium',
+                    isCorrect
+                      ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-300'
+                      : 'border-rose-400/40 bg-rose-500/15 text-rose-300',
                   )}
                 >
                   {isCorrect ? `✓ ${t('result.correct')}: ` : `✗ ${t('result.incorrect')}: `}{c.text}
@@ -108,8 +109,8 @@ const StudySession = () => {
               );
             })}
             {currentQ.explanation && (
-              <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-gray-700">
-                <span className="mr-1 font-semibold text-blue-600">{t('result.review.explanation')}:</span>
+              <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-200">
+                <span className="mr-1 font-semibold text-blue-300">{t('result.review.explanation')}:</span>
                 {currentQ.explanation}
               </div>
             )}

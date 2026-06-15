@@ -109,7 +109,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const renderSection = (label: string, links: NavLinkItem[]) => (
     <div>
-      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-slate-500">
+      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-white/30">
         {label}
       </p>
       <ul className="space-y-0.5">
@@ -123,10 +123,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 to={link.to}
                 onClick={onClose}
                 className={clsx(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
                   isActive
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-500/30'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white',
+                    ? 'border border-indigo-200 bg-gradient-to-r from-indigo-100 to-violet-100 text-indigo-700 shadow-sm shadow-indigo-200/50 dark:border-indigo-400/30 dark:from-indigo-500/30 dark:to-violet-500/30 dark:text-white dark:shadow-indigo-500/10'
+                    : 'text-slate-600 hover:bg-black/5 hover:text-slate-900 dark:text-white/55 dark:hover:bg-white/8 dark:hover:text-white/90',
                 )}
               >
                 {link.icon}
@@ -143,14 +143,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-10 bg-black/60 lg:hidden"
+          className="fixed inset-0 z-10 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
       <aside
         className={clsx(
-          'bg-gradient-dark fixed inset-y-0 left-0 top-16 z-20 flex w-64 flex-col border-r border-white/10 transition-transform duration-200',
+          'glass fixed inset-y-0 left-0 top-16 z-20 flex w-64 flex-col transition-transform duration-200',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         )}
       >
@@ -159,10 +159,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {renderSection(t('nav.employee'), clientLinks)}
         </nav>
 
-        <div className="border-t border-white/10 p-3">
+        <div className="border-t border-slate-200 p-3 dark:border-white/10">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-rose-500/10 hover:text-rose-400"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:text-white/40 dark:hover:bg-rose-500/15 dark:hover:text-rose-300"
           >
             <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

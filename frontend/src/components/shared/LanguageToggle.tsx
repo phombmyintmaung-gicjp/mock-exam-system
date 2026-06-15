@@ -1,13 +1,11 @@
 import { clsx } from 'clsx';
 import useLanguage from '@/hooks/useLanguage';
+import { useThemeStore } from '@/store/themeStore';
 
-interface LanguageToggleProps {
-  variant?: 'light' | 'dark';
-}
-
-const LanguageToggle = ({ variant = 'light' }: LanguageToggleProps) => {
+const LanguageToggle = () => {
   const { currentLanguage, toggleLanguage } = useLanguage();
-  const isDark = variant === 'dark';
+  const theme = useThemeStore((s) => s.theme);
+  const isDark = theme === 'dark';
 
   return (
     <div
@@ -15,7 +13,7 @@ const LanguageToggle = ({ variant = 'light' }: LanguageToggleProps) => {
         'flex rounded-lg p-0.5',
         isDark
           ? 'border border-white/20 bg-white/10'
-          : 'border border-gray-200 bg-gray-50',
+          : 'border border-slate-200 bg-white/80',
       )}
     >
       <button
@@ -23,12 +21,10 @@ const LanguageToggle = ({ variant = 'light' }: LanguageToggleProps) => {
         className={clsx(
           'rounded-md px-3 py-1 text-sm font-medium transition-colors',
           currentLanguage === 'ja'
-            ? isDark
-              ? 'bg-indigo-600 text-white'
-              : 'bg-indigo-600 text-white'
+            ? 'bg-indigo-600 text-white'
             : isDark
             ? 'text-white/60 hover:text-white'
-            : 'text-gray-600 hover:text-gray-900',
+            : 'text-slate-500 hover:text-slate-900',
         )}
       >
         日本語
@@ -38,12 +34,10 @@ const LanguageToggle = ({ variant = 'light' }: LanguageToggleProps) => {
         className={clsx(
           'rounded-md px-3 py-1 text-sm font-medium transition-colors',
           currentLanguage === 'en'
-            ? isDark
-              ? 'bg-indigo-600 text-white'
-              : 'bg-indigo-600 text-white'
+            ? 'bg-indigo-600 text-white'
             : isDark
             ? 'text-white/60 hover:text-white'
-            : 'text-gray-600 hover:text-gray-900',
+            : 'text-slate-500 hover:text-slate-900',
         )}
       >
         English
