@@ -31,13 +31,13 @@ const WeakAreas = () => {
               <div key={area.category} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="font-medium text-gray-900">{area.category}</span>
-                  <span className="text-sm font-semibold text-red-600">
+                  <span className={`text-sm font-semibold ${area.accuracy > 60 ? 'text-emerald-600' : 'text-red-600'}`}>
                     {t('profile.weakAreas.accuracy', { value: area.accuracy })}
                   </span>
                 </div>
                 <div className="h-2.5 overflow-hidden rounded-full bg-gray-100">
                   <div
-                    className="h-full rounded-full bg-red-400 transition-all"
+                    className={`h-full rounded-full transition-all ${area.accuracy > 60 ? 'bg-emerald-400' : 'bg-red-400'}`}
                     style={{ width: `${area.accuracy}%` }}
                   />
                 </div>
