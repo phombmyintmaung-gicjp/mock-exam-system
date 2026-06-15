@@ -138,9 +138,9 @@ const ReadingSession = () => {
                       className={clsx(
                         'w-full rounded-xl border px-4 py-3 text-left text-sm transition-all',
                         showResult && isCorrect
-                          ? 'border-emerald-400/40 bg-emerald-500/20 font-semibold text-emerald-300'
+                          ? 'border-emerald-400/40 bg-emerald-500/20 font-semibold text-emerald-800 dark:text-emerald-300'
                           : showResult && isSelected && !isCorrect
-                            ? 'border-rose-400/40 bg-rose-500/15 text-rose-300'
+                            ? 'border-rose-400/40 bg-rose-500/15 text-rose-800 dark:text-rose-300'
                             : isSelected
                               ? 'border-indigo-400/50 bg-indigo-500/20 text-white'
                               : 'border-slate-200 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:border-slate-300 dark:hover:border-white/25 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white/90',
@@ -153,8 +153,8 @@ const ReadingSession = () => {
               </div>
 
               {isStudy && revealed && currentQ.explanation && (
-                <div className="mt-4 rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-200">
-                  <span className="mr-1 font-semibold text-blue-300">{t('result.review.explanation')}:</span>
+                <div className="mt-4 rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-900 dark:text-blue-200">
+                  <span className="mr-1 font-semibold text-blue-700 dark:text-blue-300">{t('result.review.explanation')}:</span>
                   {currentQ.explanation}
                 </div>
               )}

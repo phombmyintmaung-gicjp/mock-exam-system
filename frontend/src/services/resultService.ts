@@ -24,12 +24,15 @@ export const getResultHistory = async (page = 1): Promise<PaginatedResponse<Hist
   return { data: items, count: res.data.count as number, next: res.data.next as string | null, previous: res.data.previous as string | null };
 };
 
-export const exportResultPdf = async (resultId: number): Promise<void> => {
+export const exportResultPdf = async (resultId: number, category?: string, userName?: string): Promise<void> => {
   const res = await api.get(`/results/${resultId}/export`, { responseType: 'blob' });
   const url = URL.createObjectURL(res.data as Blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `result-${resultId}.pdf`;
+  const sanitize = (s: string) => s.replace(/[/\\:*?"<>|]/g, '').replace(/\s+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+  const examPart = category ? sanitize(category) : String(resultId);
+  const userPart = userName ? sanitize(userName) : '';
+  a.download = userPart ? `Result_${examPart}_${userPart}.pdf` : `Result_${examPart}.pdf`;
   a.click();
   URL.revokeObjectURL(url);
 };

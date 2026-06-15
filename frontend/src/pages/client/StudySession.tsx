@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { ProgressBar } from '@/components/shared/ProgressBar';
 import { QuestionCard } from '@/components/shared/QuestionCard';
@@ -23,11 +22,12 @@ const StudySession = () => {
   const resetSession          = useExamSessionStore((s) => s.resetSession);
 
   const [revealed, setRevealed] = useState(false);
+  const isFinishing = useRef(false);
 
   useElapsedTimer(session?.currentIndex ?? 0);
 
   useEffect(() => {
-    if (!session) navigate('/exam/select', { replace: true });
+    if (!session && !isFinishing.current) navigate('/exam/select', { replace: true });
   }, [session, navigate]);
 
   useEffect(() => { setRevealed(false); }, [session?.currentIndex]);
@@ -42,11 +42,12 @@ const StudySession = () => {
     if (!session?.sessionId) return;
     const questionIds = session.questions.map((q) => q.id);
     try {
+      isFinishing.current = true;
       const result = await submitExam(session.sessionId, session.answers, questionIds);
       resetSession();
       navigate(`/exam/results/${result.id}`);
     } catch {
-      // stay on page
+      isFinishing.current = false;
     }
   };
 
@@ -85,35 +86,14 @@ const StudySession = () => {
             question={currentQ}
             selectedChoiceId={selectedChoice}
             onSelect={handleSelect}
+            revealed={revealed}
           />
         )}
 
-        {revealed && currentQ && (
-          <div className="mt-4 space-y-2">
-            {currentQ.choices.map((c) => {
-              const isCorrect = c.isCorrect;
-              const isSelected = c.id === selectedChoice;
-              if (!isCorrect && !isSelected) return null;
-              return (
-                <div
-                  key={c.id}
-                  className={clsx(
-                    'rounded-xl border px-4 py-2.5 text-sm font-medium',
-                    isCorrect
-                      ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-300'
-                      : 'border-rose-400/40 bg-rose-500/15 text-rose-300',
-                  )}
-                >
-                  {isCorrect ? `✓ ${t('result.correct')}: ` : `✗ ${t('result.incorrect')}: `}{c.text}
-                </div>
-              );
-            })}
-            {currentQ.explanation && (
-              <div className="rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-200">
-                <span className="mr-1 font-semibold text-blue-300">{t('result.review.explanation')}:</span>
-                {currentQ.explanation}
-              </div>
-            )}
+        {revealed && currentQ?.explanation && (
+          <div className="mt-4 rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-900 dark:text-blue-200">
+            <span className="mr-1 font-semibold text-blue-700 dark:text-blue-300">{t('result.review.explanation')}:</span>
+            {currentQ.explanation}
           </div>
         )}
 

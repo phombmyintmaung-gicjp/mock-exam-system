@@ -12,31 +12,41 @@ class ExamService
     public function createSession(User $user, array $data): ExamSession
     {
         return ExamSession::create([
-            'user_id'             => $user->id,
-            'category'            => $data['category'],
-            'mode'                => $data['mode'],
-            'time_limit_seconds'  => $data['time_limit_seconds'] ?? config('exam.default_time_limit', 3600),
-            'is_submitted'        => false,
+            'user_id'              => $user->id,
+            'category'             => $data['category'],
+            'mode'                 => $data['mode'],
+            'time_limit_seconds'   => $data['time_limit_seconds'] ?? config('exam.default_time_limit', 3600),
+            'question_type_filter' => !empty($data['question_types']) ? $data['question_types'] : null,
+            'is_submitted'         => false,
         ]);
     }
 
-    public function getSessionQuestions(ExamSession $session, int $count = 20): Collection
+    public function getSessionQuestions(ExamSession $session, int $count = 20, array $questionTypes = []): Collection
     {
         if (str_starts_with($session->category, 'JLPT-')) {
-            return $this->getJLPTQuestions($session, $count);
+            return $this->getJLPTQuestions($session, $count, $questionTypes);
         }
         return $this->getBalancedQuestions($session, $count);
     }
 
-    private function getJLPTQuestions(ExamSession $session, int $count): Collection
+    private function getJLPTQuestions(ExamSession $session, int $count, array $questionTypes = []): Collection
     {
         $needsPassage = str_ends_with($session->category, '-文法読解')
                      || str_ends_with($session->category, '-Reading');
         $with = $needsPassage ? ['choices', 'passage'] : ['choices'];
 
-        $questions = Question::with($with)
-            ->byCategory($session->category)
-            ->orderByRaw("CASE question_type
+        $query = Question::with($with)
+            ->byCategory($session->category);
+
+        if (!empty($questionTypes)) {
+            $query->whereIn('question_type', $questionTypes);
+        }
+
+        // When a sub-section filter is active (Vocab/Kanji/Grammar/Reading), return
+        // all matching questions — the pool is already scoped to the right types and
+        // the frontend badge already shows the real count. For full-section practice
+        // (no filter), cap at $count and randomise within each type group.
+        $queryBuilder = $query->orderByRaw("CASE question_type
                 WHEN '問題1'     THEN 1
                 WHEN '問題2'     THEN 2
                 WHEN '問題3'     THEN 3
@@ -48,9 +58,11 @@ class ExamService
                 WHEN 'もんだい４' THEN 4
                 WHEN 'もんだい５' THEN 5
                 WHEN 'もんだい６' THEN 6
-                ELSE 99 END, id ASC")
-            ->limit($count)
-            ->get();
+                ELSE 99 END, RAND()");
+
+        $questions = empty($questionTypes)
+            ? $queryBuilder->limit($count)->get()
+            : $queryBuilder->get();
 
         if ($needsPassage) {
             $noPassage  = $questions->filter(fn ($q) => is_null($q->passage_id));

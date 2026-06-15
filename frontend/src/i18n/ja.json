@@ -16,6 +16,7 @@
     "saving": "保存中...",
     "or": "または",
     "noData": "データがありません",
+    "noQuestionsAvailable": "このセクションにはまだ問題がありません。",
     "difficulty": {
       "easy": "初級",
       "medium": "中級",
@@ -43,7 +44,9 @@
     "passwordTooShort": "パスワードは8文字以上で入力してください",
     "alreadyHaveAccount": "すでにアカウントをお持ちの方は",
     "noAccount": "アカウントをお持ちでない方は",
-    "signUpLink": "こちら"
+    "signUpLink": "こちら",
+    "backToHome": "ホームへ戻る",
+    "rememberEmail": "メールアドレスを記憶する"
   },
   "nav": {
     "admin": "管理者",
@@ -57,7 +60,12 @@
     "history": "受験履歴",
     "weakAreas": "苦手分野",
     "profile": "プロフィール",
-    "passages": "文章管理"
+    "passages": "文章管理",
+    "itExam": "IT試験",
+    "japaneseExam": "日本語検定",
+    "myAccount": "マイアカウント",
+    "itExamSelect": "IT試験を選ぶ",
+    "jlptPractice": "JLPT練習"
   },
   "exam": {
     "startButton": "試験を開始する",
@@ -89,7 +97,23 @@
       "mojiGoiDesc": "問題1〜5：漢字・語彙・文字の知識",
       "bunpoKaido": "言語知識（文法）・読解",
       "bunpoKaidoDesc": "もんだい1〜6：文法・文章読解",
-      "levelSelected": "{{level}} レベルを選択中"
+      "levelSelected": "{{level}} レベルを選択中",
+      "vocab": "語彙",
+      "vocabDesc": "問題4〜5：語の意味と使い方",
+      "kanji": "漢字",
+      "kanjiDesc": "問題1〜3：漢字の読み方と構成",
+      "grammar": "文法",
+      "grammarDesc": "問題1〜2：文法パターンと文の構造",
+      "reading": "読解",
+      "readingDesc": "問題3〜6：文章読解"
+    },
+    "it": {
+      "title": "IT資格試験",
+      "subtitle": "カテゴリとモードを選択してください",
+      "aws": "AWS",
+      "network": "ネットワーク",
+      "security": "セキュリティ",
+      "linux": "Linux"
     }
   },
   "result": {
@@ -152,11 +176,34 @@
     },
     "questionImport": {
       "title": "問題をインポート",
-      "subtitle": "CSVまたはJSONで一括インポート",
-      "dropText": "CSVまたはJSONファイルをここにドロップ",
+      "subtitle": "Excelファイル（.xlsx / .xls）で一括インポート",
+      "uploadTitle": "Excelファイルをアップロード",
+      "dropText": "Excelファイルをここにドロップ",
       "browseButton": "ファイルを選択",
       "uploadButton": "アップロード",
-      "success": "問題のインポートが完了しました。"
+      "success": "問題のインポートが完了しました。",
+      "resultSummary": "{{imported}}件インポート、{{skipped}}件スキップ",
+      "resultImported": "{{count}}件の問題をインポートしました",
+      "resultDuplicates": "{{count}}件の重複をスキップしました（データベースに既に存在します）",
+      "resultSkipped": "{{count}}件のエラーによりスキップされました",
+      "downloadTemplate": "テンプレートをダウンロード",
+      "formatTitle": "カラム一覧",
+      "formatDesc": "1行目がヘッダー行、2行目以降にデータを入力してください。カラムの順番は自由です。",
+      "categoryRef": "カテゴリの値",
+      "colField": "カラム名",
+      "colRequired": "必須",
+      "colNotes": "備考",
+      "field_text": "問題文",
+      "field_category": "例：AWS、JLPT-N5-文字語彙",
+      "field_difficulty": "easy · medium · hard",
+      "field_question_type": "JLPTのみ — 問題1〜5、もんだい１〜６",
+      "field_explanation": "解答後に表示される解説",
+      "field_choice": "choice1〜choice4（最低2つ）",
+      "field_correct_index": "1=choice1、2=choice2 …",
+      "tipsTitle": "注意事項",
+      "tip1": "difficultyは小文字で：easy・medium・hard",
+      "tip2": "correct_indexは数字：1・2・3・4",
+      "tip3": "IT問題はquestion_typeを空白のままにしてください"
     },
     "questions": {
       "title": "問題管理",
@@ -167,10 +214,21 @@
       "importButton": "インポート",
       "searchPlaceholder": "問題を検索...",
       "allDifficulties": "全難易度",
+      "tabIT": "IT試験",
+      "tabJapanese": "日本語検定",
       "columnQuestion": "問題",
       "columnCategory": "カテゴリ",
       "columnDifficulty": "難易度",
+      "columnLevel": "レベル",
+      "columnSection": "セクション",
+      "columnType": "問題種別",
       "columnActions": "操作",
+      "allLevels": "全レベル",
+      "allSections": "全セクション",
+      "allTypes": "全種別",
+      "sectionMojiGoi": "文字語彙",
+      "sectionBunpo": "文法読解",
+      "rowCount": "{{count}}件表示中",
       "noData": "問題がありません。最初の問題を追加してください。"
     },
     "reports": {
@@ -241,7 +299,9 @@
       "itCerts": "ITカテゴリ",
       "jlptLevels": "JLPTレベル",
       "questions": "問題数",
-      "attempts": "受験回数無制限"
+      "attempts": "受験回数無制限",
+      "categories": "カテゴリ",
+      "modes": "学習モード"
     },
     "features": {
       "title": "合格に必要なすべてが揃う",

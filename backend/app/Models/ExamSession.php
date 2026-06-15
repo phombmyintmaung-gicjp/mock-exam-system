@@ -23,6 +23,7 @@ class ExamSession extends Model
         'category',
         'time_limit_seconds',
         'mode',
+        'question_type_filter',
         'completed_at',
         'is_submitted',
     ];
@@ -33,8 +34,9 @@ class ExamSession extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_submitted'  => 'boolean',
-        'completed_at'  => 'datetime',
+        'is_submitted'         => 'boolean',
+        'completed_at'         => 'datetime',
+        'question_type_filter' => 'array',
     ];
 
     // -------------------------------------------------------------------------

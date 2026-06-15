@@ -6,12 +6,14 @@ import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import useResults from '@/hooks/useResults';
 import { exportResultPdf } from '@/services/resultService';
+import { useAuthStore } from '@/store/authStore';
 
 const Results = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const resultId = Number(id);
+  const userName = useAuthStore((s) => s.user?.name);
 
   const { result, isLoading, error } = useResults(resultId);
 
@@ -65,7 +67,7 @@ const Results = () => {
             <Button
               label={t('result.exportPdf')}
               variant="secondary"
-              onClick={() => exportResultPdf(resultId)}
+              onClick={() => exportResultPdf(resultId, result?.category, userName)}
             />
             <Button
               label={t('result.retake')}

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\ExamResult;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Mpdf\Mpdf;
 
 class ResultController extends Controller
 {
@@ -97,7 +99,7 @@ class ResultController extends Controller
      *      $pdf = Pdf::loadView('pdf.result', ['result' => $result]);
      *      return $pdf->download("result-{$id}.pdf");
      */
-    public function export(int $id): JsonResponse
+    public function export(int $id): Response
     {
         /** @var \App\Models\User $user */
         $user = auth()->user();
@@ -105,17 +107,43 @@ class ResultController extends Controller
         $result = ExamResult::where('user_id', $user->id)
             ->with([
                 'session',
+                'user',
                 'answerRecords.question.choices',
                 'answerRecords.selectedChoice',
             ])
             ->findOrFail($id);
 
-        // Stub: return JSON until a PDF library is integrated.
-        return response()->json([
-            'data' => $result,
-            'meta' => [
-                'note' => 'PDF export requires barryvdh/laravel-dompdf. See ResultController@export.',
+        $category = preg_replace('/[\/\\\\:*?"<>|]/', '', $result->session?->category ?? 'exam');
+        $userName = preg_replace('/[\/\\\\:*?"<>|\s]+/', '_', trim($user->name ?? 'user'));
+        $fileName = "Result_{$category}_{$userName}.pdf";
+
+        $html = view('pdf.result', ['result' => $result])->render();
+
+        $fontDir  = (new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'];
+        $fontData = (new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'];
+
+        $mpdf = new Mpdf([
+            'mode'          => 'ja',
+            'format'        => 'A4',
+            'margin_top'    => 15,
+            'margin_bottom' => 15,
+            'margin_left'   => 15,
+            'margin_right'  => 15,
+            'tempDir'       => storage_path('app/mpdf_tmp'),
+            'fontDir'       => array_merge($fontDir, ['/usr/share/fonts/opentype/ipaexfont-gothic']),
+            'fontdata'      => $fontData + [
+                'ipaexgothic' => [
+                    'R' => 'ipaexg.ttf',
+                    'B' => 'ipaexg.ttf',
+                ],
             ],
+            'default_font'  => 'ipaexgothic',
+        ]);
+        $mpdf->WriteHTML($html);
+
+        return response($mpdf->Output('', 'S'), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ]);
     }
 }

@@ -16,6 +16,7 @@
     "saving": "Saving...",
     "or": "or",
     "noData": "No data available.",
+    "noQuestionsAvailable": "No questions available for this section yet.",
     "difficulty": {
       "easy": "Easy",
       "medium": "Medium",
@@ -43,7 +44,9 @@
     "passwordTooShort": "Password must be at least 8 characters",
     "alreadyHaveAccount": "Already have an account?",
     "noAccount": "Don't have an account?",
-    "signUpLink": "Sign Up"
+    "signUpLink": "Sign Up",
+    "backToHome": "Back to Home",
+    "rememberEmail": "Remember email"
   },
   "nav": {
     "admin": "Admin",
@@ -57,7 +60,12 @@
     "history": "History",
     "weakAreas": "Weak Areas",
     "profile": "Profile",
-    "passages": "Passages"
+    "passages": "Passages",
+    "itExam": "IT Exam",
+    "japaneseExam": "Japanese Language",
+    "myAccount": "My Account",
+    "itExamSelect": "Select IT Exam",
+    "jlptPractice": "JLPT Practice"
   },
   "exam": {
     "startButton": "Start Exam",
@@ -89,7 +97,23 @@
       "mojiGoiDesc": "Q1–5: Kanji, vocabulary, characters",
       "bunpoKaido": "Language Knowledge (Grammar) & Reading",
       "bunpoKaidoDesc": "Q1–6: Grammar and reading comprehension",
-      "levelSelected": "{{level}} selected"
+      "levelSelected": "{{level}} selected",
+      "vocab": "Vocabulary",
+      "vocabDesc": "Q4–5: Word meaning and usage",
+      "kanji": "Kanji",
+      "kanjiDesc": "Q1–3: Character reading and formation",
+      "grammar": "Grammar",
+      "grammarDesc": "Q1–2: Grammar patterns and sentence structure",
+      "reading": "Reading",
+      "readingDesc": "Q3–6: Reading comprehension passages"
+    },
+    "it": {
+      "title": "IT Certification Exam",
+      "subtitle": "Select a category and mode to begin",
+      "aws": "AWS",
+      "network": "Network",
+      "security": "Security",
+      "linux": "Linux"
     }
   },
   "result": {
@@ -152,11 +176,34 @@
     },
     "questionImport": {
       "title": "Import Questions",
-      "subtitle": "Bulk import via CSV or JSON",
-      "dropText": "Drop your CSV or JSON file here",
+      "subtitle": "Bulk import via Excel (.xlsx / .xls)",
+      "uploadTitle": "Upload Excel File",
+      "dropText": "Drop your Excel file here",
       "browseButton": "Browse files",
       "uploadButton": "Upload",
-      "success": "Questions imported successfully."
+      "success": "Questions imported successfully.",
+      "resultSummary": "{{imported}} imported, {{skipped}} skipped",
+      "resultImported": "{{count}} question(s) imported successfully",
+      "resultDuplicates": "{{count}} duplicate(s) skipped — already exist in the database",
+      "resultSkipped": "{{count}} row(s) skipped due to errors",
+      "downloadTemplate": "Download Template",
+      "formatTitle": "Column Reference",
+      "formatDesc": "Row 1 must be the header. Data starts at row 2. Columns can be in any order.",
+      "categoryRef": "Category Values",
+      "colField": "Column",
+      "colRequired": "Req.",
+      "colNotes": "Notes",
+      "field_text": "Question text",
+      "field_category": "e.g. AWS, JLPT-N5-文字語彙",
+      "field_difficulty": "easy · medium · hard",
+      "field_question_type": "JLPT only — 問題1–5, もんだい１–６",
+      "field_explanation": "Shown after answer",
+      "field_choice": "choice1 to choice4 — at least 2",
+      "field_correct_index": "1 = choice1, 2 = choice2 …",
+      "tipsTitle": "Tips",
+      "tip1": "difficulty must be exactly: easy, medium, or hard (lowercase)",
+      "tip2": "correct_index is a number: 1, 2, 3, or 4",
+      "tip3": "Leave question_type blank for IT questions"
     },
     "questions": {
       "title": "Question Management",
@@ -167,10 +214,21 @@
       "importButton": "Import",
       "searchPlaceholder": "Search questions...",
       "allDifficulties": "All difficulties",
+      "tabIT": "IT Exam",
+      "tabJapanese": "Japanese Language",
       "columnQuestion": "Question",
       "columnCategory": "Category",
       "columnDifficulty": "Difficulty",
+      "columnLevel": "Level",
+      "columnSection": "Section",
+      "columnType": "Type",
       "columnActions": "Actions",
+      "allLevels": "All Levels",
+      "allSections": "All Sections",
+      "allTypes": "All Types",
+      "sectionMojiGoi": "文字語彙",
+      "sectionBunpo": "文法読解",
+      "rowCount": "{{count}} questions shown",
       "noData": "No questions yet. Add your first question."
     },
     "reports": {
@@ -241,7 +299,9 @@
       "itCerts": "IT Categories",
       "jlptLevels": "JLPT Levels",
       "questions": "Questions",
-      "attempts": "Unlimited Attempts"
+      "attempts": "Unlimited Attempts",
+      "categories": "Categories",
+      "modes": "Study Modes"
     },
     "features": {
       "title": "Everything you need to pass",

@@ -70,8 +70,15 @@ const PassagesIcon = () => (
   </svg>
 );
 
+const JapaneseIcon = () => (
+  <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+  </svg>
+);
+
 interface NavLinkItem {
   to: string;
+  search?: string;
   label: string;
   icon: React.ReactNode;
   end?: boolean;
@@ -98,8 +105,15 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { to: '/admin/reports', label: t('nav.reports'), icon: <ReportsIcon /> },
   ];
 
-  const clientLinks: NavLinkItem[] = [
-    { to: '/exam/select', label: t('nav.examSelect'), icon: <ExamIcon /> },
+  const itLinks: NavLinkItem[] = [
+    { to: '/exam/select', label: t('nav.itExamSelect'), icon: <ExamIcon /> },
+  ];
+
+  const jlptLinks: NavLinkItem[] = [
+    { to: '/exam/select', search: '?type=jlpt', label: t('nav.jlptPractice'), icon: <JapaneseIcon /> },
+  ];
+
+  const profileLinks: NavLinkItem[] = [
     { to: '/profile/history', label: t('nav.history'), icon: <HistoryIcon /> },
     { to: '/profile/weak-areas', label: t('nav.weakAreas'), icon: <WeakAreasIcon /> },
     { to: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, end: true },
@@ -107,24 +121,31 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const isAdmin = user?.role === 'admin';
 
-  const renderSection = (label: string, links: NavLinkItem[]) => (
+  const renderSection = (label: string, links: NavLinkItem[], accent?: 'indigo' | 'rose') => (
     <div>
       <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-white/30">
         {label}
       </p>
       <ul className="space-y-0.5">
         {links.map((link) => {
-          const isActive = link.end
+          const href = link.to + (link.search ?? '');
+          const pathMatch = link.end
             ? location.pathname === link.to
             : location.pathname === link.to || location.pathname.startsWith(link.to + '/');
+          const searchMatch = link.search
+            ? location.search === link.search
+            : location.search !== '?type=jlpt';
+          const isActive = pathMatch && searchMatch;
           return (
-            <li key={link.to}>
+            <li key={href}>
               <Link
-                to={link.to}
+                to={href}
                 onClick={onClose}
                 className={clsx(
                   'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
-                  isActive
+                  isActive && accent === 'rose'
+                    ? 'border border-rose-200 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 shadow-sm shadow-rose-200/50 dark:border-rose-400/30 dark:from-rose-500/25 dark:to-pink-500/25 dark:text-white dark:shadow-rose-500/10'
+                    : isActive
                     ? 'border border-indigo-200 bg-gradient-to-r from-indigo-100 to-violet-100 text-indigo-700 shadow-sm shadow-indigo-200/50 dark:border-indigo-400/30 dark:from-indigo-500/30 dark:to-violet-500/30 dark:text-white dark:shadow-indigo-500/10'
                     : 'text-slate-600 hover:bg-black/5 hover:text-slate-900 dark:text-white/55 dark:hover:bg-white/8 dark:hover:text-white/90',
                 )}
@@ -156,7 +177,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       >
         <nav className="flex-1 overflow-y-auto p-3 pt-4 space-y-6 pb-2">
           {isAdmin && renderSection(t('nav.admin'), adminLinks)}
-          {renderSection(t('nav.employee'), clientLinks)}
+          {!isAdmin && renderSection(t('nav.itExam'), itLinks)}
+          {!isAdmin && renderSection(t('nav.japaneseExam'), jlptLinks, 'rose')}
+          {!isAdmin && renderSection(t('nav.myAccount'), profileLinks)}
         </nav>
 
         <div className="border-t border-slate-200 p-3 dark:border-white/10">

@@ -27,6 +27,16 @@ export interface Question {
   passage?: Passage;
 }
 
+// Raw shape returned by GET /admin/questions — Eloquent serialises to snake_case.
+export interface AdminQuestion {
+  id: number;
+  text: string;
+  category: string;
+  difficulty: Difficulty;
+  question_type?: string | null;
+  explanation?: string;
+}
+
 export interface ExamSession {
   sessionId: number;
   questions: Question[];

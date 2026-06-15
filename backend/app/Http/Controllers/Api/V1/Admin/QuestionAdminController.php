@@ -10,6 +10,7 @@ use App\Models\Question;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class QuestionAdminController extends Controller
 {
@@ -41,6 +42,13 @@ class QuestionAdminController extends Controller
 
         if ($request->filled('category')) {
             $query->byCategory($request->string('category')->toString());
+        } elseif ($request->filled('group')) {
+            // group=jlpt → JLPT-* categories; group=it → everything else
+            if ($request->input('group') === 'jlpt') {
+                $query->where('category', 'LIKE', 'JLPT-%');
+            } elseif ($request->input('group') === 'it') {
+                $query->where('category', 'NOT LIKE', 'JLPT-%');
+            }
         }
 
         if ($request->filled('difficulty')) {
@@ -51,7 +59,8 @@ class QuestionAdminController extends Controller
             $query->withTrashed();
         }
 
-        $paginator = $query->paginate(perPage: 25);
+        $perPage = min((int) $request->input('per_page', 25), 500);
+        $paginator = $query->paginate(perPage: $perPage);
 
         return response()->json([
             'data'     => $paginator->items(),
@@ -240,15 +249,153 @@ class QuestionAdminController extends Controller
     public function import(Request $request): JsonResponse
     {
         $request->validate([
-            'file' => ['required', 'file', 'mimes:csv,json,txt', 'max:5120'],
+            'file' => ['required', 'file', 'mimes:xlsx,xls', 'max:10240'],
         ]);
 
-        // Stub — replace with real parsing logic.
+        $path      = $request->file('file')->getRealPath();
+        $rows      = $this->parseExcel($path);
+        $imported  = 0;
+        $skippedDuplicates = 0;
+        $errors    = [];
+
+        foreach ($rows as $index => $row) {
+            // Row numbers shown to the user are 1-based and skip the header, so +2.
+            $lineNum = $index + 2;
+
+            $missingFields = array_keys(array_filter(
+                ['text' => $row['text'], 'category' => $row['category'], 'difficulty' => $row['difficulty'], 'explanation' => $row['explanation']],
+                fn ($v) => empty($v)
+            ));
+            if (!empty($missingFields)) {
+                $errors[] = "Row {$lineNum}: missing " . implode(', ', $missingFields);
+                continue;
+            }
+
+            if (!in_array($row['difficulty'], ['easy', 'medium', 'hard'], true)) {
+                $errors[] = "Row {$lineNum}: difficulty must be easy, medium, or hard (got \"{$row['difficulty']}\").";
+                continue;
+            }
+
+            $choices      = $row['choices'];
+            $correctCount = count(array_filter($choices, fn ($c) => $c['is_correct']));
+
+            if (count($choices) < 2) {
+                $errors[] = "Row {$lineNum}: at least 2 choices required.";
+                continue;
+            }
+            if ($correctCount !== 1) {
+                $errors[] = "Row {$lineNum}: exactly one choice must be marked correct (correct_index must be 1–4).";
+                continue;
+            }
+
+            // Duplicate check: same text + category (including soft-deleted) is considered the same question.
+            $exists = Question::withTrashed()
+                ->where('category', $row['category'])
+                ->where('text', $row['text'])
+                ->exists();
+
+            if ($exists) {
+                $skippedDuplicates++;
+                continue;
+            }
+
+            try {
+                DB::transaction(function () use ($row): void {
+                    /** @var Question $question */
+                    $question = Question::create([
+                        'text'          => $row['text'],
+                        'category'      => $row['category'],
+                        'difficulty'    => $row['difficulty'],
+                        'question_type' => $row['question_type'] ?: null,
+                        'explanation'   => $row['explanation'],
+                    ]);
+
+                    foreach ($row['choices'] as $order => $choice) {
+                        $question->choices()->create([
+                            'text'       => $choice['text'],
+                            'is_correct' => $choice['is_correct'],
+                            'order'      => $order,
+                        ]);
+                    }
+                });
+
+                $imported++;
+            } catch (\Throwable $e) {
+                $errors[] = "Row {$lineNum}: " . $e->getMessage();
+            }
+        }
+
         return response()->json([
             'data' => [
-                'message' => 'Import stub: integrate CSV/JSON parsing to process the uploaded file.',
-                'file'    => $request->file('file')?->getClientOriginalName(),
+                'imported'   => $imported,
+                'duplicates' => $skippedDuplicates,
+                'skipped'    => count($errors),
+                'errors'     => $errors,
             ],
         ]);
+    }
+
+    // ── Private helpers ───────────────────────────────────────────────────────
+
+    /**
+     * Read an .xlsx / .xls file and return normalised row data.
+     *
+     * Expected columns (row 1 = header, data starts at row 2):
+     *   text | category | difficulty | question_type | explanation
+     *   choice1 | choice2 | choice3 | choice4 | correct_index
+     *
+     * correct_index is 1-based (1 = choice1 … 4 = choice4).
+     * question_type is optional — leave the cell blank for IT questions.
+     *
+     * @return list<array<string,mixed>>
+     */
+    private function parseExcel(string $path): array
+    {
+        $spreadsheet = IOFactory::load($path);
+        $sheet       = $spreadsheet->getActiveSheet();
+        $data        = $sheet->toArray(nullValue: '', calculateFormulas: true, formatData: false, returnCellRef: false);
+
+        if (empty($data)) {
+            return [];
+        }
+
+        // Build a header→column-index map from the first row (case-insensitive, trimmed).
+        $rawHeader = array_shift($data);
+        $header    = array_map(fn ($h) => strtolower(trim((string) $h)), $rawHeader);
+        $col       = array_flip($header); // ['text' => 0, 'category' => 1, …]
+
+        $rows = [];
+        foreach ($data as $r) {
+            // Skip fully empty rows (all cells blank).
+            if (count(array_filter(array_map('strval', $r))) === 0) {
+                continue;
+            }
+
+            $get = fn (string $key): string => trim((string) ($r[$col[$key] ?? -1] ?? ''));
+
+            $correctIdx = (int) $get('correct_index');
+            $choices    = [];
+            foreach (['choice1', 'choice2', 'choice3', 'choice4'] as $i => $key) {
+                $text = $get($key);
+                if ($text === '') {
+                    continue;
+                }
+                $choices[] = [
+                    'text'       => $text,
+                    'is_correct' => ($i + 1) === $correctIdx,
+                ];
+            }
+
+            $rows[] = [
+                'text'          => $get('text'),
+                'category'      => $get('category'),
+                'difficulty'    => $get('difficulty'),
+                'question_type' => $get('question_type'),
+                'explanation'   => $get('explanation'),
+                'choices'       => $choices,
+            ];
+        }
+
+        return $rows;
     }
 }

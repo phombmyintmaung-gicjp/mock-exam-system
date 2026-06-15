@@ -1,6 +1,11 @@
 import api from './api';
 import type { User } from '@/types/user';
 
+export const fetchMe = async (): Promise<User> => {
+  const res = await api.get('/profile');
+  return res.data.data as User;
+};
+
 export const register = async (
   name: string,
   email: string,

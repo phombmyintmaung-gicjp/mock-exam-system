@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useBlocker } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Timer } from '@/components/shared/Timer';
@@ -25,22 +25,27 @@ const ExamSession = () => {
   const resetSession   = useExamSessionStore((s) => s.resetSession);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const isFinishing = useRef(false);
 
   useEffect(() => {
-    if (!session) navigate('/exam/select', { replace: true });
+    if (!session && !isFinishing.current) navigate('/exam/select', { replace: true });
   }, [session, navigate]);
 
-  const blocker = useBlocker(({ currentLocation, nextLocation }) =>
-    !!session && currentLocation.pathname !== nextLocation.pathname,
-  );
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, []);
 
   const handleConfirmExit = () => {
     resetSession();
-    blocker.proceed?.();
+    setShowExitModal(false);
+    navigate('/exam/select');
   };
 
   const handleCancelExit = () => {
-    blocker.reset?.();
+    setShowExitModal(false);
   };
 
   const handleSubmit = async () => {
@@ -48,10 +53,12 @@ const ExamSession = () => {
     setIsSubmitting(true);
     const questionIds = session.questions.map((q) => q.id);
     try {
+      isFinishing.current = true;
       const result = await submitExam(session.sessionId, session.answers, questionIds);
       resetSession();
       navigate(`/exam/results/${result.id}`);
     } catch {
+      isFinishing.current = false;
       setIsSubmitting(false);
     }
   };
@@ -98,6 +105,12 @@ const ExamSession = () => {
                 >
                   🚩 {t('exam.flag')}
                 </button>
+                <button
+                  onClick={() => setShowExitModal(true)}
+                  className="flex items-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-all"
+                >
+                  ✕ {t('exam.exitConfirmButton')}
+                </button>
               </div>
             </div>
             <ProgressBar current={session.currentIndex + 1} total={session.questions.length} />
@@ -123,7 +136,7 @@ const ExamSession = () => {
       </PageShell>
 
       <Modal
-        isOpen={blocker.state === 'blocked'}
+        isOpen={showExitModal}
         title={t('exam.exitConfirmTitle')}
         onClose={handleCancelExit}
       >

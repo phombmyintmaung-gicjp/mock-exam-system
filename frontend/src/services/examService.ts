@@ -6,11 +6,23 @@ export const fetchExamQuestions = async (category: string): Promise<Question[]> 
   return res.data.data;
 };
 
+export const countQuestionsByTypes = async (
+  category: string,
+  questionTypes: string[],
+): Promise<number> => {
+  const res = await api.get('/exams/questions', { params: { category, per_page: 500 } });
+  const raw = res.data.data as Array<{ question_type?: string }>;
+  return raw.filter((q) => questionTypes.includes(q.question_type ?? '')).length;
+};
+
 export const startExamSession = async (
   category: string,
   mode: ExamMode,
+  questionTypes?: string[],
 ): Promise<ExamSession> => {
-  const res = await api.post('/exams/sessions', { category, mode });
+  const body: Record<string, unknown> = { category, mode };
+  if (questionTypes && questionTypes.length > 0) body.question_types = questionTypes;
+  const res = await api.post('/exams/sessions', body);
   const { session, questions } = res.data.data as {
     session: Record<string, unknown>;
     questions: Record<string, unknown>[];

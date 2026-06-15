@@ -50,7 +50,8 @@ class QuestionController extends Controller
             $query->where('difficulty', $request->input('difficulty'));
         }
 
-        $paginator = $query->paginate(perPage: 20);
+        $perPage = min((int) $request->input('per_page', 20), 500);
+        $paginator = $query->paginate(perPage: $perPage);
 
         return response()->json([
             'data'     => $paginator->items(),

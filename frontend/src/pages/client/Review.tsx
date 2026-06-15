@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Shimmer, ReviewItemSkeleton } from '@/components/ui/Shimmer';
@@ -8,6 +8,7 @@ import useResults from '@/hooks/useResults';
 const Review = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { result, isLoading } = useResults(Number(id));
 
   const correctCount = result?.answers.filter((a) => a.isCorrect).length ?? 0;
@@ -17,6 +18,12 @@ const Review = () => {
     <PageShell>
       <div className="mx-auto max-w-3xl">
         <div className="mb-6">
+          <button
+            onClick={() => navigate(`/exam/results/${id}`)}
+            className="mb-4 flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white transition-colors"
+          >
+            ← {t('result.title')}
+          </button>
           <h1 className="text-2xl font-bold text-gray-900">{t('result.review.title')}</h1>
           <p className="mt-1 text-sm text-gray-500">{t('result.review.subtitle')}</p>
         </div>

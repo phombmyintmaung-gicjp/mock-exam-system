@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
@@ -12,8 +12,17 @@ const Login = () => {
   const { token, user, setAuth } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberEmail, setRememberEmail] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('rememberedEmail');
+    if (saved) {
+      setEmail(saved);
+      setRememberEmail(true);
+    }
+  }, []);
 
   if (token && user) {
     return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/exam/select'} replace />;
@@ -25,6 +34,11 @@ const Login = () => {
     setLoading(true);
     try {
       const { token: newToken, user: newUser } = await login(email, password);
+      if (rememberEmail) {
+        localStorage.setItem('rememberedEmail', email);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
       setAuth(newUser, newToken);
       navigate(newUser.role === 'admin' ? '/admin/dashboard' : '/exam/select', { replace: true });
     } catch {
@@ -36,6 +50,17 @@ const Login = () => {
 
   return (
     <div className="relative flex min-h-screen bg-app overflow-hidden">
+      {/* Back to Home */}
+      <Link
+        to="/"
+        className="absolute top-5 left-5 z-20 flex items-center gap-1.5 rounded-full border border-white/10 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-slate-700 backdrop-blur-sm transition-colors hover:bg-white/20 dark:text-white/70 dark:hover:text-white"
+      >
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        {t('auth.backToHome')}
+      </Link>
+
       {/* Decorative orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute -top-48 -left-48 h-96 w-96 rounded-full bg-purple-600/20 blur-3xl dark:bg-rose-600/20" />
@@ -119,6 +144,15 @@ const Login = () => {
                   required
                   className="glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all"
                 />
+                <label className="mt-2.5 flex cursor-pointer items-center gap-2 select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberEmail}
+                    onChange={(e) => setRememberEmail(e.target.checked)}
+                    className="h-4 w-4 rounded border-slate-300 accent-indigo-500 dark:border-white/20"
+                  />
+                  <span className="text-xs text-slate-500 dark:text-white/50">{t('auth.rememberEmail')}</span>
+                </label>
               </div>
 
               {error && (

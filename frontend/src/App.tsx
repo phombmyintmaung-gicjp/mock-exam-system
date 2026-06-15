@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useThemeStore } from '@/store/themeStore';
+import { useAuthStore } from '@/store/authStore';
+import { fetchMe } from '@/services/authService';
 
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
@@ -29,6 +31,9 @@ import ReadingSession from '@/pages/client/ReadingSession';
 
 const App = () => {
   const theme = useThemeStore((s) => s.theme);
+  const token = useAuthStore((s) => s.token);
+  const setUser = useAuthStore((s) => s.setUser);
+  const logout = useAuthStore((s) => s.logout);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -38,6 +43,16 @@ const App = () => {
       root.classList.remove('dark');
     }
   }, [theme]);
+
+  // On every mount, refresh the user from the DB so that role or profile
+  // changes made outside the current session (e.g. admin promoting a user)
+  // take effect on the next page load without requiring a re-login.
+  useEffect(() => {
+    if (!token) return;
+    fetchMe()
+      .then(setUser)
+      .catch(() => logout()); // token invalid / expired → force re-login
+  }, [token, setUser, logout]);
 
   return (
     <BrowserRouter>

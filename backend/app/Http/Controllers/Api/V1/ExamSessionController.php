@@ -61,11 +61,19 @@ class ExamSessionController extends Controller
         $session = $this->examService->createSession($user, $data);
 
         $questionCount = (int) ($data['question_count'] ?? $setting?->question_count ?? 20);
-        $questions     = $this->examService->getSessionQuestions($session, $questionCount);
+        $questionTypes = $data['question_types'] ?? [];
+        $questions     = $this->examService->getSessionQuestions($session, $questionCount, $questionTypes);
+
+        // Merge actual question_count back onto the session payload so the frontend
+        // always knows the real pool size (may differ from the ExamSetting value
+        // when a sub-section filter is active or the DB has fewer questions).
+        $sessionData = array_merge($session->toArray(), [
+            'question_count' => $questions->count(),
+        ]);
 
         return response()->json([
             'data' => [
-                'session'   => $session,
+                'session'   => $sessionData,
                 'questions' => $questions,
             ],
         ], 201);

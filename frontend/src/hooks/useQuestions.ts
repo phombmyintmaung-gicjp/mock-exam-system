@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Question } from '@/types/exam';
+import type { AdminQuestion } from '@/types/exam';
 import { getAdminQuestions } from '@/services/questionService';
 
 const useQuestions = (params?: Record<string, string>) => {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<AdminQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
