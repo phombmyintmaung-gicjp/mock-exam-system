@@ -48,7 +48,7 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 - Assign category and difficulty level (Easy / Medium / Hard)
 - Assign `question_type` sub-label for JLPT ordering (問題1–5 / もんだい１–６)
 - Add explanation per question (shown during answer review)
-- Bulk import questions from CSV or JSON
+- Bulk import questions from EXCEL or JSON
 - Search and filter by category, difficulty, keyword
 
 **Passage Management**
