@@ -7,7 +7,8 @@ const useTimer = (secondsRemaining: number, onExpire: () => void) => {
   const tickTimer = useExamSessionStore((s) => s.tickTimer);
 
   useEffect(() => {
-    if (secondsRemaining <= 0) {
+    if (secondsRemaining < 0) return;   // -1 = timer disabled (study mode)
+    if (secondsRemaining === 0) {
       onExpireRef.current();
       return;
     }

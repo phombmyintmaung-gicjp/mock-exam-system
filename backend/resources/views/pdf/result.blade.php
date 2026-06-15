@@ -23,7 +23,11 @@
   .badge-pass { background: #dcfce7; color: #166534; }
   .badge-fail { background: #fee2e2; color: #991b1b; }
   .section-title { font-size: 13px; font-weight: 700; color: #475569; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 12px; }
+  .passage-block { margin-bottom: 16px; border: 1px solid #c7d2fe; border-radius: 6px; overflow: hidden; }
+  .passage-header { background: #eef2ff; padding: 8px 12px; font-size: 11px; font-weight: 700; color: #4338ca; border-bottom: 1px solid #c7d2fe; }
+  .passage-body { padding: 10px 12px; font-size: 11px; line-height: 1.8; color: #334155; white-space: pre-wrap; }
   .question { margin-bottom: 14px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; }
+  .question-indented { margin-left: 16px; }
   .q-header { padding: 8px 12px; display: table; width: 100%; }
   .q-header-correct { background: #f0fdf4; }
   .q-header-wrong { background: #fff7f7; }
@@ -89,39 +93,99 @@
 
 <div class="section-title">Answer Review ({{ $result->answerRecords->count() }} questions)</div>
 
-@foreach($result->answerRecords as $i => $record)
-  @php
-    $q = $record->question;
-    $choices = $q ? $q->choices : collect();
-    $correctChoice = $choices->firstWhere('is_correct', true);
-    $selectedChoice = $record->selectedChoice;
-  @endphp
-  <div class="question">
-    <div class="q-header {{ $record->is_correct ? 'q-header-correct' : 'q-header-wrong' }}">
-      <div class="q-num">
-        <div class="q-num-badge {{ $record->is_correct ? 'q-num-correct' : 'q-num-wrong' }}">
-          {{ $record->is_correct ? '✓' : 'X' }}
+@php
+  // Replace circled Unicode letters (Ⓐ–Ⓩ) with ASCII [A]–[Z] so IPAex Gothic
+  // renders them correctly (the font does not cover U+24B6–U+24CF).
+  function sanitizeText(?string $text): string {
+    if ($text === null) return '';
+    $from = ['Ⓐ','Ⓑ','Ⓒ','Ⓓ','Ⓔ','Ⓕ','Ⓖ','Ⓗ','Ⓘ','Ⓙ','Ⓚ','Ⓛ','Ⓜ','Ⓝ','Ⓞ','Ⓟ','Ⓠ','Ⓡ','Ⓢ','Ⓣ','Ⓤ','Ⓥ','Ⓦ','Ⓧ','Ⓨ','Ⓩ',
+              'ⓐ','ⓑ','ⓒ','ⓓ','ⓔ','ⓕ','ⓖ','ⓗ','ⓘ','ⓙ','ⓚ','ⓛ','ⓜ','ⓝ','ⓞ','ⓟ','ⓠ','ⓡ','ⓢ','ⓣ','ⓤ','ⓥ','ⓦ','ⓧ','ⓨ','ⓩ'];
+    $to   = [
+             '[ A ]','[ B ]','[ C ]','[ D ]','[ E ]','[ F ]','[ G ]','[ H ]','[ I ]','[ J ]','[ K ]','[ L ]','[ M ]','[ N ]','[ O ]','[ P ]','[ Q ]','[ R ]','[ S ]','[ T ]','[ U ]','[ V ]','[ W ]','[ X ]','[ Y ]','[ Z ]',
+             '[ a ]','[ b ]','[ c ]','[ d ]','[ e ]','[ f ]','[ g ]','[ h ]','[ i ]','[ j ]','[ k ]','[ l ]','[ m ]','[ n ]','[ o ]','[ p ]','[ q ]','[ r ]','[ s ]','[ t ]','[ u ]','[ v ]','[ w ]','[ x ]','[ y ]','[ z ]'
+            ];
+    return str_replace($from, $to, $text);
+  }
+
+  // Group answer records: passage-linked questions share a passage block;
+  // questions without a passage are rendered individually (passageId = null key).
+  $groups = [];
+  $seenPassageIds = [];
+  $globalIndex = 0;
+
+  foreach ($result->answerRecords as $record) {
+    $passageId = $record->question?->passage_id ?? null;
+
+    if ($passageId !== null) {
+      // First encounter for this passage — create a new group.
+      if (!isset($groups['p_' . $passageId])) {
+        $groups['p_' . $passageId] = [
+          'passage'  => $record->question->passage,
+          'records'  => [],
+        ];
+      }
+      $groups['p_' . $passageId]['records'][] = $record;
+    } else {
+      // No passage — each record gets its own standalone group.
+      $groups['standalone_' . $globalIndex] = [
+        'passage' => null,
+        'records' => [$record],
+      ];
+      $globalIndex++;
+    }
+  }
+
+  $qNum = 0;
+@endphp
+
+@foreach($groups as $group)
+  @if($group['passage'])
+    <div class="passage-block">
+      <div class="passage-header">{{ sanitizeText($group['passage']->title) }}</div>
+      <div class="passage-body">{{ sanitizeText($group['passage']->content) }}</div>
+    </div>
+  @endif
+
+  @foreach($group['records'] as $record)
+    @php
+      $qNum++;
+      $q = $record->question;
+      $choices = $q ? $q->choices : collect();
+      $correctChoice = $choices->firstWhere('is_correct', true);
+      $selectedChoice = $record->selectedChoice;
+      $indented = $group['passage'] !== null;
+    @endphp
+    <div class="question {{ $indented ? 'question-indented' : '' }}">
+      <div class="q-header {{ $record->is_correct ? 'q-header-correct' : 'q-header-wrong' }}">
+        <div class="q-num">
+          <div class="q-num-badge {{ $record->is_correct ? 'q-num-correct' : 'q-num-wrong' }}">
+            {{ $record->is_correct ? 'O' : 'X' }}
+          </div>
         </div>
+        <div class="q-text">Q{{ $qNum }}. {{ sanitizeText($q->text ?? '—') }}</div>
       </div>
-      <div class="q-text">Q{{ $i + 1 }}. {{ $q->text ?? '—' }}</div>
+      <div class="q-body">
+        @foreach($choices as $choice)
+          @php
+            $isCorrect = $choice->is_correct;
+            $isWrongSelected = $selectedChoice && $choice->id === $selectedChoice->id && !$record->is_correct;
+          @endphp
+          <div class="choice {{ $isCorrect ? 'choice-correct' : ($isWrongSelected ? 'choice-wrong' : 'choice-neutral') }}">
+            {{ sanitizeText($choice->text) }}
+            @if($isCorrect) <- Correct @endif
+            @if($isWrongSelected) <- Your answer @endif
+          </div>
+        @endforeach
+        @if($q && $q->explanation)
+          <div class="explanation">{{ sanitizeText($q->explanation) }}</div>
+        @endif
+      </div>
     </div>
-    <div class="q-body">
-      @foreach($choices as $choice)
-        @php
-          $isCorrect = $choice->is_correct;
-          $isWrongSelected = $selectedChoice && $choice->id === $selectedChoice->id && !$record->is_correct;
-        @endphp
-        <div class="choice {{ $isCorrect ? 'choice-correct' : ($isWrongSelected ? 'choice-wrong' : 'choice-neutral') }}">
-          {{ $choice->text }}
-          @if($isCorrect) ← Correct @endif
-          @if($isWrongSelected) ← Your answer @endif
-        </div>
-      @endforeach
-      @if($q && $q->explanation)
-        <div class="explanation">{{ $q->explanation }}</div>
-      @endif
-    </div>
-  </div>
+  @endforeach
+
+  @if($group['passage'])
+    <div style="margin-bottom: 20px;"></div>
+  @endif
 @endforeach
 
 <div class="footer">Mock Exam System &nbsp;·&nbsp; {{ $result->user->name ?? '' }} &nbsp;·&nbsp; {{ $result->session->category ?? '' }}</div>

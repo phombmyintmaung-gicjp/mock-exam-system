@@ -109,6 +109,7 @@ class ResultController extends Controller
                 'session',
                 'user',
                 'answerRecords.question.choices',
+                'answerRecords.question.passage',
                 'answerRecords.selectedChoice',
             ])
             ->findOrFail($id);
