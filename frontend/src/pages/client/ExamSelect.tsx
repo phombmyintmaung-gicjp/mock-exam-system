@@ -116,6 +116,11 @@ const ExamSelect = () => {
   const [countsLoading, setCountsLoading] = useState(false);
   const [starting, setStarting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCounts, setSelectedCounts] = useState<Record<string, number>>({});
+
+  const COUNT_OPTIONS = [10, 20, 500] as const;
+  const getCount = (key: string) => selectedCounts[key] ?? 20;
+  const setCount = (key: string, n: number) => setSelectedCounts((prev) => ({ ...prev, [key]: n }));
 
   // Pre-fetch question counts for all 4 JLPT sections on level change
   useEffect(() => {
@@ -144,12 +149,13 @@ const ExamSelect = () => {
     mode: ExamMode,
     isReading: boolean,
     questionTypes?: string[],
+    questionCount?: number,
   ) => {
     const key = `${category}-${mode}`;
     setStarting(key);
     setError(null);
     try {
-      const session = await startExamSession(category, mode, questionTypes);
+      const session = await startExamSession(category, mode, questionTypes, questionCount);
       setSession({
         sessionId: session.sessionId,
         mode: session.mode,
@@ -230,7 +236,7 @@ const ExamSelect = () => {
                           'rounded-full px-2 py-0.5 text-xs font-semibold',
                           isEmpty
                             ? 'bg-slate-100 text-slate-400 dark:bg-white/8 dark:text-white/30'
-                            : 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300',
+                            : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300',
                         )}>
                           {count}
                         </span>
@@ -248,16 +254,36 @@ const ExamSelect = () => {
                       </div>
                     ) : (
                       <div className="flex flex-col gap-2">
+                        <div className="mb-1 flex items-center gap-2">
+                          <span className="text-xs text-slate-400 dark:text-white/40">{t('exam.numQuestions')}</span>
+                          <div className="flex gap-1">
+                            {COUNT_OPTIONS.map((n) => (
+                              <button
+                                key={n}
+                                type="button"
+                                onClick={() => setCount(sec.id, n)}
+                                className={clsx(
+                                  'rounded-lg px-2.5 py-1 text-xs font-semibold transition-all',
+                                  getCount(sec.id) === n
+                                    ? 'bg-amber-500 text-white'
+                                    : 'border border-slate-200 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-500 dark:text-white/50 hover:bg-black/8 dark:hover:bg-white/10',
+                                )}
+                              >
+                                {n === 500 ? t('exam.numQuestionsAll') : n}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                         <Button
                           label={starting === examKey ? '…' : t('exam.examMode')}
                           disabled={starting !== null}
-                          onClick={() => handleStart(category, 'exam', sec.isReading, sec.questionTypes)}
+                          onClick={() => handleStart(category, 'exam', sec.isReading, sec.questionTypes, getCount(sec.id))}
                         />
                         <Button
                           label={starting === studyKey ? '…' : t('exam.studyMode')}
                           variant="secondary"
                           disabled={starting !== null}
-                          onClick={() => handleStart(category, 'study', sec.isReading, sec.questionTypes)}
+                          onClick={() => handleStart(category, 'study', sec.isReading, sec.questionTypes, getCount(sec.id))}
                         />
                       </div>
                     )}
@@ -305,16 +331,36 @@ const ExamSelect = () => {
                   <h2 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">{t(cat.labelKey)}</h2>
                   <p className="mb-5 text-xs text-slate-500 dark:text-white/50">{t('exam.it.subtitle')}</p>
                   <div className="flex flex-col gap-2">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="text-xs text-slate-400 dark:text-white/40">{t('exam.numQuestions')}</span>
+                      <div className="flex gap-1">
+                        {COUNT_OPTIONS.map((n) => (
+                          <button
+                            key={n}
+                            type="button"
+                            onClick={() => setCount(cat.id, n)}
+                            className={clsx(
+                              'rounded-lg px-2.5 py-1 text-xs font-semibold transition-all',
+                              getCount(cat.id) === n
+                                ? 'bg-indigo-500 text-white'
+                                : 'border border-slate-200 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-500 dark:text-white/50 hover:bg-black/8 dark:hover:bg-white/10',
+                            )}
+                          >
+                            {n === 500 ? t('exam.numQuestionsAll') : n}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     <Button
                       label={starting === examKey ? '…' : t('exam.examMode')}
                       disabled={starting !== null}
-                      onClick={() => handleStart(cat.id, 'exam', false)}
+                      onClick={() => handleStart(cat.id, 'exam', false, undefined, getCount(cat.id))}
                     />
                     <Button
                       label={starting === studyKey ? '…' : t('exam.studyMode')}
                       variant="secondary"
                       disabled={starting !== null}
-                      onClick={() => handleStart(cat.id, 'study', false)}
+                      onClick={() => handleStart(cat.id, 'study', false, undefined, getCount(cat.id))}
                     />
                   </div>
                 </div>

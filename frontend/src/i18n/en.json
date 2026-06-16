@@ -98,6 +98,8 @@
     "studyModeTitle": "Study Mode",
     "questionOf": "Question {{current}} of {{total}}",
     "questionCount": "{{count}} questions",
+    "numQuestions": "Questions",
+    "numQuestionsAll": "All",
     "jlpt": {
       "title": "JLPT Practice",
       "subtitle": "Choose a level and section to start practicing",
@@ -180,7 +182,13 @@
       "noCorrectAnswer": "Please mark one choice as correct.",
       "markCorrect": "Mark as correct",
       "choicePlaceholder": "Choice {{number}}",
-      "saveButton": "Save Question"
+      "saveButton": "Save Question",
+      "editTab": "Edit",
+      "previewTab": "Preview",
+      "previewHint": "Click a choice to try it out.",
+      "previewEmpty": "Enter question text to see it here.",
+      "revealAnswer": "Reveal Answer",
+      "resetPreview": "Reset"
     },
     "questionImport": {
       "title": "Import Questions",

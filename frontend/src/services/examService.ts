@@ -19,9 +19,11 @@ export const startExamSession = async (
   category: string,
   mode: ExamMode,
   questionTypes?: string[],
+  questionCount?: number,
 ): Promise<ExamSession> => {
   const body: Record<string, unknown> = { category, mode };
   if (questionTypes && questionTypes.length > 0) body.question_types = questionTypes;
+  if (questionCount !== undefined) body.question_count = questionCount;
   const res = await api.post('/exams/sessions', body);
   const { session, questions } = res.data.data as {
     session: Record<string, unknown>;

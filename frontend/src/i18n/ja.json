@@ -98,6 +98,8 @@
     "studyModeTitle": "学習モード",
     "questionOf": "問題 {{current}} / {{total}}",
     "questionCount": "{{count}}問",
+    "numQuestions": "問題数",
+    "numQuestionsAll": "全問",
     "jlpt": {
       "title": "JLPT 練習",
       "subtitle": "レベルとセクションを選んで練習しましょう",
@@ -180,7 +182,13 @@
       "noCorrectAnswer": "正解の選択肢を1つマークしてください。",
       "markCorrect": "正解にする",
       "choicePlaceholder": "選択肢 {{number}}",
-      "saveButton": "問題を保存する"
+      "saveButton": "問題を保存する",
+      "editTab": "編集",
+      "previewTab": "プレビュー",
+      "previewHint": "選択肢をクリックして確認できます。",
+      "previewEmpty": "問題文を入力するとここに表示されます。",
+      "revealAnswer": "答えを確認する",
+      "resetPreview": "リセット"
     },
     "questionImport": {
       "title": "問題をインポート",
