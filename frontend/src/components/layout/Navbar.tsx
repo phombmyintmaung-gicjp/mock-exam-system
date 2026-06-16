@@ -53,7 +53,7 @@ const Navbar = ({ onMenuToggle }: NavbarProps) => {
         </button>
 
         <div className="flex flex-1 items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/30">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 shadow-md shadow-amber-500/30">
             <span className="text-xs font-bold text-white">試</span>
           </div>
           <span className="text-gradient-brand text-lg font-bold tracking-tight">
@@ -74,7 +74,7 @@ const Navbar = ({ onMenuToggle }: NavbarProps) => {
           </button>
 
           <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 dark:border-white/15 dark:bg-white/10">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 text-xs font-bold text-white shadow-sm">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-xs font-bold text-white shadow-sm">
               {initial}
             </div>
             <span className="hidden max-w-[120px] truncate text-sm font-medium text-slate-700 dark:text-white/85 sm:inline">

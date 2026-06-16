@@ -9,7 +9,7 @@ const inputClass = (hasError: boolean) =>
   `mt-1 block w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none focus:ring-1 ${
     hasError
       ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+      : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500'
   }`;
 
 const Profile = () => {
@@ -95,7 +95,7 @@ const Profile = () => {
         {/* ── Profile information card ─────────────────────────── */}
         <form onSubmit={handleProfileSubmit} className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
           <div className="mb-6 flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-2xl font-bold text-white">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-2xl font-bold text-white">
               {initial}
             </div>
             <div>

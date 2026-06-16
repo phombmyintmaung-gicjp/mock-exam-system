@@ -21,7 +21,7 @@ const LanguageToggle = () => {
         className={clsx(
           'rounded-md px-3 py-1 text-sm font-medium transition-colors',
           currentLanguage === 'ja'
-            ? 'bg-indigo-600 text-white'
+            ? 'bg-amber-500 text-white'
             : isDark
             ? 'text-white/60 hover:text-white'
             : 'text-slate-500 hover:text-slate-900',
@@ -34,7 +34,7 @@ const LanguageToggle = () => {
         className={clsx(
           'rounded-md px-3 py-1 text-sm font-medium transition-colors',
           currentLanguage === 'en'
-            ? 'bg-indigo-600 text-white'
+            ? 'bg-amber-500 text-white'
             : isDark
             ? 'text-white/60 hover:text-white'
             : 'text-slate-500 hover:text-slate-900',

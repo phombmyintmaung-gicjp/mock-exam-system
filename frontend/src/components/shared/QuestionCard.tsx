@@ -41,10 +41,10 @@ const QuestionCard = ({ question, selectedChoiceId, onSelect, revealed = false }
             }
           } else {
             rowClass = isSelected
-              ? 'border-indigo-400/50 bg-indigo-500/20 text-white shadow-sm shadow-indigo-500/10'
+              ? 'border-amber-400/50 bg-amber-500/20 text-amber-900 dark:text-white shadow-sm shadow-amber-500/10'
               : 'border-slate-200 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:border-slate-300 dark:hover:border-white/25 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white/90';
             badgeClass = isSelected
-              ? 'bg-indigo-500 text-white'
+              ? 'bg-amber-500 text-white'
               : 'bg-black/5 dark:bg-white/10 text-slate-400 dark:text-white/40 group-hover:bg-black/8 dark:group-hover:bg-white/20 group-hover:text-slate-600 dark:group-hover:text-white/70';
           }
 

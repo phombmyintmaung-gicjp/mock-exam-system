@@ -38,9 +38,9 @@ const Dashboard = () => {
   const passRate = totalExams > 0 ? Math.round((overallPass / totalExams) * 100) : 0;
 
   const statCards = [
-    { labelKey: 'admin.dashboard.totalQuestions', value: totalQuestions !== null ? String(totalQuestions) : '—', textColor: 'text-indigo-300', accent: 'from-indigo-500 to-violet-500' },
+    { labelKey: 'admin.dashboard.totalQuestions', value: totalQuestions !== null ? String(totalQuestions) : '—', textColor: 'text-amber-300', accent: 'from-amber-500 to-orange-500' },
     { labelKey: 'admin.dashboard.totalUsers',     value: totalUsers !== null ? String(totalUsers) : '—',         textColor: 'text-emerald-300', accent: 'from-emerald-500 to-teal-500' },
-    { labelKey: 'admin.dashboard.passRate',       value: totalExams ? `${passRate}%` : '—',                     textColor: 'text-violet-300', accent: 'from-violet-500 to-purple-500' },
+    { labelKey: 'admin.dashboard.passRate',       value: totalExams ? `${passRate}%` : '—',                     textColor: 'text-orange-300', accent: 'from-orange-500 to-amber-400' },
     { labelKey: 'admin.dashboard.examsToday',     value: String(recentExams.length || '—'),                     textColor: 'text-amber-300', accent: 'from-orange-500 to-amber-500' },
   ];
 

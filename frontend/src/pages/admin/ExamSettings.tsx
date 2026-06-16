@@ -97,7 +97,7 @@ const ExamSettings = () => {
                     max={300}
                     value={card.timeLimitMinutes}
                     onChange={(e) => updateCard(index, { timeLimitMinutes: Number(e.target.value), message: null })}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
                 <div>
@@ -110,7 +110,7 @@ const ExamSettings = () => {
                     max={200}
                     value={card.questionCount}
                     onChange={(e) => updateCard(index, { questionCount: Number(e.target.value), message: null })}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
                 <div>
@@ -123,7 +123,7 @@ const ExamSettings = () => {
                     max={100}
                     value={card.passingScore}
                     onChange={(e) => updateCard(index, { passingScore: Number(e.target.value), message: null })}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
                 <div className="flex justify-end pt-1">

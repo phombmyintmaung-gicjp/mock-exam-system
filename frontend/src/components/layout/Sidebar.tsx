@@ -124,7 +124,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const isAdmin = user?.role === 'admin';
 
-  const renderSection = (label: string, links: NavLinkItem[], accent?: 'indigo' | 'rose') => (
+  const renderSection = (label: string, links: NavLinkItem[], accent?: 'amber' | 'rose') => (
     <div>
       <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-white/30">
         {label}
@@ -144,7 +144,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             isActive && accent === 'rose'
               ? 'border border-rose-200 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 shadow-sm shadow-rose-200/50 dark:border-rose-400/30 dark:from-rose-500/25 dark:to-pink-500/25 dark:text-white dark:shadow-rose-500/10'
               : isActive
-              ? 'border border-indigo-200 bg-gradient-to-r from-indigo-100 to-violet-100 text-indigo-700 shadow-sm shadow-indigo-200/50 dark:border-indigo-400/30 dark:from-indigo-500/30 dark:to-violet-500/30 dark:text-white dark:shadow-indigo-500/10'
+              ? 'border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 shadow-sm shadow-amber-200/50 dark:border-amber-400/30 dark:from-amber-500/25 dark:to-orange-500/20 dark:text-white dark:shadow-amber-500/10'
               : 'text-slate-600 hover:bg-black/5 hover:text-slate-900 dark:text-white/55 dark:hover:bg-white/8 dark:hover:text-white/90',
           );
           return (
@@ -187,7 +187,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       >
         <nav className="flex-1 overflow-y-auto p-3 pt-4 space-y-6 pb-2">
           {isAdmin && renderSection(t('nav.admin'), adminLinks)}
-          {!isAdmin && renderSection(t('nav.itExam'), itLinks)}
+          {!isAdmin && renderSection(t('nav.itExam'), itLinks, 'amber')}
           {!isAdmin && renderSection(t('nav.japaneseExam'), jlptLinks, 'rose')}
           {!isAdmin && renderSection(t('nav.myAccount'), profileLinks)}
         </nav>

@@ -85,7 +85,7 @@ const UserManagement = () => {
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder={t('admin.users.searchPlaceholder')}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:max-w-sm"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:max-w-sm"
         />
       </div>
 
@@ -121,7 +121,7 @@ const UserManagement = () => {
                         <span
                           className={
                             user.role === 'admin'
-                              ? 'inline-flex rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-700'
+                              ? 'inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700'
                               : 'inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600'
                           }
                         >
@@ -130,7 +130,7 @@ const UserManagement = () => {
                       </td>
                       <td className="px-6 py-4">
                         <button
-                          className="text-xs font-medium text-blue-600 hover:text-blue-800"
+                          className="text-xs font-medium text-amber-600 hover:text-amber-800"
                           onClick={() => navigate(`/admin/users/${user.id}/edit`)}
                         >
                           {t('common.edit')}

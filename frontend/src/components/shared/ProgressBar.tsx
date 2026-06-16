@@ -10,7 +10,7 @@ const ProgressBar = ({ current, total }: ProgressBarProps) => {
     <div className="flex flex-1 items-center gap-4">
       <div className="flex-1 overflow-hidden rounded-full bg-black/5 dark:bg-white/10 h-2 border border-slate-200 dark:border-white/10">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-indigo-400 to-violet-400 transition-all duration-300"
+          className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400 transition-all duration-300"
           style={{ width: `${pct}%` }}
         />
       </div>

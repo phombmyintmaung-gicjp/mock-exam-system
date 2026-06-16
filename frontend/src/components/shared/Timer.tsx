@@ -21,12 +21,12 @@ const Timer = ({ seconds, mode = 'countdown' }: TimerProps) => {
         isWarning
           ? 'border border-rose-400/40 bg-rose-500/20 text-rose-300 shadow-sm shadow-rose-500/10'
           : mode === 'elapsed'
-            ? 'border border-blue-400/30 bg-blue-500/15 text-blue-300'
+            ? 'border border-amber-400/30 bg-amber-500/15 text-amber-700 dark:text-amber-300'
             : 'border border-slate-200 dark:border-white/15 bg-black/5 dark:bg-white/10 text-slate-800 dark:text-white/90',
       )}
     >
       <svg
-        className={clsx('h-5 w-5', isWarning ? 'text-rose-400' : mode === 'elapsed' ? 'text-blue-400' : 'text-indigo-400')}
+        className={clsx('h-5 w-5', isWarning ? 'text-rose-400' : mode === 'elapsed' ? 'text-amber-500' : 'text-slate-500 dark:text-white/60')}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"

@@ -88,16 +88,16 @@ const Home = () => {
     <div className="min-h-screen bg-app">
       {/* Decorative orbs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-48 -left-48 h-96 w-96 rounded-full bg-purple-600/20 blur-3xl dark:bg-rose-600/18" />
-        <div className="absolute top-1/3 -right-48 h-80 w-80 rounded-full bg-indigo-600/20 blur-3xl dark:bg-amber-500/12" />
-        <div className="absolute -bottom-48 left-1/3 h-72 w-72 rounded-full bg-violet-600/15 blur-3xl dark:bg-pink-700/15" />
+        <div className="absolute -top-48 -left-48 h-96 w-96 rounded-full bg-amber-400/18 blur-3xl dark:bg-amber-500/12" />
+        <div className="absolute top-1/3 -right-48 h-80 w-80 rounded-full bg-orange-400/15 blur-3xl dark:bg-orange-500/10" />
+        <div className="absolute -bottom-48 left-1/3 h-72 w-72 rounded-full bg-amber-300/12 blur-3xl dark:bg-amber-600/10" />
       </div>
 
       {/* Navbar */}
       <header className="fixed inset-x-0 top-0 z-50 glass border-b border-slate-200/60 dark:border-white/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 shadow-md shadow-amber-500/30">
               <span className="text-xs font-bold text-white">試</span>
             </div>
             <span className="text-gradient-brand text-xl font-bold">{t('app.title')}</span>
@@ -113,7 +113,7 @@ const Home = () => {
             </button>
             <Link
               to="/login"
-              className="rounded-lg bg-gradient-to-r from-indigo-500 to-violet-500 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-indigo-500/25 transition-all hover:opacity-90"
+              className="rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-amber-500/25 transition-all hover:opacity-90"
             >
               {t('auth.login')}
             </Link>
@@ -125,8 +125,8 @@ const Home = () => {
       <section className="relative px-4 pb-20 pt-32 sm:pt-40">
         <div className="mx-auto max-w-4xl">
           <div className="mb-5 flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400" aria-hidden="true" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 dark:bg-amber-400" aria-hidden="true" />
               {t('home.hero.badge')}
             </span>
           </div>
@@ -143,7 +143,7 @@ const Home = () => {
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
               to="/login"
-              className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-8 py-3.5 text-center text-base font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:opacity-90 hover:shadow-xl sm:w-auto"
+              className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3.5 text-center text-base font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:opacity-90 hover:shadow-xl sm:w-auto"
             >
               {t('home.hero.cta')}
             </Link>
@@ -192,8 +192,8 @@ const Home = () => {
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
-                gradient: 'from-indigo-500 to-violet-500',
-                shadow: 'shadow-indigo-500/20',
+                gradient: 'from-amber-500 to-orange-500',
+                shadow: 'shadow-amber-500/20',
                 titleKey: 'home.features.exam.title',
                 descKey: 'home.features.exam.desc',
                 icon: <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
@@ -206,8 +206,8 @@ const Home = () => {
                 icon: <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>,
               },
               {
-                gradient: 'from-violet-500 to-purple-500',
-                shadow: 'shadow-violet-500/20',
+                gradient: 'from-orange-500 to-amber-400',
+                shadow: 'shadow-orange-500/20',
                 titleKey: 'home.features.analytics.title',
                 descKey: 'home.features.analytics.desc',
                 icon: <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
@@ -333,12 +333,12 @@ const Home = () => {
           </div>
 
           <div className="relative grid gap-10 sm:grid-cols-3">
-            <div className="absolute left-[16.66%] right-[16.66%] top-6 hidden h-px bg-gradient-to-r from-indigo-300/40 via-violet-300/40 to-indigo-300/40 dark:from-white/15 dark:via-white/10 dark:to-white/15 sm:block" aria-hidden="true" />
+            <div className="absolute left-[16.66%] right-[16.66%] top-6 hidden h-px bg-gradient-to-r from-amber-300/40 via-orange-300/40 to-amber-300/40 dark:from-white/15 dark:via-white/10 dark:to-white/15 sm:block" aria-hidden="true" />
             {(
               [
-                { step: '1', titleKey: 'home.howItWorks.step1.title', descKey: 'home.howItWorks.step1.desc', gradient: 'from-indigo-500 to-violet-600', shadow: 'shadow-indigo-500/30' },
-                { step: '2', titleKey: 'home.howItWorks.step2.title', descKey: 'home.howItWorks.step2.desc', gradient: 'from-violet-500 to-purple-600', shadow: 'shadow-violet-500/30' },
-                { step: '3', titleKey: 'home.howItWorks.step3.title', descKey: 'home.howItWorks.step3.desc', gradient: 'from-purple-500 to-pink-500', shadow: 'shadow-purple-500/30' },
+                { step: '1', titleKey: 'home.howItWorks.step1.title', descKey: 'home.howItWorks.step1.desc', gradient: 'from-amber-500 to-orange-500', shadow: 'shadow-amber-500/30' },
+                { step: '2', titleKey: 'home.howItWorks.step2.title', descKey: 'home.howItWorks.step2.desc', gradient: 'from-orange-500 to-amber-400', shadow: 'shadow-orange-500/30' },
+                { step: '3', titleKey: 'home.howItWorks.step3.title', descKey: 'home.howItWorks.step3.desc', gradient: 'from-amber-400 to-orange-400', shadow: 'shadow-amber-400/30' },
               ] as const
             ).map(({ step, titleKey, descKey, gradient, shadow }) => (
               <div key={step} className="relative text-center">
@@ -356,23 +356,23 @@ const Home = () => {
       {/* ── Bottom CTA ────────────────────────────────────────── */}
       <section className="px-4 py-16">
         <div className="mx-auto max-w-2xl">
-          <div className="glass-card glow-indigo overflow-hidden rounded-3xl text-center">
-            <div className="h-0.5 bg-gradient-to-r from-indigo-500 to-violet-500" />
+          <div className="glass-card glow-amber overflow-hidden rounded-3xl text-center">
+            <div className="h-0.5 bg-gradient-to-r from-amber-500 to-orange-500" />
             <div className="px-8 py-12">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-xl shadow-indigo-500/30">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-xl shadow-amber-500/30">
                 <span className="text-2xl font-bold text-white">試</span>
               </div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">{t('home.cta.title')}</h2>
               <p className="mt-3 text-slate-500 dark:text-white/50">{t('home.cta.subtitle')}</p>
               <Link
                 to="/login"
-                className="mt-8 inline-block rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:opacity-90"
+                className="mt-8 inline-block rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:opacity-90"
               >
                 {t('home.cta.button')}
               </Link>
               <p className="mt-4 text-sm text-slate-400 dark:text-white/35">
                 {t('home.cta.noAccount')}{' '}
-                <Link to="/register" className="font-semibold text-indigo-500 underline underline-offset-2 hover:text-indigo-400 dark:text-indigo-300 dark:hover:text-indigo-200">
+                <Link to="/register" className="font-semibold text-amber-600 underline underline-offset-2 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
                   {t('home.cta.signUp')}
                 </Link>
               </p>
@@ -385,7 +385,7 @@ const Home = () => {
       <footer className="border-t border-slate-100 dark:border-white/8 px-4 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 sm:flex-row">
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-500">
               <span className="text-xs font-bold text-white">試</span>
             </div>
             <span className="text-gradient-brand text-sm font-bold">{t('app.title')}</span>

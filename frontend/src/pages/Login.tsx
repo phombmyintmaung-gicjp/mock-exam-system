@@ -63,9 +63,9 @@ const Login = () => {
 
       {/* Decorative orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-48 -left-48 h-96 w-96 rounded-full bg-purple-600/20 blur-3xl dark:bg-rose-600/20" />
-        <div className="absolute top-1/4 -right-32 h-80 w-80 rounded-full bg-indigo-600/15 blur-3xl dark:bg-amber-500/15" />
-        <div className="absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-violet-600/15 blur-3xl dark:bg-pink-600/18" />
+        <div className="absolute -top-48 -left-48 h-96 w-96 rounded-full bg-amber-400/18 blur-3xl dark:bg-amber-500/15" />
+        <div className="absolute top-1/4 -right-32 h-80 w-80 rounded-full bg-orange-400/15 blur-3xl dark:bg-orange-500/12" />
+        <div className="absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-amber-300/12 blur-3xl dark:bg-amber-600/12" />
       </div>
 
       {/* Left decorative panel — hidden on mobile */}
@@ -149,7 +149,7 @@ const Login = () => {
                     type="checkbox"
                     checked={rememberEmail}
                     onChange={(e) => setRememberEmail(e.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 accent-indigo-500 dark:border-white/20"
+                    className="h-4 w-4 rounded border-slate-300 accent-amber-500 dark:border-white/20"
                   />
                   <span className="text-xs text-slate-500 dark:text-white/50">{t('auth.rememberEmail')}</span>
                 </label>
@@ -171,7 +171,7 @@ const Login = () => {
 
             <p className="mt-6 text-center text-sm text-slate-400 dark:text-white/40">
               {t('auth.noAccount')}{' '}
-              <Link to="/register" className="font-semibold text-indigo-300 hover:text-indigo-200 hover:underline transition-colors">
+              <Link to="/register" className="font-semibold text-amber-500 hover:text-amber-400 hover:underline transition-colors dark:text-amber-300 dark:hover:text-amber-200">
                 {t('auth.signUpLink')}
               </Link>
             </p>

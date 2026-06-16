@@ -18,7 +18,7 @@ const Spinner = ({ size = 'md' }: SpinnerProps) => {
       role="status"
       aria-label="loading"
       className={clsx(
-        'animate-spin rounded-full border-gray-200 border-t-blue-600',
+        'animate-spin rounded-full border-gray-200 border-t-amber-500',
         sizeClasses[size],
       )}
     />

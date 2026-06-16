@@ -123,7 +123,7 @@ const QuestionImport = () => {
           <div
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
-            className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 dark:border-white/15 p-10 text-center transition-colors hover:border-indigo-400 dark:hover:border-indigo-500"
+            className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 dark:border-white/15 p-10 text-center transition-colors hover:border-amber-400 dark:hover:border-amber-500"
           >
             {/* Excel icon */}
             <svg className="mb-3 h-10 w-10 text-emerald-500/70" viewBox="0 0 48 48" fill="none">
@@ -230,7 +230,7 @@ const QuestionImport = () => {
                 <tbody>
                   {COLUMNS.map(({ field, required }) => (
                     <tr key={field} className="border-b border-slate-50 dark:border-white/5">
-                      <td className="py-1.5 font-mono text-indigo-600 dark:text-indigo-400">{field}</td>
+                      <td className="py-1.5 font-mono text-amber-600 dark:text-amber-400">{field}</td>
                       <td className="py-1.5 text-center text-slate-500 dark:text-white/50">{required ? '✓' : ''}</td>
                       <td className="py-1.5 text-slate-600 dark:text-white/55">
                         {t(`admin.questionImport.field_${field.replace('–', '_').replace('1', '').replace('4', '')}`)}
@@ -249,13 +249,13 @@ const QuestionImport = () => {
               <div>
                 <p className="mb-1 font-semibold text-slate-400 dark:text-white/35">IT</p>
                 {['AWS', 'Network', 'Security', 'Linux'].map((c) => (
-                  <p key={c} className="font-mono text-indigo-600 dark:text-indigo-400">{c}</p>
+                  <p key={c} className="font-mono text-amber-600 dark:text-amber-400">{c}</p>
                 ))}
               </div>
               <div>
                 <p className="mb-1 font-semibold text-slate-400 dark:text-white/35">JLPT</p>
                 {['JLPT-N5-文字語彙', 'JLPT-N5-文法読解', '…N4, N3, N2, N1…'].map((c) => (
-                  <p key={c} className="font-mono text-indigo-600 dark:text-indigo-400">{c}</p>
+                  <p key={c} className="font-mono text-amber-600 dark:text-amber-400">{c}</p>
                 ))}
               </div>
             </div>

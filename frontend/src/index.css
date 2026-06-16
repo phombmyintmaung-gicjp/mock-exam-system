@@ -3,52 +3,52 @@
 
 /* ── Theme tokens ───────────────────────────────────────────── */
 :root {
-  --app-bg: #f5f3ff;
-  --app-gradient: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 45%, #e8f4fd 100%);
-  --dot-color: rgba(99, 102, 241, 0.06);
+  --app-bg: #f8f7f4;
+  --app-gradient: linear-gradient(135deg, #f8f7f4 0%, #fdf6ec 50%, #fef9f0 100%);
+  --dot-color: rgba(180, 120, 20, 0.05);
 
   --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-border: rgba(99, 102, 241, 0.13);
+  --glass-border: rgba(180, 120, 20, 0.12);
   --glass-card-bg: rgba(255, 255, 255, 0.80);
-  --glass-card-border: rgba(99, 102, 241, 0.10);
-  --glass-card-shadow: 0 4px 32px rgba(99, 102, 241, 0.07);
+  --glass-card-border: rgba(180, 120, 20, 0.09);
+  --glass-card-shadow: 0 4px 32px rgba(180, 120, 20, 0.06);
 
   --glass-input-bg: rgba(255, 255, 255, 0.92);
-  --glass-input-border: rgba(99, 102, 241, 0.22);
+  --glass-input-border: rgba(180, 120, 20, 0.20);
   --glass-input-color: #0f172a;
   --glass-input-placeholder: rgba(15, 23, 42, 0.35);
-  --glass-input-focus-border: rgba(99, 102, 241, 0.55);
-  --glass-input-focus-shadow: rgba(99, 102, 241, 0.12);
+  --glass-input-focus-border: rgba(245, 158, 11, 0.55);
+  --glass-input-focus-shadow: rgba(245, 158, 11, 0.12);
 
-  --brand-from: #a78bfa;
-  --brand-to: #c084fc;
-  --glow-near: rgba(99, 102, 241, 0.25);
-  --glow-far: rgba(99, 102, 241, 0.10);
+  --brand-from: #fbbf24;
+  --brand-to: #f97316;
+  --glow-near: rgba(245, 158, 11, 0.25);
+  --glow-far: rgba(245, 158, 11, 0.10);
 }
 
-/* Dark mode: "Midnight Rose" — deep wine/plum base with rose-amber accents */
+/* Dark mode: "Midnight Ember" — deep charcoal with amber-rose accents */
 .dark {
-  --app-bg: #130810;
-  --app-gradient: linear-gradient(135deg, #130810 0%, #260d1e 28%, #1c0a2e 58%, #0f1528 100%);
-  --dot-color: rgba(251, 113, 133, 0.05);
+  --app-bg: #111009;
+  --app-gradient: linear-gradient(135deg, #111009 0%, #1c1508 28%, #1a0f05 58%, #0f1010 100%);
+  --dot-color: rgba(251, 191, 36, 0.04);
 
-  --glass-bg: rgba(251, 113, 133, 0.07);
-  --glass-border: rgba(251, 113, 133, 0.14);
-  --glass-card-bg: rgba(251, 113, 133, 0.055);
-  --glass-card-border: rgba(251, 113, 133, 0.10);
-  --glass-card-shadow: 0 4px 40px rgba(251, 113, 133, 0.06);
+  --glass-bg: rgba(251, 191, 36, 0.06);
+  --glass-border: rgba(251, 191, 36, 0.12);
+  --glass-card-bg: rgba(251, 191, 36, 0.045);
+  --glass-card-border: rgba(251, 191, 36, 0.09);
+  --glass-card-shadow: 0 4px 40px rgba(251, 191, 36, 0.05);
 
-  --glass-input-bg: rgba(255, 200, 210, 0.07);
-  --glass-input-border: rgba(251, 113, 133, 0.22);
+  --glass-input-bg: rgba(255, 220, 150, 0.06);
+  --glass-input-border: rgba(251, 191, 36, 0.20);
   --glass-input-color: #fff;
   --glass-input-placeholder: rgba(255, 255, 255, 0.35);
-  --glass-input-focus-border: rgba(251, 113, 133, 0.65);
-  --glass-input-focus-shadow: rgba(251, 113, 133, 0.18);
+  --glass-input-focus-border: rgba(251, 191, 36, 0.65);
+  --glass-input-focus-shadow: rgba(251, 191, 36, 0.15);
 
-  --brand-from: #fb7185;
-  --brand-to: #fbbf24;
-  --glow-near: rgba(251, 113, 133, 0.30);
-  --glow-far: rgba(251, 113, 133, 0.12);
+  --brand-from: #fbbf24;
+  --brand-to: #f97316;
+  --glow-near: rgba(251, 191, 36, 0.28);
+  --glow-far: rgba(251, 191, 36, 0.10);
 }
 
 /* ── Custom utilities ───────────────────────────────────────── */
@@ -101,6 +101,11 @@
     background-clip: text;
   }
 
+  .glow-amber {
+    box-shadow: 0 0 40px var(--glow-near), 0 0 80px var(--glow-far);
+  }
+
+  /* Keep old name as alias so existing uses still compile */
   .glow-indigo {
     box-shadow: 0 0 40px var(--glow-near), 0 0 80px var(--glow-far);
   }

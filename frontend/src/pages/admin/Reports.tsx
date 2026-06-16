@@ -64,7 +64,7 @@ const Reports = () => {
                     label={stat.category}
                     passRate={stat.passRate}
                     examCountLabel={t('admin.reports.examCount', { count: stat.totalAttempts })}
-                    color="bg-blue-500"
+                    color="bg-amber-500"
                   />
                 ))}
           </div>

@@ -103,8 +103,8 @@ const Review = () => {
                   </div>
 
                   {item.explanation && (
-                    <div className="border-t border-blue-100 bg-blue-50 px-6 py-4">
-                      <p className="mb-1 text-xs font-semibold uppercase text-blue-600">
+                    <div className="border-t border-amber-100 bg-amber-50 px-6 py-4">
+                      <p className="mb-1 text-xs font-semibold uppercase text-amber-700">
                         {t('result.review.explanation')}
                       </p>
                       <p className="text-sm text-gray-700">{item.explanation}</p>

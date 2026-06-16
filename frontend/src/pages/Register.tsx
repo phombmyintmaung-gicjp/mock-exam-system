@@ -68,14 +68,14 @@ const Register = () => {
     `mt-1 block w-full rounded-lg border px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 ${
       fieldErrors[field]
         ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
-        : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+        : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500'
     }`;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <Link to="/" className="text-3xl font-bold text-blue-600">
+          <Link to="/" className="text-3xl font-bold text-amber-600">
             {t('app.title')}
           </Link>
           <p className="mt-2 text-sm text-gray-500">{t('app.subtitle')}</p>
@@ -170,7 +170,7 @@ const Register = () => {
 
           <p className="mt-6 text-center text-sm text-gray-500">
             {t('auth.alreadyHaveAccount')}{' '}
-            <Link to="/login" className="font-medium text-blue-600 hover:underline">
+            <Link to="/login" className="font-medium text-amber-600 hover:underline">
               {t('auth.login')}
             </Link>
           </p>

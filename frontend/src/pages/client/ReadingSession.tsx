@@ -138,7 +138,7 @@ const ReadingSession = () => {
         {/* Header bar */}
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <span className="rounded-full border border-purple-400/30 bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-300">
+            <span className="rounded-full border border-amber-400/30 bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300">
               {t('exam.jlpt.bunpoKaido')}
             </span>
             <span className="text-sm text-slate-500 dark:text-white/50">
@@ -209,7 +209,7 @@ const ReadingSession = () => {
                             : showResult && isSelected && !isCorrect
                               ? 'border-rose-400/40 bg-rose-500/15 text-rose-800 dark:text-rose-300'
                               : isSelected
-                                ? 'border-indigo-400/50 bg-indigo-500/20 text-white'
+                                ? 'border-amber-400/50 bg-amber-500/20 text-amber-900 dark:text-white'
                                 : 'border-slate-200 dark:border-white/10 bg-black/5 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:border-slate-300 dark:hover:border-white/25 hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-800 dark:hover:text-white/90',
                         )}
                       >
@@ -220,8 +220,8 @@ const ReadingSession = () => {
                 </div>
 
                 {isStudy && revealed && currentQ.explanation && (
-                  <div className="mt-4 rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-900 dark:text-blue-200">
-                    <span className="mr-1 font-semibold text-blue-700 dark:text-blue-300">{t('result.review.explanation')}:</span>
+                  <div className="mt-4 rounded-xl border border-amber-400/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-200">
+                    <span className="mr-1 font-semibold text-amber-700 dark:text-amber-300">{t('result.review.explanation')}:</span>
                     {currentQ.explanation}
                   </div>
                 )}

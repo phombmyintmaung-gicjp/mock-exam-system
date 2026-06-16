@@ -102,8 +102,8 @@ const Passages = () => {
           className={clsx(
             'rounded-full border px-4 py-1 text-sm font-medium transition-colors',
             filterLevel === ''
-              ? 'border-indigo-500 bg-indigo-500 text-white'
-              : 'border-slate-200 text-slate-600 hover:border-indigo-400 hover:text-indigo-600 dark:border-white/15 dark:text-white/55 dark:hover:border-white/30 dark:hover:text-white',
+              ? 'border-amber-500 bg-amber-500 text-white'
+              : 'border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 dark:border-white/15 dark:text-white/55 dark:hover:border-white/30 dark:hover:text-white',
           )}
         >
           {t('admin.passages.allLevels')}
@@ -115,8 +115,8 @@ const Passages = () => {
             className={clsx(
               'rounded-full border px-4 py-1 text-sm font-medium transition-colors',
               filterLevel === l
-                ? 'border-indigo-500 bg-indigo-500 text-white'
-                : 'border-slate-200 text-slate-600 hover:border-indigo-400 hover:text-indigo-600 dark:border-white/15 dark:text-white/55 dark:hover:border-white/30 dark:hover:text-white',
+                ? 'border-amber-500 bg-amber-500 text-white'
+                : 'border-slate-200 text-slate-600 hover:border-amber-400 hover:text-amber-600 dark:border-white/15 dark:text-white/55 dark:hover:border-white/30 dark:hover:text-white',
             )}
           >
             {l}
@@ -129,8 +129,8 @@ const Passages = () => {
         <div className="flex justify-center py-20"><Spinner size="lg" /></div>
       ) : passages.length === 0 ? (
         <div className="glass-card flex flex-col items-center justify-center rounded-2xl py-20 text-center">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20">
-            <svg className="h-6 w-6 text-indigo-400 dark:text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20">
+            <svg className="h-6 w-6 text-amber-500 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
@@ -179,7 +179,7 @@ const Passages = () => {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => openEdit(p)}
-                          className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+                          className="text-sm font-medium text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300"
                         >
                           {t('common.edit')}
                         </button>

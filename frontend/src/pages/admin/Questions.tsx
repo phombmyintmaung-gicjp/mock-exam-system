@@ -131,12 +131,12 @@ const Questions = () => {
             value={itSearch}
             onChange={(e) => setItSearch(e.target.value)}
             placeholder={t('admin.questions.searchPlaceholder')}
-            className="w-full rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:max-w-sm"
+            className="w-full rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/30 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:max-w-sm"
           />
           <select
             value={itDifficulty}
             onChange={(e) => setItDifficulty(e.target.value)}
-            className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-indigo-500 focus:outline-none"
+            className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-amber-500 focus:outline-none"
           >
             <option value="">{t('admin.questions.allDifficulties')}</option>
             <option value="easy">{t('common.difficulty.easy')}</option>
@@ -158,7 +158,7 @@ const Questions = () => {
                 className={clsx(
                   'rounded-lg px-3 py-1.5 text-xs font-bold transition-all',
                   jlptLevel === lv
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-amber-500 text-white shadow-sm'
                     : 'border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 text-slate-600 dark:text-white/60 hover:bg-slate-50 dark:hover:bg-white/10',
                 )}
               >
@@ -172,7 +172,7 @@ const Questions = () => {
             <select
               value={jlptSection}
               onChange={(e) => { setJlptSection(e.target.value as JLPTTestType | 'all'); setJlptType(''); }}
-              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-indigo-500 focus:outline-none"
+              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-amber-500 focus:outline-none"
             >
               <option value="all">{t('admin.questions.allSections')}</option>
               <option value="文字語彙">{t('admin.questions.sectionMojiGoi')}</option>
@@ -182,7 +182,7 @@ const Questions = () => {
             <select
               value={jlptType}
               onChange={(e) => setJlptType(e.target.value)}
-              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-indigo-500 focus:outline-none"
+              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-amber-500 focus:outline-none"
             >
               <option value="">{t('admin.questions.allTypes')}</option>
               {(jlptSection === 'all' ? QUESTION_TYPES.all : QUESTION_TYPES[jlptSection]).map((qt) => (
@@ -259,7 +259,7 @@ const Questions = () => {
                         ) : (
                           <>
                             <td className="px-6 py-4">
-                              <span className="inline-block rounded-full bg-indigo-100 dark:bg-indigo-500/20 px-2.5 py-0.5 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+                              <span className="inline-block rounded-full bg-amber-100 dark:bg-amber-500/20 px-2.5 py-0.5 text-xs font-bold text-amber-700 dark:text-amber-300">
                                 {level}
                               </span>
                             </td>
@@ -272,7 +272,7 @@ const Questions = () => {
                         <td className="px-6 py-4">
                           <div className="flex gap-3">
                             <button
-                              className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+                              className="text-xs font-medium text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300"
                               onClick={() => navigate(`/admin/questions/${q.id}/edit`)}
                             >
                               {t('common.edit')}

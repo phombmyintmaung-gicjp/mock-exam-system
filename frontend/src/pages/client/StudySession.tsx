@@ -91,8 +91,8 @@ const StudySession = () => {
         )}
 
         {revealed && currentQ?.explanation && (
-          <div className="mt-4 rounded-xl border border-blue-400/25 bg-blue-500/10 px-4 py-3 text-sm text-blue-900 dark:text-blue-200">
-            <span className="mr-1 font-semibold text-blue-700 dark:text-blue-300">{t('result.review.explanation')}:</span>
+          <div className="mt-4 rounded-xl border border-amber-400/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-900 dark:text-amber-200">
+            <span className="mr-1 font-semibold text-amber-700 dark:text-amber-300">{t('result.review.explanation')}:</span>
             {currentQ.explanation}
           </div>
         )}
