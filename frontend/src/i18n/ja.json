@@ -369,7 +369,42 @@
       "fieldReading": "読み方（ひらがな）",
       "fieldMeaning": "意味（英語）",
       "fieldExample": "例文",
-      "fieldExampleTranslation": "例文の翻訳"
+      "fieldExampleHint": "漢字にふりがなを付けるには {漢字|よみ} の形式で入力してください — 例：{今日|きょう}は{良|よ}い日です。",
+      "fieldExampleTranslation": "例文の翻訳",
+      "previewTitle": "プレビュー",
+      "previewFront": "表面",
+      "previewBack": "裏面",
+      "previewEmpty": "上のフィールドを入力するとプレビューが表示されます",
+      "importButton": "インポート",
+      "importTitle": "フラッシュカードのインポート",
+      "importSubtitle": "Excelファイル（.xlsx / .xls）からフラッシュカードを一括登録します",
+      "uploadTitle": "ファイルをアップロード",
+      "dropText": "Excelファイルをドロップ、または",
+      "browseButton": "ファイルを選択",
+      "uploadButton": "インポート",
+      "downloadTemplate": "テンプレートをダウンロード",
+      "formatTitle": "カラム一覧",
+      "formatDesc": "1行目はヘッダー行です。データは2行目から開始します。カラム名は大文字・小文字を区別しません。",
+      "colField": "カラム名",
+      "colRequired": "必須",
+      "colNotes": "説明",
+      "field_type": "kanji · vocab · grammar",
+      "field_level": "N1 · N2 · N3 · N4 · N5",
+      "field_front": "カードの表面に表示する漢字・語彙・文法パターン",
+      "field_reading": "ひらがなの読み方（任意）",
+      "field_meaning": "カード裏面に表示する英語の意味",
+      "field_example_sentence": "例文 — ふりがなは {漢字|よみ} 形式で入力（任意）",
+      "field_example_translation": "例文の英訳（任意）",
+      "furiganaTitle": "ふりがな記法",
+      "furiganaDesc": "漢字を {漢字|よみ} の形式で囲むと、学習カードにルビが自動表示されます。",
+      "furiganaExample": "例：",
+      "tipsTitle": "ヒント",
+      "tip1": "同じ type・level・front の重複カードは自動的にスキップされます。",
+      "tip2": "type は小文字（kanji など）、level は大文字（N3 など）で入力してください。",
+      "tip3": "必須フィールドが空の行はスキップされ、エラーレポートに表示されます。",
+      "resultImported": "{{count}} 件のカードをインポートしました",
+      "resultDuplicates": "{{count}} 件の重複をスキップしました",
+      "resultSkipped": "{{count}} 行にエラーがありました"
     }
   },
   "study": {
@@ -520,6 +555,11 @@
       "wrong": "不正解",
       "total": "合計"
     }
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "subtitle": "お探しのページは存在しないか、移動された可能性があります。",
+    "backButton": "ホームへ戻る"
   },
   "examSecurity": {
     "notice": {

@@ -115,6 +115,7 @@ Route::prefix('v1')->group(function () {
             // Flashcard management
             Route::get('flashcards', [FlashcardAdminController::class, 'index'])->name('admin.flashcards.index');
             Route::post('flashcards', [FlashcardAdminController::class, 'store'])->name('admin.flashcards.store');
+            Route::post('flashcards/import', [FlashcardAdminController::class, 'import'])->name('admin.flashcards.import');
             Route::put('flashcards/{id}', [FlashcardAdminController::class, 'update'])->name('admin.flashcards.update');
             Route::delete('flashcards/{id}', [FlashcardAdminController::class, 'destroy'])->name('admin.flashcards.destroy');
 

@@ -5,7 +5,9 @@ const useLanguage = () => {
 
   const currentLanguage = i18n.language;
   const toggleLanguage = () => {
-    i18n.changeLanguage(currentLanguage === 'ja' ? 'en' : 'ja');
+    const next = currentLanguage === 'ja' ? 'en' : 'ja';
+    i18n.changeLanguage(next);
+    localStorage.setItem('i18n-lang', next);
   };
 
   return { currentLanguage, toggleLanguage };

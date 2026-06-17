@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { TableRowSkeleton } from '@/components/ui/Shimmer';
+import { Furigana } from '@/components/shared/Furigana';
 import { getAdminFlashcards, createFlashcard, updateFlashcard, deleteFlashcard } from '@/services/flashcardService';
 import type { Flashcard, FlashcardType, FlashcardLevel } from '@/types/flashcard';
 
@@ -23,6 +25,7 @@ const emptyForm = {
 
 const Flashcards = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [cards, setCards]           = useState<Flashcard[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -125,7 +128,10 @@ const Flashcards = () => {
             {t('admin.flashcards.subtitle', { count: totalCount })}
           </p>
         </div>
-        <Button label={t('admin.flashcards.newButton')} onClick={openCreate} />
+        <div className="flex gap-2">
+          <Button label={t('admin.flashcards.importButton')} variant="secondary" onClick={() => navigate('/admin/flashcards/import')} />
+          <Button label={t('admin.flashcards.newButton')} onClick={openCreate} />
+        </div>
       </div>
 
       {/* Filters */}
@@ -237,92 +243,162 @@ const Flashcards = () => {
         isOpen={modalOpen}
         title={editTarget ? t('admin.flashcards.editTitle') : t('admin.flashcards.newTitle')}
         onClose={() => setModalOpen(false)}
+        wide
       >
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldType')}</label>
-              <select
-                value={form.type}
-                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as FlashcardType }))}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-              >
-                {TYPES.map((tp) => <option key={tp} value={tp}>{t(`study.${tp}.title`)}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldLevel')}</label>
-              <select
-                value={form.level}
-                onChange={(e) => setForm((f) => ({ ...f, level: e.target.value as FlashcardLevel }))}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-              >
-                {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
-              </select>
-            </div>
-          </div>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* ── Form ── */}
+          <div className="min-w-0 flex-1 space-y-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldType')}</label>
+                <select
+                  value={form.type}
+                  onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as FlashcardType }))}
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                >
+                  {TYPES.map((tp) => <option key={tp} value={tp}>{t(`study.${tp}.title`)}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldLevel')}</label>
+                <select
+                  value={form.level}
+                  onChange={(e) => setForm((f) => ({ ...f, level: e.target.value as FlashcardLevel }))}
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                >
+                  {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldFront')}</label>
+                <input
+                  value={form.front}
+                  onChange={(e) => setForm((f) => ({ ...f, front: e.target.value }))}
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  placeholder="漢字 / 語彙 / 文法パターン"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldReading')}</label>
+                <input
+                  value={form.reading}
+                  onChange={(e) => setForm((f) => ({ ...f, reading: e.target.value }))}
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  placeholder="ひらがな（任意）"
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldFront')}</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldMeaning')}</label>
               <input
-                value={form.front}
-                onChange={(e) => setForm((f) => ({ ...f, front: e.target.value }))}
+                value={form.meaning}
+                onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
                 className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-                placeholder="漢字 / 語彙 / 文法パターン"
+                placeholder="English meaning"
               />
             </div>
+
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldReading')}</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldExample')}</label>
               <input
-                value={form.reading}
-                onChange={(e) => setForm((f) => ({ ...f, reading: e.target.value }))}
+                value={form.example_sentence}
+                onChange={(e) => setForm((f) => ({ ...f, example_sentence: e.target.value }))}
                 className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-                placeholder="ひらがな（任意）"
+                placeholder="例文（任意）"
+              />
+              <p className="mt-1.5 flex items-start gap-1.5 text-xs text-slate-400 dark:text-white/40">
+                <span className="mt-px shrink-0 rounded bg-amber-100 px-1 py-0.5 font-mono text-[10px] font-semibold text-amber-700 dark:bg-amber-400/15 dark:text-amber-300">
+                  {'{漢字|よみ}'}
+                </span>
+                {t('admin.flashcards.fieldExampleHint')}
+              </p>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldExampleTranslation')}</label>
+              <input
+                value={form.example_translation}
+                onChange={(e) => setForm((f) => ({ ...f, example_translation: e.target.value }))}
+                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                placeholder="Example translation (optional)"
+              />
+            </div>
+
+            {saveError && <p className="text-sm text-red-500">{saveError}</p>}
+
+            <div className="flex justify-end gap-3 pt-1">
+              <Button label={t('common.cancel')} variant="secondary" onClick={() => setModalOpen(false)} />
+              <Button
+                label={saving ? t('common.saving') : t('common.save')}
+                disabled={saving || !form.front || !form.meaning}
+                onClick={handleSave}
               />
             </div>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldMeaning')}</label>
-            <input
-              value={form.meaning}
-              onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-              placeholder="English meaning"
-            />
+          {/* ── Live preview ── */}
+          <div className="w-full shrink-0 lg:w-64">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40">
+              {t('admin.flashcards.previewTitle')}
+            </p>
+
+            {form.front || form.meaning ? (
+              <div className="flex flex-col gap-3">
+                {/* Front card */}
+                <div className="rounded-2xl border border-amber-200/70 bg-gradient-to-br from-white to-amber-50 p-4 shadow-sm dark:border-amber-400/20 dark:from-slate-800 dark:to-slate-700">
+                  <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-widest text-amber-500 dark:text-amber-400">
+                    {t('admin.flashcards.previewFront')}
+                  </p>
+                  <p className="text-center text-3xl font-bold text-slate-900 dark:text-white">
+                    {form.front || '—'}
+                  </p>
+                  <div className="mt-2 flex justify-center gap-1.5">
+                    <span className={clsx('rounded-full px-2 py-0.5 text-[10px] font-medium capitalize', typeColor[form.type])}>
+                      {t(`study.${form.type}.title`)}
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500 dark:bg-white/10 dark:text-white/50">
+                      {form.level}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Back card */}
+                <div className="rounded-2xl border border-slate-200/70 bg-gradient-to-br from-slate-50 to-white p-4 shadow-sm dark:border-white/10 dark:from-slate-700 dark:to-slate-800">
+                  <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-white/40">
+                    {t('admin.flashcards.previewBack')}
+                  </p>
+                  {form.reading && (
+                    <p className="text-center text-sm font-medium text-amber-600 dark:text-amber-400">{form.reading}</p>
+                  )}
+                  <p className="text-center text-base font-bold text-slate-900 dark:text-white">
+                    {form.meaning || '—'}
+                  </p>
+                  {form.example_sentence && (
+                    <div className="mt-3 rounded-xl bg-slate-100 px-3 py-2 dark:bg-white/8">
+                      <p className="text-center text-xs leading-loose text-slate-700 dark:text-white/80">
+                        <Furigana text={form.example_sentence} />
+                      </p>
+                      {form.example_translation && (
+                        <p className="mt-1 text-center text-[10px] text-slate-400 dark:text-white/40">
+                          {form.example_translation}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <p className="rounded-xl border border-dashed border-slate-200 p-4 text-center text-xs text-slate-400 dark:border-white/10 dark:text-white/30">
+                {t('admin.flashcards.previewEmpty')}
+              </p>
+            )}
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldExample')}</label>
-            <input
-              value={form.example_sentence}
-              onChange={(e) => setForm((f) => ({ ...f, example_sentence: e.target.value }))}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-              placeholder="例文（任意）"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldExampleTranslation')}</label>
-            <input
-              value={form.example_translation}
-              onChange={(e) => setForm((f) => ({ ...f, example_translation: e.target.value }))}
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-              placeholder="Example translation (optional)"
-            />
-          </div>
-
-          {saveError && <p className="text-sm text-red-500">{saveError}</p>}
-
-          <div className="flex justify-end gap-3 pt-1">
-            <Button label={t('common.cancel')} variant="secondary" onClick={() => setModalOpen(false)} />
-            <Button
-              label={saving ? t('common.saving') : t('common.save')}
-              disabled={saving || !form.front || !form.meaning}
-              onClick={handleSave}
-            />
-          </div>
         </div>
       </Modal>
 

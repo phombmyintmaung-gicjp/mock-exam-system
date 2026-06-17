@@ -23,6 +23,7 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 ## Language Support
 
 - UI defaults to **Japanese**, with English toggle available
+- Language preference is **persisted across page loads** via `localStorage` (`i18n-lang` key)
 - Language switching applies to UI elements only (labels, buttons, messages)
 - All exam questions and answer choices are in **Japanese** (JLPT) or **English** (IT certifications)
 
@@ -72,6 +73,9 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 - Create / update / delete flashcards (kanji, vocabulary, grammar)
 - Assign JLPT level (N1–N5) and type per card
 - Fields: front (kanji/word/pattern), reading (hiragana), meaning (English), example sentence
+- **Furigana notation** in example sentences: wrap kanji with `{漢字|よみ}` — rendered as ruby text on the study card
+- **Live preview** panel in the create/edit form — shows both card faces with furigana rendered in real time
+- **Bulk import** from Excel (.xlsx / .xls) with column reference, furigana guide, and downloadable template
 
 ---
 
@@ -123,7 +127,8 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 **Free Flashcard Study** (`/study` — no login required)
 - Kanji readings, JLPT vocabulary, and grammar patterns
 - Filter by JLPT level (N1–N5) and card type
-- Flip card animation — front shows the word, back shows reading + meaning + example
+- Flip card animation — front shows the word, back shows reading + meaning + example sentence
+- Example sentences display **furigana** (ruby text) above kanji, authored with `{漢字|よみ}` notation
 - Shuffle mode for randomised practice
 
 ---
@@ -197,19 +202,21 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
 mock-exam-system/
 ├── frontend/                   # React (TypeScript) + Tailwind CSS
 │   ├── src/
-│   │   ├── components/         # ui/, layout/, shared/
+│   │   ├── components/         # ui/, layout/, shared/ (incl. Furigana, FlipCard)
 │   │   ├── pages/
-│   │   │   ├── admin/          # Dashboard, Questions, Passages, Flashcards, Users, Settings
+│   │   │   ├── admin/          # Dashboard, Questions, Passages,
+│   │   │   │                   #   Flashcards, FlashcardImport, Users, Settings
 │   │   │   ├── client/         # ExamSelect, ExamSession, StudySession,
 │   │   │   │                   #   ReadingSession, Results, Review, History,
 │   │   │   │                   #   Profile, WeakAreas
-│   │   │   └── study/          # StudyHome, FlashcardSession (public — no login)
+│   │   │   ├── study/          # StudyHome, FlashcardSession (public — no login)
+│   │   │   └── NotFound.tsx    # 404 page (bilingual, auth-aware back button)
 │   │   ├── hooks/              # Custom React hooks
 │   │   ├── services/           # API call functions (examService, authService,
 │   │   │                       #   flashcardService, publicApi, …)
 │   │   ├── store/              # Zustand: authStore, examSessionStore
 │   │   ├── types/              # TypeScript interfaces (exam, user, result, flashcard, …)
-│   │   └── i18n/               # ja.json, en.json
+│   │   └── i18n/               # ja.json, en.json (language persisted in localStorage)
 │   ├── Dockerfile
 │   └── package.json
 │

@@ -77,14 +77,19 @@ Detailed conventions are in `.claude/rules/`:
 | `frontend/src/App.tsx` | Root component and route definitions |
 | `frontend/src/services/api.ts` | Axios instance with JWT interceptor |
 | `frontend/src/store/` | Global state (authStore, examSessionStore) |
-| `frontend/src/i18n/` | Translation files (ja.json, en.json) |
+| `frontend/src/i18n/` | Translation files (ja.json, en.json) — language saved in `localStorage` key `i18n-lang` |
 | `frontend/src/components/shared/QuestionCard.tsx` | Choice card — accepts `revealed` prop for inline study-mode feedback |
+| `frontend/src/components/shared/Furigana.tsx` | Parses `{漢字\|よみ}` notation and renders HTML `<ruby>` elements |
+| `frontend/src/components/shared/FlipCard.tsx` | Flip card used in FlashcardSession — uses `Furigana` for example sentences |
+| `frontend/src/components/ui/Modal.tsx` | Modal dialog — accepts `wide` prop (`max-w-4xl`) for forms that need more space |
+| `frontend/src/pages/NotFound.tsx` | 404 page — bilingual, auth-aware back button |
+| `frontend/src/pages/admin/FlashcardImport.tsx` | Bulk Excel import for flashcards with column guide and furigana notation reference |
 | `backend/routes/api.php` | All API route definitions |
-| `backend/app/Models/` | Eloquent models (User, Question, Passage, ExamSession, …) |
-| `backend/app/Services/` | Business logic (ExamService, ResultService, AnalyticsService, PassageService) |
+| `backend/app/Models/` | Eloquent models (User, Question, Passage, ExamSession, Flashcard, …) |
+| `backend/app/Services/` | Business logic (ExamService, ResultService, AnalyticsService, PassageService, FlashcardService) |
 | `backend/app/Http/Controllers/Api/V1/` | Thin API controllers |
 | `backend/database/migrations/` | Database schema migrations |
-| `backend/database/seeders/` | Sample data (departments, users, questions, passages, JLPT questions, exam history) |
+| `backend/database/seeders/` | Sample data (departments, users, questions, passages, JLPT questions, flashcards, exam history) |
 | `backend/resources/views/pdf/result.blade.php` | Blade template for PDF export (mPDF) |
 | `backend/config/` | Laravel configuration files |
 
@@ -106,10 +111,22 @@ JLPT categories follow the pattern `JLPT-{level}-{section}`:
 
 ```
 DepartmentSeeder → UserSeeder → ExamSettingSeeder → QuestionSeeder
-→ PassageSeeder → JLPTQuestionSeeder → ExamHistorySeeder
+→ PassageSeeder → JLPTQuestionSeeder → FlashcardSeeder → ExamHistorySeeder
 ```
 
-JLPTQuestionSeeder clears old JLPT questions before re-inserting, making it safe to re-run.
+JLPTQuestionSeeder clears old JLPT questions before re-inserting, making it safe to re-run.  
+FlashcardSeeder truncates and re-inserts all 150 cards (N1–N5, kanji/vocab/grammar), safe to re-run.
+
+## Furigana Notation
+
+Example sentences on flashcards support inline furigana using `{漢字|よみ}` notation stored in the database.
+
+- `{今日|きょう}はいい{日|ひ}ですね。` → renders ruby text above each marked kanji
+- Parsed by `frontend/src/components/shared/Furigana.tsx` using `split(/(\{[^}]+\|[^}]+\})/g)`
+- Plain text segments fall through as `<span>` — the notation is optional per-word
+- Used in: `FlipCard.tsx` (study session back face), `FlashcardImport.tsx` (live rendered demo)
+- Admin flashcard form shows a live preview that renders furigana as the admin types
+- The import page includes a notation guide with a side-by-side raw/rendered example
 
 ## Study Mode Behaviour
 
@@ -150,6 +167,34 @@ JLPTQuestionSeeder clears old JLPT questions before re-inserting, making it safe
 - Use `useBlocker` — the app uses `BrowserRouter`, not a data router; `useBlocker` will crash at runtime
 - Use NotoSansCJK (TTC format) with mPDF — use IPAex Gothic (single TTF) instead
 - Use Unicode special characters (`✗`, `✓`, etc.) in Blade PDF templates without verifying the font covers those code points
+
+## Flashcard Import Endpoint
+
+- Route: `POST /api/v1/admin/flashcards/import` (requires `auth:api` + `admin` middleware)
+- Accepts: `multipart/form-data` with `file` field (.xlsx / .xls, max 10 MB)
+- Columns: `type` · `level` · `front` · `reading` · `meaning` · `example_sentence` · `example_translation`
+- Duplicate check: same `type` + `level` + `front` → skipped (not an error)
+- Returns: `{ imported: N, duplicates: N, skipped: N, errors: [...] }`
+- Frontend page: `/admin/flashcards/import` → `FlashcardImport.tsx`
+- Service function: `importFlashcards(file)` in `frontend/src/services/flashcardService.ts`
+
+## Docker Layout
+
+Dockerfiles live next to their source code — not in a separate `docker/` folder:
+
+| File | Build context |
+|------|--------------|
+| `backend/Dockerfile` | `./backend` |
+| `frontend/Dockerfile` | `./frontend` |
+
+Each directory also has its own `.dockerignore`. A root-level `.dockerignore` exists for any top-level Docker operations.
+
+## i18n Language Persistence
+
+- Selected language is saved to `localStorage` under the key `i18n-lang`
+- `frontend/src/i18n/index.ts` reads this key on init: `lng: localStorage.getItem('i18n-lang') ?? 'ja'`
+- `frontend/src/hooks/useLanguage.ts` writes to `localStorage` on every toggle
+- This ensures the language choice survives page reloads and direct URL navigation
 
 ## Notes
 

@@ -40,3 +40,19 @@ export async function updateFlashcard(id: number, data: Partial<Omit<Flashcard, 
 export async function deleteFlashcard(id: number): Promise<void> {
   await api.delete(`/admin/flashcards/${id}`);
 }
+
+export interface FlashcardImportResult {
+  imported: number;
+  duplicates: number;
+  skipped: number;
+  errors: string[];
+}
+
+export async function importFlashcards(file: File): Promise<FlashcardImportResult> {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await api.post<ApiResponse<FlashcardImportResult>>('/admin/flashcards/import', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data.data;
+}

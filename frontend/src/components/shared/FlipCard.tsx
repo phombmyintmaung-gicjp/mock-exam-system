@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { clsx } from 'clsx';
 import type { Flashcard } from '@/types/flashcard';
+import { Furigana } from '@/components/shared/Furigana';
 
 interface FlipCardProps {
   card: Flashcard;
@@ -47,7 +48,9 @@ export function FlipCard({ card }: FlipCardProps) {
           <p className="text-center text-2xl font-bold text-slate-900 dark:text-white">{card.meaning}</p>
           {card.example_sentence && (
             <div className="mt-2 w-full rounded-xl bg-slate-100 px-4 py-3 dark:bg-white/8">
-              <p className="text-center text-sm text-slate-700 dark:text-white/80">{card.example_sentence}</p>
+              <p className="text-center text-sm leading-loose text-slate-700 dark:text-white/80">
+                <Furigana text={card.example_sentence} />
+              </p>
               {card.example_translation && (
                 <p className="mt-1 text-center text-xs text-slate-400 dark:text-white/40">{card.example_translation}</p>
               )}

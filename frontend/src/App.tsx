@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useThemeStore } from '@/store/themeStore';
 import { useAuthStore } from '@/store/authStore';
 import { fetchMe } from '@/services/authService';
@@ -7,6 +7,7 @@ import { fetchMe } from '@/services/authService';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
+import NotFound from '@/pages/NotFound';
 import { PrivateRoute } from '@/components/layout/PrivateRoute';
 
 import Dashboard from '@/pages/admin/Dashboard';
@@ -20,6 +21,7 @@ import Reports from '@/pages/admin/Reports';
 import Passages from '@/pages/admin/Passages';
 import Categories from '@/pages/admin/Categories';
 import Flashcards from '@/pages/admin/Flashcards';
+import FlashcardImport from '@/pages/admin/FlashcardImport';
 
 import StudyHome from '@/pages/study/StudyHome';
 import FlashcardSession from '@/pages/study/FlashcardSession';
@@ -85,6 +87,7 @@ const App = () => {
           <Route path="/admin/passages" element={<Passages />} />
           <Route path="/admin/categories" element={<Categories />} />
           <Route path="/admin/flashcards" element={<Flashcards />} />
+          <Route path="/admin/flashcards/import" element={<FlashcardImport />} />
         </Route>
 
         {/* Client routes — require employee role */}
@@ -100,7 +103,7 @@ const App = () => {
           <Route path="/reading/session/:category" element={<ReadingSession />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
