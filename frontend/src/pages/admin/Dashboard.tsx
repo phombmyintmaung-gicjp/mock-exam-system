@@ -8,7 +8,7 @@ import { getAdminUsers } from '@/services/userService';
 import { getAdminQuestions } from '@/services/questionService';
 import type { CategoryStat } from '@/types/analytics';
 import type { HistoryItem } from '@/types/result';
-import { getResultHistory } from '@/services/resultService';
+import { getAdminRecentResults } from '@/services/resultService';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -20,11 +20,11 @@ const Dashboard = () => {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([getCategoryStats(), getResultHistory(), getAdminUsers(), getAdminQuestions()])
+    Promise.all([getCategoryStats(), getAdminRecentResults(6), getAdminUsers(), getAdminQuestions()])
       .then(([stats, history, usersRes, questionsRes]) => {
         if (cancelled) return;
         setCategoryStats(stats);
-        setRecentExams(history.slice(0, 6));
+        setRecentExams(history);
         setTotalUsers(usersRes.count);
         setTotalQuestions(questionsRes.count);
       })
@@ -73,6 +73,7 @@ const Dashboard = () => {
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-slate-100 dark:border-white/8 bg-black/5 dark:bg-white/5">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40">{t('admin.users.columnName')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40">{t('admin.questions.columnCategory')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40">{t('profile.history.columnScore')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40">{t('profile.history.columnResult')}</th>
@@ -81,17 +82,18 @@ const Dashboard = () => {
             </thead>
             <tbody>
               {isLoading
-                ? Array.from({ length: 6 }).map((_, i) => <TableRowSkeleton key={i} cols={4} />)
+                ? Array.from({ length: 6 }).map((_, i) => <TableRowSkeleton key={i} cols={5} />)
                 : recentExams.length === 0
                 ? (
                     <tr>
-                      <td colSpan={4} className="px-6 py-8 text-center text-sm text-slate-300 dark:text-white/30">
+                      <td colSpan={5} className="px-6 py-8 text-center text-sm text-slate-300 dark:text-white/30">
                         {t('common.noData')}
                       </td>
                     </tr>
                   )
                 : recentExams.map((exam) => (
                     <tr key={exam.id} className="border-b border-slate-100 dark:border-white/5 last:border-0 transition-colors hover:bg-black/5 dark:hover:bg-white/5">
+                      <td className="px-6 py-4 font-medium text-slate-700 dark:text-white/80">{exam.userName || '—'}</td>
                       <td className="px-6 py-4 text-slate-600 dark:text-white/70">{exam.category || '—'}</td>
                       <td className="px-6 py-4 font-medium text-slate-800 dark:text-white/90">
                         {exam.totalQuestions > 0

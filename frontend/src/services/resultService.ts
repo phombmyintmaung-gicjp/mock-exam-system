@@ -24,6 +24,25 @@ export const getResultHistory = async (page = 1): Promise<PaginatedResponse<Hist
   return { data: items, count: res.data.count as number, next: res.data.next as string | null, previous: res.data.previous as string | null };
 };
 
+export const getAdminRecentResults = async (limit = 10): Promise<HistoryItem[]> => {
+  const res = await api.get('/admin/results', { params: { page: 1 } });
+  const items = (res.data.data ?? []).slice(0, limit).map((d: Record<string, unknown>) => {
+    const session = d.session as Record<string, unknown> | null;
+    const user = d.user as Record<string, unknown> | null;
+    return {
+      id: d.id as number,
+      category: (session?.category as string) ?? '',
+      mode: (session?.mode as string) ?? '',
+      score: d.score as number,
+      totalQuestions: d.total_questions as number,
+      status: d.status as PassFailStatus,
+      completedAt: d.completed_at as string,
+      userName: (user?.name as string) ?? '',
+    };
+  });
+  return items;
+};
+
 export const exportResultPdf = async (resultId: number, category?: string, userName?: string): Promise<void> => {
   const res = await api.get(`/results/${resultId}/export`, { responseType: 'blob' });
   const url = URL.createObjectURL(res.data as Blob);

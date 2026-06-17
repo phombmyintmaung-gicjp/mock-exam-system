@@ -64,6 +64,7 @@
     "weakAreas": "Weak Areas",
     "profile": "Profile",
     "passages": "Passages",
+    "categories": "Categories",
     "itExam": "IT Exam",
     "japaneseExam": "Japanese Language",
     "myAccount": "My Account",
@@ -296,6 +297,24 @@
       "passwordPlaceholder": "Enter password",
       "passwordOptional": "Leave blank to keep existing password",
       "saveButton": "Save User"
+    },
+    "categories": {
+      "title": "Category Management",
+      "subtitle": "Add and remove question categories",
+      "nameLabel": "Category Name",
+      "namePlaceholder": "e.g. AWS, Linux, Security",
+      "addButton": "Add Category",
+      "addError": "Failed to add category. Name may already exist.",
+      "columnName": "Name",
+      "columnQuestions": "Questions",
+      "editButton": "Rename",
+      "renameTitle": "Rename Category",
+      "renameLabel": "New Name",
+      "renameButton": "Save",
+      "renameError": "Failed to rename. Name may already exist.",
+      "deleteTitle": "Delete Category",
+      "deleteMessage": "Delete \"{{name}}\"? This cannot be undone.",
+      "deleteError": "Cannot delete a category that has questions assigned to it."
     },
     "passages": {
       "title": "Passage Management",

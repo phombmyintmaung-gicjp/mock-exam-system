@@ -31,4 +31,5 @@ export interface HistoryItem {
   totalQuestions: number;
   status: PassFailStatus;
   completedAt: string;
+  userName?: string;
 }

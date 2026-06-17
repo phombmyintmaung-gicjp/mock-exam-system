@@ -11,7 +11,7 @@ class CategoryController extends Controller
 {
     public function index(): JsonResponse
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::withCount('questions')->orderBy('name')->get();
         return response()->json(['data' => $categories]);
     }
 
@@ -19,6 +19,13 @@ class CategoryController extends Controller
     {
         $category = Category::create($request->validated());
         return response()->json(['data' => $category], 201);
+    }
+
+    public function update(StoreCategoryRequest $request, int $id): JsonResponse
+    {
+        $category = Category::findOrFail($id);
+        $category->update($request->validated());
+        return response()->json(['data' => $category]);
     }
 
     public function destroy(int $id): JsonResponse

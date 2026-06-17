@@ -64,6 +64,7 @@
     "weakAreas": "苦手分野",
     "profile": "プロフィール",
     "passages": "文章管理",
+    "categories": "カテゴリ管理",
     "itExam": "IT試験",
     "japaneseExam": "日本語検定",
     "myAccount": "マイアカウント",
@@ -296,6 +297,24 @@
       "passwordPlaceholder": "パスワードを入力してください",
       "passwordOptional": "空白のままにすると既存のパスワードが維持されます",
       "saveButton": "ユーザーを保存する"
+    },
+    "categories": {
+      "title": "カテゴリ管理",
+      "subtitle": "問題カテゴリの追加・削除",
+      "nameLabel": "カテゴリ名",
+      "namePlaceholder": "例：AWS、Linux、Security",
+      "addButton": "追加",
+      "addError": "追加に失敗しました。同名のカテゴリが存在する可能性があります。",
+      "columnName": "名前",
+      "columnQuestions": "問題数",
+      "editButton": "名前変更",
+      "renameTitle": "カテゴリ名を変更",
+      "renameLabel": "新しい名前",
+      "renameButton": "保存",
+      "renameError": "名前変更に失敗しました。同名のカテゴリが存在する可能性があります。",
+      "deleteTitle": "カテゴリを削除",
+      "deleteMessage": "「{{name}}」を削除しますか？この操作は取り消せません。",
+      "deleteError": "問題が割り当てられているカテゴリは削除できません。"
     },
     "passages": {
       "title": "文章管理",

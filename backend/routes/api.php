@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\Admin\DepartmentController;
 use App\Http\Controllers\Api\V1\Admin\ExamSettingController;
 use App\Http\Controllers\Api\V1\Admin\PassageController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
+use App\Http\Controllers\Api\V1\Admin\ResultAdminController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
@@ -98,7 +99,11 @@ Route::prefix('v1')->group(function () {
             // Categories
             Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');
             Route::post('categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+            Route::put('categories/{id}', [CategoryController::class, 'update'])->name('admin.categories.update');
             Route::delete('categories/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+            // Results (all users)
+            Route::get('results', [ResultAdminController::class, 'index'])->name('admin.results.index');
 
             // Reading passages
             Route::get('passages', [PassageController::class, 'index'])->name('admin.passages.index');

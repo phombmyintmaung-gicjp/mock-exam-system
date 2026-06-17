@@ -18,6 +18,7 @@ import UserManagement from '@/pages/admin/UserManagement';
 import UserForm from '@/pages/admin/UserForm';
 import Reports from '@/pages/admin/Reports';
 import Passages from '@/pages/admin/Passages';
+import Categories from '@/pages/admin/Categories';
 
 import ExamSelect from '@/pages/client/ExamSelect';
 import ExamSession from '@/pages/client/ExamSession';
@@ -74,6 +75,7 @@ const App = () => {
           <Route path="/admin/users/:id/edit" element={<UserForm />} />
           <Route path="/admin/reports" element={<Reports />} />
           <Route path="/admin/passages" element={<Passages />} />
+          <Route path="/admin/categories" element={<Categories />} />
         </Route>
 
         {/* Client routes — require employee role */}
