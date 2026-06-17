@@ -7,7 +7,9 @@ import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { Badge } from '@/components/ui/Badge';
 import { getPassages, createPassage, updatePassage, deletePassage } from '@/services/passageService';
+import { getCategories } from '@/services/categoryService';
 import type { Passage, JLPTLevel } from '@/types/exam';
+import type { Category } from '@/types/category';
 
 type PassageRow = Passage & { questions_count: number };
 
@@ -21,11 +23,12 @@ const LEVEL_COLORS: Record<JLPTLevel, string> = {
   N5: 'from-blue-500 to-cyan-500',
 };
 
-const emptyForm = { title: '', content: '', level: 'N5' as JLPTLevel };
+const emptyForm = { title: '', content: '', level: 'N5' as JLPTLevel, category_id: '' as string };
 
 const Passages = () => {
   const { t } = useTranslation();
   const [passages, setPassages]         = useState<PassageRow[]>([]);
+  const [categories, setCategories]     = useState<Category[]>([]);
   const [isLoading, setIsLoading]       = useState(true);
   const [filterLevel, setFilterLevel]   = useState<JLPTLevel | ''>('');
   const [modalOpen, setModalOpen]       = useState(false);
@@ -46,6 +49,10 @@ const Passages = () => {
 
   useEffect(() => { load(); }, [load]);
 
+  useEffect(() => {
+    getCategories().then(setCategories).catch(() => {});
+  }, []);
+
   const openCreate = () => {
     setEditTarget(null);
     setForm(emptyForm);
@@ -54,17 +61,18 @@ const Passages = () => {
 
   const openEdit = (p: PassageRow) => {
     setEditTarget(p);
-    setForm({ title: p.title, content: p.content, level: p.level });
+    setForm({ title: p.title, content: p.content, level: p.level, category_id: p.category_id != null ? String(p.category_id) : '' });
     setModalOpen(true);
   };
 
   const handleSave = async () => {
     setSaving(true);
+    const payload = { ...form, category_id: form.category_id ? Number(form.category_id) : null };
     try {
       if (editTarget) {
-        await updatePassage(editTarget.id, form);
+        await updatePassage(editTarget.id, payload);
       } else {
-        await createPassage(form);
+        await createPassage(payload);
       }
       setModalOpen(false);
       load();
@@ -149,6 +157,9 @@ const Passages = () => {
                     {t('admin.passages.colLevel')}
                   </th>
                   <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40">
+                    {t('admin.passages.colCategory')}
+                  </th>
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40">
                     {t('admin.passages.colQuestions')}
                   </th>
                   <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40">
@@ -171,6 +182,9 @@ const Passages = () => {
                     </td>
                     <td className="px-5 py-3.5">
                       <Badge label={p.level} variant="default" />
+                    </td>
+                    <td className="px-5 py-3.5 text-slate-600 dark:text-white/60">
+                      {p.category?.name ?? <span className="text-slate-300 dark:text-white/20">—</span>}
                     </td>
                     <td className="px-5 py-3.5 text-slate-600 dark:text-white/60">
                       {p.questions_count}
@@ -226,6 +240,19 @@ const Passages = () => {
               className="glass-input w-full rounded-xl px-4 py-2.5 text-sm transition-all"
             >
               {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
+              {t('admin.passages.fieldCategory')}
+            </label>
+            <select
+              value={form.category_id}
+              onChange={(e) => setForm((f) => ({ ...f, category_id: e.target.value }))}
+              className="glass-input w-full rounded-xl px-4 py-2.5 text-sm transition-all"
+            >
+              <option value="">{t('admin.passages.noCategory')}</option>
+              {categories.map((c) => <option key={c.id} value={String(c.id)}>{c.name}</option>)}
             </select>
           </div>
           <div>

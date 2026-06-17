@@ -11,9 +11,10 @@ class StorePassageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'   => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string'],
-            'level'   => ['required', 'in:N1,N2,N3,N4,N5'],
+            'title'       => ['required', 'string', 'max:255'],
+            'content'     => ['required', 'string'],
+            'level'       => ['required', 'in:N1,N2,N3,N4,N5'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
         ];
     }
 }

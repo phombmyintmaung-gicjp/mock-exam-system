@@ -69,7 +69,10 @@
     "japaneseExam": "Japanese Language",
     "myAccount": "My Account",
     "itExamSelect": "Select IT Exam",
-    "jlptPractice": "JLPT Practice"
+    "jlptPractice": "JLPT Practice",
+    "contentGroup": "Content",
+    "usersGroup": "Users",
+    "systemGroup": "System"
   },
   "exam": {
     "startButton": "Start Exam",
@@ -323,12 +326,15 @@
       "allLevels": "All Levels",
       "colTitle": "Title",
       "colLevel": "Level",
+      "colCategory": "Category",
       "colQuestions": "Questions",
       "colActions": "Actions",
       "newTitle": "New Passage",
       "editTitle": "Edit Passage",
       "fieldTitle": "Title",
       "fieldLevel": "Level",
+      "fieldCategory": "Category",
+      "noCategory": "No Category",
       "fieldContent": "Content"
     }
   },

@@ -20,7 +20,6 @@ class StoreUserRequest extends FormRequest
             'email'                 => ['required', 'email', 'max:254', 'unique:users,email'],
             'name'                  => ['required', 'string', 'max:150'],
             'role'                  => ['required', 'in:admin,employee'],
-            'department_id'         => ['nullable', 'integer', 'exists:departments,id'],
             'target_certification'  => ['nullable', 'string', 'max:200'],
             'password'              => ['required', 'string', 'min:8', 'confirmed'],
             'is_active'             => ['sometimes', 'boolean'],

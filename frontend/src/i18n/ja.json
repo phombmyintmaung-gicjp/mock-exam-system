@@ -69,7 +69,10 @@
     "japaneseExam": "日本語検定",
     "myAccount": "マイアカウント",
     "itExamSelect": "IT試験を選ぶ",
-    "jlptPractice": "JLPT練習"
+    "jlptPractice": "JLPT練習",
+    "contentGroup": "コンテンツ",
+    "usersGroup": "ユーザー",
+    "systemGroup": "システム"
   },
   "exam": {
     "startButton": "試験を開始する",
@@ -323,12 +326,15 @@
       "allLevels": "全レベル",
       "colTitle": "タイトル",
       "colLevel": "レベル",
+      "colCategory": "カテゴリ",
       "colQuestions": "問題数",
       "colActions": "操作",
       "newTitle": "新しい文章",
       "editTitle": "文章を編集する",
       "fieldTitle": "タイトル",
       "fieldLevel": "レベル",
+      "fieldCategory": "カテゴリ",
+      "noCategory": "カテゴリなし",
       "fieldContent": "本文"
     }
   },

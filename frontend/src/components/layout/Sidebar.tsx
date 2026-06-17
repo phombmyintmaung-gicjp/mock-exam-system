@@ -94,6 +94,11 @@ interface NavLinkItem {
   end?: boolean;
 }
 
+interface NavSection {
+  title?: string;
+  links: NavLinkItem[];
+}
+
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -110,14 +115,33 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     navigate('/');
   };
 
-  const adminLinks: NavLinkItem[] = [
-    { to: '/admin/dashboard', label: t('nav.dashboard'), icon: <DashboardIcon /> },
-    { to: '/admin/questions', label: t('nav.questions'), icon: <QuestionsIcon /> },
-    { to: '/admin/users', label: t('nav.users'), icon: <UsersIcon /> },
-    { to: '/admin/exams', label: t('nav.examSettings'), icon: <SettingsIcon /> },
-    { to: '/admin/passages', label: t('nav.passages'), icon: <PassagesIcon /> },
-    { to: '/admin/categories', label: t('nav.categories'), icon: <CategoriesIcon /> },
-    { to: '/admin/reports', label: t('nav.reports'), icon: <ReportsIcon /> },
+  const adminSections: NavSection[] = [
+    {
+      links: [
+        { to: '/admin/dashboard', label: t('nav.dashboard'), icon: <DashboardIcon /> },
+      ],
+    },
+    {
+      title: t('nav.contentGroup'),
+      links: [
+        { to: '/admin/questions',  label: t('nav.questions'),  icon: <QuestionsIcon /> },
+        { to: '/admin/passages',   label: t('nav.passages'),   icon: <PassagesIcon /> },
+        { to: '/admin/categories', label: t('nav.categories'), icon: <CategoriesIcon /> },
+      ],
+    },
+    {
+      title: t('nav.usersGroup'),
+      links: [
+        { to: '/admin/users', label: t('nav.users'), icon: <UsersIcon /> },
+      ],
+    },
+    {
+      title: t('nav.systemGroup'),
+      links: [
+        { to: '/admin/exams',   label: t('nav.examSettings'), icon: <SettingsIcon /> },
+        { to: '/admin/reports', label: t('nav.reports'),      icon: <ReportsIcon /> },
+      ],
+    },
   ];
 
   const itLinks: NavLinkItem[] = [
@@ -129,12 +153,46 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   ];
 
   const profileLinks: NavLinkItem[] = [
-    { to: '/profile/history', label: t('nav.history'), icon: <HistoryIcon /> },
+    { to: '/profile/history',    label: t('nav.history'),   icon: <HistoryIcon /> },
     { to: '/profile/weak-areas', label: t('nav.weakAreas'), icon: <WeakAreasIcon /> },
-    { to: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, end: true },
+    { to: '/profile',            label: t('nav.profile'),   icon: <ProfileIcon />, end: true },
   ];
 
   const isAdmin = user?.role === 'admin';
+
+  const renderNavItem = (link: NavLinkItem, accent?: 'amber' | 'rose') => {
+    const href = link.to + (link.search ?? '');
+    const pathMatch = link.end
+      ? location.pathname === link.to
+      : location.pathname === link.to || location.pathname.startsWith(link.to + '/');
+    const searchMatch = link.search
+      ? location.search === link.search
+      : location.search !== '?type=jlpt';
+    const isActive = pathMatch && searchMatch;
+    const cls = clsx(
+      'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all w-full text-left',
+      isActive && accent === 'rose'
+        ? 'border border-rose-200 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 shadow-sm shadow-rose-200/50 dark:border-rose-400/30 dark:from-rose-500/25 dark:to-pink-500/25 dark:text-white dark:shadow-rose-500/10'
+        : isActive
+        ? 'border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 shadow-sm shadow-amber-200/50 dark:border-amber-400/30 dark:from-amber-500/25 dark:to-orange-500/20 dark:text-white dark:shadow-amber-500/10'
+        : 'text-slate-600 hover:bg-black/5 hover:text-slate-900 dark:text-white/55 dark:hover:bg-white/8 dark:hover:text-white/90',
+    );
+    return (
+      <li key={href}>
+        {isExamActive ? (
+          <button onClick={() => { onClose(); setPendingPath(href); }} className={cls}>
+            <span className="shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:scale-110">{link.icon}</span>
+            {link.label}
+          </button>
+        ) : (
+          <Link to={href} onClick={onClose} className={cls}>
+            <span className="shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:scale-110">{link.icon}</span>
+            {link.label}
+          </Link>
+        )}
+      </li>
+    );
+  };
 
   const renderSection = (label: string, links: NavLinkItem[], accent?: 'amber' | 'rose') => (
     <div>
@@ -142,47 +200,28 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         {label}
       </p>
       <ul className="space-y-0.5">
-        {links.map((link) => {
-          const href = link.to + (link.search ?? '');
-          const pathMatch = link.end
-            ? location.pathname === link.to
-            : location.pathname === link.to || location.pathname.startsWith(link.to + '/');
-          const searchMatch = link.search
-            ? location.search === link.search
-            : location.search !== '?type=jlpt';
-          const isActive = pathMatch && searchMatch;
-          const linkClass = clsx(
-            'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all w-full text-left',
-            isActive && accent === 'rose'
-              ? 'border border-rose-200 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 shadow-sm shadow-rose-200/50 dark:border-rose-400/30 dark:from-rose-500/25 dark:to-pink-500/25 dark:text-white dark:shadow-rose-500/10'
-              : isActive
-              ? 'border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 shadow-sm shadow-amber-200/50 dark:border-amber-400/30 dark:from-amber-500/25 dark:to-orange-500/20 dark:text-white dark:shadow-amber-500/10'
-              : 'text-slate-600 hover:bg-black/5 hover:text-slate-900 dark:text-white/55 dark:hover:bg-white/8 dark:hover:text-white/90',
-          );
-          return (
-            <li key={href}>
-              {isExamActive ? (
-                <button
-                  onClick={() => { onClose(); setPendingPath(href); }}
-                  className={linkClass}
-                >
-                  <span className="shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:scale-110">
-                    {link.icon}
-                  </span>
-                  {link.label}
-                </button>
-              ) : (
-                <Link to={href} onClick={onClose} className={linkClass}>
-                  <span className="shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:scale-110">
-                    {link.icon}
-                  </span>
-                  {link.label}
-                </Link>
-              )}
-            </li>
-          );
-        })}
+        {links.map((link) => renderNavItem(link, accent))}
       </ul>
+    </div>
+  );
+
+  const renderAdminSections = () => (
+    <div className="space-y-4">
+      <p className="px-3 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-white/30">
+        {t('nav.admin')}
+      </p>
+      {adminSections.map((section, i) => (
+        <div key={i}>
+          {section.title && (
+            <p className="mb-1 mt-1 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-white/40">
+              {section.title}
+            </p>
+          )}
+          <ul className="space-y-0.5">
+            {section.links.map((link) => renderNavItem(link))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 
@@ -218,7 +257,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         {/* Nav links */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-6">
-          {isAdmin && renderSection(t('nav.admin'), adminLinks)}
+          {isAdmin && renderAdminSections()}
           {!isAdmin && renderSection(t('nav.itExam'), itLinks, 'amber')}
           {!isAdmin && renderSection(t('nav.japaneseExam'), jlptLinks, 'rose')}
           {!isAdmin && renderSection(t('nav.myAccount'), profileLinks)}

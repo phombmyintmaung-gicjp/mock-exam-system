@@ -14,6 +14,8 @@ export interface Passage {
   title: string;
   content: string;
   level: JLPTLevel;
+  category_id?: number | null;
+  category?: { id: number; name: string } | null;
 }
 
 export interface Question {

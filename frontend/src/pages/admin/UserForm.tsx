@@ -4,8 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
-import { getAdminUser, createAdminUser, updateAdminUser, getDepartments } from '@/services/userService';
-import type { Department } from '@/types/user';
+import { getAdminUser, createAdminUser, updateAdminUser } from '@/services/userService';
 
 const UserForm = () => {
   const { t } = useTranslation();
@@ -21,14 +20,6 @@ const UserForm = () => {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<'employee' | 'admin'>('employee');
   const [password, setPassword] = useState('');
-  const [departmentId, setDepartmentId] = useState<string>('');
-  const [departments, setDepartments] = useState<Department[]>([]);
-
-  useEffect(() => {
-    getDepartments()
-      .then(setDepartments)
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (!isEdit || !id) return;
@@ -37,7 +28,6 @@ const UserForm = () => {
         setName(u.name);
         setEmail(u.email);
         setRole(u.role);
-        setDepartmentId(u.department?.id != null ? String(u.department.id) : '');
       })
       .catch(() => setError(t('common.error')))
       .finally(() => setIsLoading(false));
@@ -51,7 +41,6 @@ const UserForm = () => {
       name,
       email,
       role,
-      department_id: departmentId ? Number(departmentId) : null,
     };
     if (password) payload.password = password;
 
@@ -119,31 +108,16 @@ const UserForm = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">{t('admin.userForm.department')}</label>
-              <select
-                value={departmentId}
-                onChange={(e) => setDepartmentId(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none"
-              >
-                <option value="">{t('admin.userForm.noDepartment')}</option>
-                {departments.map((d) => (
-                  <option key={d.id} value={String(d.id)}>{d.name}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">{t('admin.userForm.role')}</label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value as 'employee' | 'admin')}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none"
-              >
-                <option value="employee">{t('nav.employee')}</option>
-                <option value="admin">{t('nav.admin')}</option>
-              </select>
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">{t('admin.userForm.role')}</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as 'employee' | 'admin')}
+              className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none sm:max-w-xs"
+            >
+              <option value="employee">{t('nav.employee')}</option>
+              <option value="admin">{t('nav.admin')}</option>
+            </select>
           </div>
 
           <div>

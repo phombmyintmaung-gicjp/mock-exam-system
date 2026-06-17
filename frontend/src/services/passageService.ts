@@ -12,12 +12,12 @@ export const getPassage = async (id: number): Promise<ApiResponse<Passage>> => {
   return res.data;
 };
 
-export const createPassage = async (data: Omit<Passage, 'id'>): Promise<ApiResponse<Passage>> => {
+export const createPassage = async (data: Record<string, unknown>): Promise<ApiResponse<Passage>> => {
   const res = await api.post('/admin/passages', data);
   return res.data;
 };
 
-export const updatePassage = async (id: number, data: Partial<Omit<Passage, 'id'>>): Promise<ApiResponse<Passage>> => {
+export const updatePassage = async (id: number, data: Record<string, unknown>): Promise<ApiResponse<Passage>> => {
   const res = await api.put(`/admin/passages/${id}`, data);
   return res.data;
 };

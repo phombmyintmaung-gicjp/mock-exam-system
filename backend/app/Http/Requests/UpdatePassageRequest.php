@@ -11,9 +11,10 @@ class UpdatePassageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'   => ['sometimes', 'string', 'max:255'],
-            'content' => ['sometimes', 'string'],
-            'level'   => ['sometimes', 'in:N1,N2,N3,N4,N5'],
+            'title'       => ['sometimes', 'string', 'max:255'],
+            'content'     => ['sometimes', 'string'],
+            'level'       => ['sometimes', 'in:N1,N2,N3,N4,N5'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
         ];
     }
 }

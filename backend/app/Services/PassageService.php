@@ -9,7 +9,7 @@ class PassageService
 {
     public function list(string $level = null): LengthAwarePaginator
     {
-        $query = Passage::withCount('questions')->latest();
+        $query = Passage::with('category')->withCount('questions')->latest();
         if ($level) {
             $query->where('level', $level);
         }

@@ -96,27 +96,23 @@ const UserManagement = () => {
               <tr className="border-b border-gray-200 bg-gray-50">
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnName')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnEmail')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnDepartment')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnRole')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnActions')}</th>
               </tr>
             </thead>
             <tbody>
               {isLoading
-                ? Array.from({ length: 6 }).map((_, i) => <TableRowSkeleton key={i} cols={5} />)
+                ? Array.from({ length: 6 }).map((_, i) => <TableRowSkeleton key={i} cols={4} />)
                 : filtered.length === 0
                 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">{t('common.noData')}</td>
+                      <td colSpan={4} className="px-6 py-8 text-center text-sm text-gray-400">{t('common.noData')}</td>
                     </tr>
                   )
                 : filtered.map((user) => (
                     <tr key={user.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium text-gray-900">{user.name}</td>
                       <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                      <td className="px-6 py-4 text-gray-600">
-                        {(user as User & { department?: { name: string } }).department?.name ?? '—'}
-                      </td>
                       <td className="px-6 py-4">
                         <span
                           className={
