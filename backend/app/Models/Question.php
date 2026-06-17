@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Category;
 
 class Question extends Model
 {
@@ -23,6 +24,7 @@ class Question extends Model
         'text',
         'difficulty',
         'category',
+        'category_id',
         'question_type',
         'explanation',
     ];
@@ -34,6 +36,11 @@ class Question extends Model
     public function passage(): BelongsTo
     {
         return $this->belongsTo(Passage::class);
+    }
+
+    public function categoryModel(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function choices(): HasMany

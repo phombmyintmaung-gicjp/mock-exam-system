@@ -5,6 +5,7 @@ import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { Modal } from '@/components/ui/Modal';
 import { TableRowSkeleton } from '@/components/ui/Shimmer';
 import useQuestions from '@/hooks/useQuestions';
 import { deleteQuestion } from '@/services/questionService';
@@ -31,6 +32,8 @@ const Questions = () => {
   const navigate = useNavigate();
 
   const [tab, setTab] = useState<Tab>('it');
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // IT filters
   const [itSearch, setItSearch] = useState('');
@@ -73,10 +76,16 @@ const Questions = () => {
     return true;
   });
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm(t('common.confirmDelete'))) return;
-    await deleteQuestion(id);
-    tab === 'it' ? itRefetch() : jlptRefetch();
+  const handleDeleteConfirm = async () => {
+    if (!deleteTargetId) return;
+    setIsDeleting(true);
+    try {
+      await deleteQuestion(deleteTargetId);
+      tab === 'it' ? itRefetch() : jlptRefetch();
+    } finally {
+      setIsDeleting(false);
+      setDeleteTargetId(null);
+    }
   };
 
   const switchTab = (next: Tab) => {
@@ -279,7 +288,7 @@ const Questions = () => {
                             </button>
                             <button
                               className="text-xs font-medium text-rose-500 hover:text-rose-700"
-                              onClick={() => handleDelete(q.id)}
+                              onClick={() => setDeleteTargetId(q.id)}
                             >
                               {t('common.delete')}
                             </button>
@@ -299,6 +308,18 @@ const Questions = () => {
           {t('admin.questions.rowCount', { count: questions.length })}
         </p>
       )}
+
+      <Modal
+        isOpen={deleteTargetId !== null}
+        title={t('common.deleteConfirmTitle')}
+        onClose={() => setDeleteTargetId(null)}
+      >
+        <p className="mb-6 text-sm text-slate-600 dark:text-white/70">{t('common.deleteConfirmMessage')}</p>
+        <div className="flex justify-end gap-3">
+          <Button label={t('common.cancel')} variant="secondary" onClick={() => setDeleteTargetId(null)} disabled={isDeleting} />
+          <Button label={isDeleting ? t('common.loading') : t('common.delete')} variant="danger" onClick={handleDeleteConfirm} disabled={isDeleting} />
+        </div>
+      </Modal>
     </PageShell>
   );
 };

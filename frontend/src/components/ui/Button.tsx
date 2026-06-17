@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { clsx } from 'clsx';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger';
@@ -9,6 +10,8 @@ interface ButtonProps {
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   className?: string;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -27,6 +30,8 @@ const Button = ({
   onClick,
   type = 'button',
   className,
+  leftIcon,
+  rightIcon,
 }: ButtonProps) => {
   return (
     <button
@@ -34,13 +39,15 @@ const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
+        'inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
         variantClasses[variant],
         disabled && 'cursor-not-allowed opacity-50',
         className,
       )}
     >
+      {leftIcon}
       {label}
+      {rightIcon}
     </button>
   );
 };

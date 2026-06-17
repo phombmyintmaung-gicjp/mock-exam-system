@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { clsx } from 'clsx';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
 import { logout as logoutApi } from '@/services/authService';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -93,6 +96,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const isExamActive   = useExamGuardStore((s) => s.isActive);
   const setPendingPath = useExamGuardStore((s) => s.setPendingPath);
 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const handleLogout = async () => {
     try { await logoutApi(); } catch {}
     logout();
@@ -140,7 +145,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             : location.search !== '?type=jlpt';
           const isActive = pathMatch && searchMatch;
           const linkClass = clsx(
-            'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all w-full text-left',
+            'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all w-full text-left',
             isActive && accent === 'rose'
               ? 'border border-rose-200 bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700 shadow-sm shadow-rose-200/50 dark:border-rose-400/30 dark:from-rose-500/25 dark:to-pink-500/25 dark:text-white dark:shadow-rose-500/10'
               : isActive
@@ -154,12 +159,16 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   onClick={() => { onClose(); setPendingPath(href); }}
                   className={linkClass}
                 >
-                  {link.icon}
+                  <span className="shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:scale-110">
+                    {link.icon}
+                  </span>
                   {link.label}
                 </button>
               ) : (
                 <Link to={href} onClick={onClose} className={linkClass}>
-                  {link.icon}
+                  <span className="shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:scale-110">
+                    {link.icon}
+                  </span>
                   {link.label}
                 </Link>
               )}
@@ -170,40 +179,69 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     </div>
   );
 
+  const initial = user?.name?.[0]?.toUpperCase() ?? 'U';
+
   return (
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-10 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-10 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
       <aside
         className={clsx(
-          'glass fixed inset-y-0 left-0 top-16 z-20 flex w-64 flex-col transition-transform duration-200',
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+          'glass fixed right-0 top-16 bottom-0 z-20 flex w-72 flex-col transition-transform duration-300',
+          isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <nav className="flex-1 overflow-y-auto p-3 pt-4 space-y-6 pb-2">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-sm font-bold text-white shadow-sm">
+              {initial}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-800 dark:text-white">{user?.name ?? 'User'}</p>
+              <p className="text-xs text-slate-400 dark:text-white/40">{user?.email ?? ''}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Nav links */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-6">
           {isAdmin && renderSection(t('nav.admin'), adminLinks)}
           {!isAdmin && renderSection(t('nav.itExam'), itLinks, 'amber')}
           {!isAdmin && renderSection(t('nav.japaneseExam'), jlptLinks, 'rose')}
           {!isAdmin && renderSection(t('nav.myAccount'), profileLinks)}
         </nav>
 
-        <div className="border-t border-slate-200 p-3 dark:border-white/10">
+        {/* Logout */}
+        <div className="border-t border-slate-200 p-4 dark:border-white/10">
           <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:text-white/40 dark:hover:bg-rose-500/15 dark:hover:text-rose-300"
+            onClick={() => setShowLogoutModal(true)}
+            className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:text-white/40 dark:hover:bg-rose-500/15 dark:hover:text-rose-300"
           >
-            <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-4 w-4 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             {t('auth.logout')}
           </button>
         </div>
       </aside>
+
+      <Modal
+        isOpen={showLogoutModal}
+        title={t('auth.logoutConfirmTitle')}
+        onClose={() => setShowLogoutModal(false)}
+      >
+        <p className="mb-6 text-sm text-slate-600 dark:text-white/70">{t('auth.logoutConfirmMessage')}</p>
+        <div className="flex justify-end gap-3">
+          <Button label={t('common.cancel')} variant="secondary" onClick={() => setShowLogoutModal(false)} />
+          <Button label={t('auth.logout')} variant="danger" onClick={handleLogout} />
+        </div>
+      </Modal>
     </>
   );
 };

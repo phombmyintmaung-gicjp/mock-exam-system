@@ -22,7 +22,7 @@ const Review = () => {
             onClick={() => navigate(`/exam/results/${id}`)}
             className="mb-4 flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white transition-colors"
           >
-            ← {t('result.title')}
+            {t('result.title')}
           </button>
           <h1 className="text-2xl font-bold text-gray-900">{t('result.review.title')}</h1>
           <p className="mt-1 text-sm text-gray-500">{t('result.review.subtitle')}</p>
@@ -68,7 +68,15 @@ const Review = () => {
                         item.isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
                       )}
                     >
-                      {item.isCorrect ? '✓' : '✗'}
+                      {item.isCorrect ? (
+                        <svg className="h-3 w-3" style={{animation:'scale-in 0.15s ease-out'}} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : (
+                        <svg className="h-3 w-3" style={{animation:'scale-in 0.15s ease-out'}} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      )}
                     </span>
                     <div>
                       <span className="text-xs font-semibold uppercase text-gray-400">Q{idx + 1}</span>

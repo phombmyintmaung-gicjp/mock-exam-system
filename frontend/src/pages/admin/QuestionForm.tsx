@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { QuestionCard } from '@/components/shared/QuestionCard';
 import { getAdminQuestion, createQuestion, updateQuestion } from '@/services/questionService';
+import { getCategories, createCategory } from '@/services/categoryService';
 import type { Question } from '@/types/exam';
+import type { Category } from '@/types/category';
 
 interface ChoiceField {
   text: string;
@@ -28,40 +30,93 @@ const QuestionForm = () => {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
 
-  const [isLoading, setIsLoading] = useState(isEdit);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
   const [previewSelected, setPreviewSelected] = useState<number | undefined>(undefined);
   const [previewRevealed, setPreviewRevealed] = useState(false);
 
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryId, setCategoryId] = useState<number | ''>('');
+  const [showNewCategory, setShowNewCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+
   const [text, setText] = useState('');
-  const [category, setCategory] = useState('');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
   const [explanation, setExplanation] = useState('');
   const [choices, setChoices] = useState<ChoiceField[]>(emptyChoices());
 
   useEffect(() => {
-    if (!isEdit || !id) return;
-    getAdminQuestion(Number(id))
-      .then((q) => {
-        setText(q.text);
-        setCategory(q.category);
-        setDifficulty(q.difficulty);
-        setExplanation(q.explanation ?? '');
-        if (q.choices.length > 0) {
-          setChoices(
-            q.choices.map((c, i) => ({
-              text: c.text,
-              is_correct: !!(c as unknown as { is_correct?: boolean }).is_correct,
-              order: i,
-            })),
-          );
+    const loadData = async () => {
+      // Load categories — graceful failure so the form still renders
+      let cats: Category[] = [];
+      try {
+        cats = await getCategories();
+        setCategories(cats);
+      } catch {
+        // Categories table may not be migrated yet; continue with empty list
+      }
+
+      if (isEdit && id) {
+        try {
+          const q = await getAdminQuestion(Number(id));
+          setText(q.text);
+          setDifficulty(q.difficulty);
+          setExplanation(q.explanation ?? '');
+
+          // 1. Try category_id from the raw backend response first
+          const rawCategoryId = (q as unknown as { category_id?: number | null }).category_id;
+          if (rawCategoryId) {
+            setCategoryId(rawCategoryId);
+          } else {
+            // 2. Fall back to name match
+            const matched = cats.find((c) => c.name === q.category);
+            if (matched) {
+              setCategoryId(matched.id);
+            } else if (q.category) {
+              // 3. No match — pre-open new-category input with the existing name
+              setShowNewCategory(true);
+              setNewCategoryName(q.category);
+            }
+          }
+
+          if (q.choices.length > 0) {
+            setChoices(
+              q.choices.map((c, i) => ({
+                text: c.text,
+                is_correct: !!(c as unknown as { is_correct?: boolean }).is_correct,
+                order: i,
+              })),
+            );
+          }
+        } catch {
+          setError(t('common.error'));
         }
-      })
-      .catch(() => setError(t('common.error')))
-      .finally(() => setIsLoading(false));
+      }
+
+      setIsLoading(false);
+    };
+    loadData();
   }, [id, isEdit, t]);
+
+  const handleAddCategory = async () => {
+    const name = newCategoryName.trim();
+    if (!name) return;
+    setIsAddingCategory(true);
+    try {
+      const created = await createCategory(name);
+      setCategories((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+      setCategoryId(created.id);
+      setShowNewCategory(false);
+      setNewCategoryName('');
+    } catch {
+      setError(t('common.error'));
+    } finally {
+      setIsAddingCategory(false);
+    }
+  };
 
   const setCorrect = (idx: number) => {
     setChoices((prev) => prev.map((c, i) => ({ ...c, is_correct: i === idx })));
@@ -77,9 +132,13 @@ const QuestionForm = () => {
       setError(t('admin.questionForm.noCorrectAnswer'));
       return;
     }
+    if (!categoryId) {
+      setError(t('admin.questionForm.categoryRequired'));
+      return;
+    }
     setIsSaving(true);
     setError(null);
-    const payload = { text, category, difficulty, explanation, choices };
+    const payload = { text, category_id: categoryId, difficulty, explanation, choices };
     try {
       if (isEdit && id) {
         await updateQuestion(Number(id), payload);
@@ -100,11 +159,13 @@ const QuestionForm = () => {
     setActiveTab('preview');
   };
 
+  const selectedCategoryName = categories.find((c) => c.id === categoryId)?.name ?? '';
+
   const previewQuestion: Question = {
     id: 0,
     text: text || t('admin.questionForm.previewEmpty'),
     difficulty,
-    category,
+    category: selectedCategoryName,
     choices: choices.map((c, i) => ({
       id: i,
       text: c.text || `Choice ${i + 1}`,
@@ -178,14 +239,53 @@ const QuestionForm = () => {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.category')}</label>
-                <input
-                  type="text"
+                <select
                   required
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                  placeholder={t('admin.questionForm.categoryPlaceholder')}
-                />
+                  value={categoryId}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '__new__') {
+                      setShowNewCategory(true);
+                    } else {
+                      setCategoryId(Number(val));
+                    }
+                  }}
+                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                >
+                  <option value="">{t('admin.questionForm.categoryPlaceholder')}</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                  <option value="__new__">{t('admin.questionForm.newCategoryLabel')}</option>
+                </select>
+                {showNewCategory && (
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      type="text"
+                      autoFocus
+                      value={newCategoryName}
+                      onChange={(e) => setNewCategoryName(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
+                      placeholder={t('admin.questionForm.newCategoryPlaceholder')}
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCategory}
+                      disabled={isAddingCategory || !newCategoryName.trim()}
+                      className="rounded-lg bg-amber-500 px-3 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                    >
+                      {t('admin.questionForm.newCategoryAdd')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setShowNewCategory(false); setNewCategoryName(''); }}
+                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                    >
+                      {t('admin.questionForm.newCategoryCancel')}
+                    </button>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.difficulty')}</label>
@@ -232,7 +332,7 @@ const QuestionForm = () => {
                       required
                       value={choice.text}
                       onChange={(e) => updateChoice(idx, e.target.value)}
-                      placeholder={`${t('admin.questionForm.choicePlaceholder')} ${idx + 1}`}
+                      placeholder={t('admin.questionForm.choicePlaceholder', { number: idx + 1 })}
                       className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
                     {choice.is_correct && (
@@ -247,7 +347,7 @@ const QuestionForm = () => {
 
             <div className="flex flex-wrap justify-end gap-3">
               <Button label={t('common.cancel')} variant="secondary" type="button" onClick={() => navigate('/admin/questions')} />
-              <Button label={isSaving ? t('common.saving') : t('admin.questionForm.saveButton')} disabled={isSaving} />
+              <Button label={isSaving ? t('common.saving') : t('admin.questionForm.saveButton')} type="submit" disabled={isSaving} />
             </div>
           </div>
         </form>

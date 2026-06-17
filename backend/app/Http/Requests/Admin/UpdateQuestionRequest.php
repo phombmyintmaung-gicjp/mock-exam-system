@@ -19,7 +19,7 @@ class UpdateQuestionRequest extends FormRequest
         return [
             'text'                      => ['sometimes', 'string'],
             'difficulty'                => ['sometimes', 'in:easy,medium,hard'],
-            'category'                  => ['sometimes', 'string', 'max:100'],
+            'category_id'               => ['sometimes', 'integer', 'exists:categories,id'],
             'explanation'               => ['sometimes', 'string'],
             'choices'                   => ['sometimes', 'array', 'min:2', 'max:6'],
             'choices.*.text'            => ['required_with:choices', 'string', 'max:500'],

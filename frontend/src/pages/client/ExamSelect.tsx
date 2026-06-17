@@ -165,7 +165,8 @@ const ExamSelect = () => {
         flagged: new Set(),
         secondsRemaining: session.timeLimitSeconds,
       });
-      navigate(isReading ? '/reading/session' : mode === 'exam' ? '/exam/session' : '/study/session');
+      const slug = encodeURIComponent(category);
+      navigate(isReading ? `/reading/session/${slug}` : mode === 'exam' ? `/exam/session/${slug}` : `/study/session/${slug}`);
     } catch {
       setError(t('common.error'));
     } finally {

@@ -152,7 +152,9 @@ const QuestionImport = () => {
               {/* Imported */}
               {result.imported > 0 && (
                 <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 dark:border-emerald-500/20 dark:bg-emerald-500/10 px-4 py-2.5 text-sm">
-                  <span className="text-emerald-600 dark:text-emerald-400 text-lg leading-none">✓</span>
+                  <svg className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
                   <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                     {t('admin.questionImport.resultImported', { count: result.imported })}
                   </span>
@@ -231,7 +233,13 @@ const QuestionImport = () => {
                   {COLUMNS.map(({ field, required }) => (
                     <tr key={field} className="border-b border-slate-50 dark:border-white/5">
                       <td className="py-1.5 font-mono text-amber-600 dark:text-amber-400">{field}</td>
-                      <td className="py-1.5 text-center text-slate-500 dark:text-white/50">{required ? '✓' : ''}</td>
+                      <td className="py-1.5 text-center text-slate-500 dark:text-white/50">
+                        {required ? (
+                          <svg className="mx-auto h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : ''}
+                      </td>
                       <td className="py-1.5 text-slate-600 dark:text-white/55">
                         {t(`admin.questionImport.field_${field.replace('–', '_').replace('1', '').replace('4', '')}`)}
                       </td>

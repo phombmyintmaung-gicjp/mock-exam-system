@@ -10,9 +10,10 @@ interface ExamSession {
   flagged: Set<number>;
   secondsRemaining: number;
   questionElapsedSeconds: number;
+  totalElapsedSeconds: number;
 }
 
-type NewSession = Omit<ExamSession, 'questionElapsedSeconds'>;
+type NewSession = Omit<ExamSession, 'questionElapsedSeconds' | 'totalElapsedSeconds'>;
 
 interface ExamSessionState {
   session: ExamSession | null;
@@ -23,13 +24,13 @@ interface ExamSessionState {
   prevQuestion: () => void;
   tickTimer: () => void;
   tickQuestionTimer: () => void;
-  resetQuestionTimer: () => void;
+  accumulateQuestionTime: () => void;
   resetSession: () => void;
 }
 
 export const useExamSessionStore = create<ExamSessionState>((set) => ({
   session: null,
-  setSession: (session) => set({ session: { ...session, questionElapsedSeconds: 0 } }),
+  setSession: (session) => set({ session: { ...session, questionElapsedSeconds: 0, totalElapsedSeconds: 0 } }),
   setAnswer: (questionId, choiceId) =>
     set((state) => {
       if (!state.session) return state;
@@ -62,10 +63,16 @@ export const useExamSessionStore = create<ExamSessionState>((set) => ({
       if (!state.session) return state;
       return { session: { ...state.session, questionElapsedSeconds: state.session.questionElapsedSeconds + 1 } };
     }),
-  resetQuestionTimer: () =>
+  accumulateQuestionTime: () =>
     set((state) => {
       if (!state.session) return state;
-      return { session: { ...state.session, questionElapsedSeconds: 0 } };
+      return {
+        session: {
+          ...state.session,
+          totalElapsedSeconds: state.session.totalElapsedSeconds + state.session.questionElapsedSeconds,
+          questionElapsedSeconds: 0,
+        },
+      };
     }),
   resetSession: () => set({ session: null }),
 }));

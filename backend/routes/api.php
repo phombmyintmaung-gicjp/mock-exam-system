@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\Admin\DepartmentController;
 use App\Http\Controllers\Api\V1\Admin\ExamSettingController;
 use App\Http\Controllers\Api\V1\Admin\PassageController;
+use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
@@ -93,6 +94,11 @@ Route::prefix('v1')->group(function () {
             // Exam settings (per-category)
             Route::get('exam-settings', [ExamSettingController::class, 'index'])->name('admin.exam-settings.index');
             Route::put('exam-settings/{category}', [ExamSettingController::class, 'update'])->name('admin.exam-settings.update');
+
+            // Categories
+            Route::get('categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+            Route::post('categories', [CategoryController::class, 'store'])->name('admin.categories.store');
+            Route::delete('categories/{id}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
             // Reading passages
             Route::get('passages', [PassageController::class, 'index'])->name('admin.passages.index');

@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "Mock Exam System",
-    "subtitle": "模擬試験システム"
+    "title": "Shiken Lab",
+    "subtitle": "試験ラボ"
   },
   "common": {
     "loading": "読み込み中...",
@@ -11,8 +11,11 @@
     "save": "保存する",
     "delete": "削除する",
     "edit": "編集する",
+    "new": "新規",
     "confirm": "確認",
     "confirmDelete": "本当に削除しますか？",
+    "deleteConfirmTitle": "問題の削除",
+    "deleteConfirmMessage": "この問題はアーカイブされ、一覧から削除されます。この操作は取り消せません。",
     "saving": "保存中...",
     "or": "または",
     "noData": "データがありません",
@@ -88,8 +91,8 @@
     "flagQuestion": "フラグを立てる",
     "nextQuestion": "次の問題",
     "prevQuestion": "前の問題",
-    "next": "次へ →",
-    "prev": "← 前へ",
+    "next": "次へ",
+    "prev": "前へ",
     "selectCategory": "カテゴリを選択してください",
     "examMode": "試験モード",
     "studyMode": "学習モード",
@@ -134,11 +137,15 @@
     "outOfCorrect": "{{total}}問中正解",
     "scoreLabel": "スコア:",
     "passingScore": "合格スコア:",
+    "studyTotalTime": "合計学習時間",
+    "studyAvgTime": "1問あたりの平均時間",
     "reviewAnswers": "回答を確認する",
     "exportPdf": "PDFをダウンロード",
     "correct": "正解",
     "incorrect": "不正解",
     "retake": "もう一度受験する",
+    "backToExamList": "試験一覧に戻る",
+    "viewHistory": "受験履歴を見る",
     "review": {
       "title": "回答レビュー",
       "subtitle": "解説付きで全問題を確認する",
@@ -173,7 +180,12 @@
       "questionText": "問題文",
       "questionTextPlaceholder": "問題文を入力してください...",
       "category": "カテゴリ",
-      "categoryPlaceholder": "例: AWS SAA",
+      "categoryPlaceholder": "カテゴリを選択してください",
+      "categoryRequired": "カテゴリを選択または作成してください。",
+      "newCategoryLabel": "＋ 新しいカテゴリを追加",
+      "newCategoryPlaceholder": "新しいカテゴリ名を入力 (例: AWS SAA)",
+      "newCategoryAdd": "追加",
+      "newCategoryCancel": "キャンセル",
       "difficulty": "難易度",
       "explanation": "解説",
       "explanationPlaceholder": "正解の解説を入力...",
@@ -416,6 +428,28 @@
       "accuracy": "{{value}}% 正解率",
       "wrong": "不正解",
       "total": "合計"
+    }
+  },
+  "examSecurity": {
+    "notice": {
+      "title": "試験セキュリティ通知",
+      "subtitle": "試験を開始する前にお読みください",
+      "rule1": "試験内容のコピー（Ctrl+C、右クリック）は厳禁です。",
+      "rule2": "ブラウザのタブ切り替えは検知され、違反として記録されます。",
+      "rule3": "試験ウィンドウを離れたり、他のアプリに切り替えると違反として記録されます。",
+      "rule4": "3回の違反で試験が自動提出されます。",
+      "agree": "同意する",
+      "acknowledge": "理解しました — 試験を開始する"
+    },
+    "violation": {
+      "title": "セキュリティ違反を検知しました",
+      "finalTitle": "試験が終了しました",
+      "tabSwitch": "試験中に別のタブに切り替えました。",
+      "windowBlur": "試験中に試験ウィンドウを離れました。",
+      "count": "違反 {{count}} / {{threshold}}",
+      "autoSubmitWarning": "あと{{remaining}}回の違反で自動提出されます。",
+      "autoSubmitting": "違反回数の上限に達しました。試験を自動提出しています…",
+      "dismiss": "試験に戻る"
     }
   }
 }

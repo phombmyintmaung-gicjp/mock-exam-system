@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
@@ -6,13 +6,18 @@ import { PageShell } from '@/components/layout/PageShell';
 import { Timer } from '@/components/shared/Timer';
 import { ProgressBar } from '@/components/shared/ProgressBar';
 import { QuestionCard } from '@/components/shared/QuestionCard';
+import { ExamSecurityNotice } from '@/components/shared/ExamSecurityNotice';
+import { ExamViolationModal } from '@/components/shared/ExamViolationModal';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
+import { useExamSecurity } from '@/hooks/useExamSecurity';
 import useTimer from '@/hooks/useTimer';
 import { submitExam } from '@/services/examService';
+
+const SECURITY_THRESHOLD = 3;
 
 const ExamSession = () => {
   const { t } = useTranslation();
@@ -34,6 +39,7 @@ const ExamSession = () => {
   const [showExitModal, setShowExitModal] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [unansweredCount, setUnansweredCount] = useState(0);
+  const [securityAcknowledged, setSecurityAcknowledged] = useState(false);
   const isFinishing = useRef(false);
 
   useEffect(() => {
@@ -89,7 +95,7 @@ const ExamSession = () => {
     setShowSubmitModal(true);
   };
 
-  const handleSubmitConfirmed = async () => {
+  const handleSubmitConfirmed = useCallback(async () => {
     if (!session?.sessionId || isSubmitting) return;
     setShowSubmitModal(false);
     setIsSubmitting(true);
@@ -103,9 +109,20 @@ const ExamSession = () => {
       isFinishing.current = false;
       setIsSubmitting(false);
     }
-  };
+  }, [session, isSubmitting, resetSession, navigate]);
 
   useTimer(session?.secondsRemaining ?? 0, () => { handleSubmitConfirmed(); });
+
+  const {
+    violationCount,
+    showWarning: showSecurityWarning,
+    lastViolationType,
+    dismissWarning: dismissSecurityWarning,
+  } = useExamSecurity({
+    enabled: securityAcknowledged && !!session,
+    threshold: SECURITY_THRESHOLD,
+    onAutoSubmit: handleSubmitConfirmed,
+  });
 
   if (!session) {
     return (
@@ -139,19 +156,25 @@ const ExamSession = () => {
                 <button
                   onClick={() => currentQ && toggleFlag(currentQ.id)}
                   className={clsx(
-                    'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all',
+                    'group flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-all',
                     isFlagged
                       ? 'bg-orange-500/20 text-orange-300 border border-orange-400/30'
                       : 'border border-slate-200 dark:border-white/15 bg-black/5 dark:bg-white/8 text-slate-500 dark:text-white/50 hover:bg-black/8 dark:hover:bg-white/15 hover:text-slate-700 dark:hover:text-white/80',
                   )}
                 >
-                  🚩 {t('exam.flag')}
+                  <svg className={clsx('h-4 w-4 transition-transform duration-150', isFlagged ? 'scale-110' : 'group-hover:scale-125')} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 21V4m0 0l9-2 9 2v11l-9-2-9 2V4z" />
+                  </svg>
+                  {t('exam.flag')}
                 </button>
                 <button
                   onClick={() => setShowExitModal(true)}
-                  className="flex items-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-all"
+                  className="group flex items-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-all"
                 >
-                  ✕ {t('exam.exitConfirmButton')}
+                  <svg className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  {t('exam.exitConfirmButton')}
                 </button>
               </div>
             </div>
@@ -167,8 +190,12 @@ const ExamSession = () => {
           )}
 
           <div className="mt-6 flex justify-between gap-3">
-            <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion} />
-            <Button label={t('exam.next')} disabled={isLast} onClick={nextQuestion} />
+            <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion}
+              leftIcon={<svg className="h-4 w-4 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>}
+            />
+            <Button label={t('exam.next')} disabled={isLast} onClick={nextQuestion}
+              rightIcon={<svg className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>}
+            />
           </div>
 
           <div className="mt-4 flex justify-center">
@@ -197,7 +224,9 @@ const ExamSession = () => {
         {unansweredCount > 0 ? (
           <>
             <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-300 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-4">
-              <span className="mt-0.5 text-lg leading-none">⚠️</span>
+              <svg className="mt-0.5 h-5 w-5 shrink-0 animate-pulse text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
               <p className="text-sm text-amber-800 dark:text-amber-200">
                 {t('exam.unansweredWarningMessage_other', { count: unansweredCount })}
               </p>
@@ -217,6 +246,18 @@ const ExamSession = () => {
           </>
         )}
       </Modal>
+
+      {session && !securityAcknowledged && (
+        <ExamSecurityNotice onAcknowledge={() => setSecurityAcknowledged(true)} onClose={() => { isFinishing.current = true; deactivateGuard(); resetSession(); navigate('/exam/select'); }} />
+      )}
+
+      <ExamViolationModal
+        isOpen={showSecurityWarning}
+        violationType={lastViolationType}
+        violationCount={violationCount}
+        threshold={SECURITY_THRESHOLD}
+        onDismiss={dismissSecurityWarning}
+      />
     </>
   );
 };

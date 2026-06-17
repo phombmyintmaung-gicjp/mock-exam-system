@@ -55,7 +55,7 @@ const App = () => {
   }, [token, setUser, logout]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -79,14 +79,14 @@ const App = () => {
         {/* Client routes — require employee role */}
         <Route element={<PrivateRoute requiredRole="employee" />}>
           <Route path="/exam/select" element={<ExamSelect />} />
-          <Route path="/exam/session" element={<ExamSession />} />
-          <Route path="/study/session" element={<StudySession />} />
+          <Route path="/exam/session/:category" element={<ExamSession />} />
+          <Route path="/study/session/:category" element={<StudySession />} />
           <Route path="/exam/results/:id" element={<Results />} />
           <Route path="/exam/results/:id/review" element={<Review />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/history" element={<History />} />
           <Route path="/profile/weak-areas" element={<WeakAreas />} />
-          <Route path="/reading/session" element={<ReadingSession />} />
+          <Route path="/reading/session/:category" element={<ReadingSession />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

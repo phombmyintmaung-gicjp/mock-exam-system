@@ -41,11 +41,13 @@ const StudySession = () => {
   const handleFinish = async () => {
     if (!session?.sessionId) return;
     const questionIds = session.questions.map((q) => q.id);
+    const totalSeconds = session.totalElapsedSeconds + session.questionElapsedSeconds;
+    const questionCount = session.questions.length;
     try {
       isFinishing.current = true;
       const result = await submitExam(session.sessionId, session.answers, questionIds);
       resetSession();
-      navigate(`/exam/results/${result.id}`);
+      navigate(`/exam/results/${result.id}`, { state: { studyTotalSeconds: totalSeconds, questionCount } });
     } catch {
       isFinishing.current = false;
     }
@@ -103,6 +105,7 @@ const StudySession = () => {
             variant="secondary"
             disabled={session.currentIndex === 0}
             onClick={prevQuestion}
+            leftIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>}
           />
           {isLast ? (
             <Button label={t('exam.submitExam')} variant="danger" onClick={handleFinish} />
@@ -111,6 +114,7 @@ const StudySession = () => {
               label={t('exam.next')}
               disabled={!revealed}
               onClick={nextQuestion}
+              rightIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>}
             />
           )}
         </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreQuestionRequest;
 use App\Http\Requests\Admin\UpdateQuestionRequest;
+use App\Models\Category;
 use App\Models\Choice;
 use App\Models\Question;
 use Illuminate\Http\JsonResponse;
@@ -103,11 +104,14 @@ class QuestionAdminController extends Controller
         $validated = $request->validated();
 
         $question = DB::transaction(function () use ($validated): Question {
+            $category = Category::findOrFail($validated['category_id']);
+
             /** @var Question $question */
             $question = Question::create([
                 'text'        => $validated['text'],
                 'difficulty'  => $validated['difficulty'],
-                'category'    => $validated['category'],
+                'category'    => $category->name,
+                'category_id' => $category->id,
                 'explanation' => $validated['explanation'],
             ]);
 
@@ -172,12 +176,19 @@ class QuestionAdminController extends Controller
         $question = Question::findOrFail($id);
 
         $question = DB::transaction(function () use ($question, $validated): Question {
-            $question->update(array_filter([
+            $updateData = array_filter([
                 'text'        => $validated['text'] ?? null,
                 'difficulty'  => $validated['difficulty'] ?? null,
-                'category'    => $validated['category'] ?? null,
                 'explanation' => $validated['explanation'] ?? null,
-            ], fn ($v) => $v !== null));
+            ], fn ($v) => $v !== null);
+
+            if (isset($validated['category_id'])) {
+                $category = Category::findOrFail($validated['category_id']);
+                $updateData['category']    = $category->name;
+                $updateData['category_id'] = $category->id;
+            }
+
+            $question->update($updateData);
 
             if (isset($validated['choices'])) {
                 // Replace all choices atomically.

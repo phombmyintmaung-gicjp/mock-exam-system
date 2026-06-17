@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
+import { Breadcrumb } from './Breadcrumb';
 
 interface PageShellProps {
   children: ReactNode;
@@ -18,10 +19,13 @@ const PageShell = ({ children }: PageShellProps) => {
         <div className="absolute top-1/3 -right-48 h-80 w-80 rounded-full bg-orange-400/15 blur-3xl dark:bg-orange-500/10" />
         <div className="absolute -bottom-48 left-1/3 h-72 w-72 rounded-full bg-amber-300/12 blur-3xl dark:bg-amber-600/10" />
       </div>
-      <Navbar onMenuToggle={() => setIsSidebarOpen((v) => !v)} />
+      <Navbar onMenuToggle={() => setIsSidebarOpen((v) => !v)} isMenuOpen={isSidebarOpen} />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-      <main className="relative pt-16 lg:ml-64">
-        <div className="p-4 md:p-8">{children}</div>
+      <main className="relative pt-16">
+        <div className="p-4 md:p-8">
+          <Breadcrumb />
+          {children}
+        </div>
       </main>
     </div>
   );

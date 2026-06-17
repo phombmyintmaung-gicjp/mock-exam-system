@@ -1,19 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Timer } from '@/components/shared/Timer';
 import { ProgressBar } from '@/components/shared/ProgressBar';
+import { ExamSecurityNotice } from '@/components/shared/ExamSecurityNotice';
+import { ExamViolationModal } from '@/components/shared/ExamViolationModal';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
+import { useExamSecurity } from '@/hooks/useExamSecurity';
 import useTimer from '@/hooks/useTimer';
 import useElapsedTimer from '@/hooks/useElapsedTimer';
 import { submitExam } from '@/services/examService';
 import type { Passage } from '@/types/exam';
+
+const SECURITY_THRESHOLD = 3;
 
 const ReadingSession = () => {
   const { t } = useTranslation();
@@ -33,6 +38,7 @@ const ReadingSession = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
+  const [securityAcknowledged, setSecurityAcknowledged] = useState(false);
   const isFinishing = useRef(false);
 
   const isStudy = session?.mode === 'study';
@@ -91,7 +97,7 @@ const ReadingSession = () => {
     setPendingPath(null);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!session?.sessionId || isSubmitting) return;
     setIsSubmitting(true);
     const questionIds = session.questions.map((q) => q.id);
@@ -104,7 +110,18 @@ const ReadingSession = () => {
       isFinishing.current = false;
       setIsSubmitting(false);
     }
-  };
+  }, [session, isSubmitting, resetSession, navigate]);
+
+  const {
+    violationCount,
+    showWarning: showSecurityWarning,
+    lastViolationType,
+    dismissWarning: dismissSecurityWarning,
+  } = useExamSecurity({
+    enabled: !isStudy && securityAcknowledged && !!session,
+    threshold: SECURITY_THRESHOLD,
+    onAutoSubmit: handleSubmit,
+  });
 
   // Pass -1 in study mode to disable the timer (0 would fire expire immediately)
   useTimer(isStudy ? -1 : (session?.secondsRemaining ?? 0), () => { handleSubmit(); });
@@ -229,7 +246,9 @@ const ReadingSession = () => {
             )}
 
             <div className="mt-4 flex justify-between gap-3">
-              <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion} />
+              <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion}
+                leftIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>}
+              />
               {isLast ? (
                 <Button
                   label={isSubmitting ? t('common.saving') : t('exam.submitExam')}
@@ -242,6 +261,7 @@ const ReadingSession = () => {
                   label={t('exam.next')}
                   disabled={isStudy && !revealed}
                   onClick={nextQuestion}
+                  rightIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>}
                 />
               )}
             </div>
@@ -260,6 +280,18 @@ const ReadingSession = () => {
           <Button label={t('exam.exitConfirmButton')} variant="danger" onClick={handleConfirmExit} />
         </div>
       </Modal>
+
+      {session && !isStudy && !securityAcknowledged && (
+        <ExamSecurityNotice onAcknowledge={() => setSecurityAcknowledged(true)} onClose={() => { isFinishing.current = true; deactivateGuard(); resetSession(); navigate('/exam/select'); }} />
+      )}
+
+      <ExamViolationModal
+        isOpen={showSecurityWarning}
+        violationType={lastViolationType}
+        violationCount={violationCount}
+        threshold={SECURITY_THRESHOLD}
+        onDismiss={dismissSecurityWarning}
+      />
     </>
   );
 };

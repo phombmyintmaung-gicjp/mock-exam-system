@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "Mock Exam System",
-    "subtitle": "Mock Exam System"
+    "title": "Shiken Lab",
+    "subtitle": "Shiken Lab"
   },
   "common": {
     "loading": "Loading...",
@@ -11,8 +11,11 @@
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
+    "new": "New",
     "confirm": "Confirm",
     "confirmDelete": "Are you sure you want to delete this?",
+    "deleteConfirmTitle": "Delete Question",
+    "deleteConfirmMessage": "This question will be archived and removed from the list. This action cannot be undone.",
     "saving": "Saving...",
     "or": "or",
     "noData": "No data available.",
@@ -88,8 +91,8 @@
     "flagQuestion": "Flag Question",
     "nextQuestion": "Next",
     "prevQuestion": "Previous",
-    "next": "Next →",
-    "prev": "← Previous",
+    "next": "Next",
+    "prev": "Previous",
     "selectCategory": "Select a category",
     "examMode": "Exam Mode",
     "studyMode": "Study Mode",
@@ -134,11 +137,15 @@
     "outOfCorrect": "out of {{total}} correct",
     "scoreLabel": "Score:",
     "passingScore": "Passing score:",
+    "studyTotalTime": "Total Study Time",
+    "studyAvgTime": "Avg. Time / Question",
     "reviewAnswers": "Review Answers",
     "exportPdf": "Download PDF",
     "correct": "Correct",
     "incorrect": "Incorrect",
     "retake": "Take Another Exam",
+    "backToExamList": "Back to Exam List",
+    "viewHistory": "View History",
     "review": {
       "title": "Answer Review",
       "subtitle": "Review all questions with explanations",
@@ -173,7 +180,12 @@
       "questionText": "Question Text",
       "questionTextPlaceholder": "Enter question text...",
       "category": "Category",
-      "categoryPlaceholder": "e.g. AWS SAA",
+      "categoryPlaceholder": "Select a category",
+      "categoryRequired": "Please select or create a category.",
+      "newCategoryLabel": "+ Add new category",
+      "newCategoryPlaceholder": "New category name (e.g. AWS SAA)",
+      "newCategoryAdd": "Add",
+      "newCategoryCancel": "Cancel",
       "difficulty": "Difficulty",
       "explanation": "Explanation",
       "explanationPlaceholder": "Explain the correct answer...",
@@ -416,6 +428,28 @@
       "accuracy": "{{value}}% accuracy",
       "wrong": "wrong",
       "total": "total"
+    }
+  },
+  "examSecurity": {
+    "notice": {
+      "title": "Exam Security Notice",
+      "subtitle": "Please read before starting your exam",
+      "rule1": "Copying exam content (Ctrl+C, right-click) is strictly prohibited.",
+      "rule2": "Switching browser tabs will be detected and recorded as a violation.",
+      "rule3": "Leaving the exam window or switching applications will be recorded as a violation.",
+      "rule4": "After 3 violations, your exam will be automatically submitted.",
+      "agree": "Agree",
+      "acknowledge": "I Understand — Start Exam"
+    },
+    "violation": {
+      "title": "Security Violation Detected",
+      "finalTitle": "Exam Terminated",
+      "tabSwitch": "You switched to another browser tab during the exam.",
+      "windowBlur": "You left the exam window during the exam.",
+      "count": "Violation {{count}} of {{threshold}}",
+      "autoSubmitWarning": "{{remaining}} more violation(s) will trigger automatic submission.",
+      "autoSubmitting": "Maximum violations reached. Submitting your exam now...",
+      "dismiss": "Return to Exam"
     }
   }
 }

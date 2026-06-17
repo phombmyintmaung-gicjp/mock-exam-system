@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 import { useExamSessionStore } from '@/store/examSessionStore';
 
 const useElapsedTimer = (questionIndex: number) => {
-  const tickQuestionTimer = useExamSessionStore((s) => s.tickQuestionTimer);
-  const resetQuestionTimer = useExamSessionStore((s) => s.resetQuestionTimer);
+  const tickQuestionTimer      = useExamSessionStore((s) => s.tickQuestionTimer);
+  const accumulateQuestionTime = useExamSessionStore((s) => s.accumulateQuestionTime);
 
   useEffect(() => {
-    resetQuestionTimer();
+    accumulateQuestionTime(); // flush previous question's time into totalElapsedSeconds
     const id = setInterval(() => tickQuestionTimer(), 1000);
     return () => clearInterval(id);
-  }, [questionIndex, resetQuestionTimer, tickQuestionTimer]);
+  }, [questionIndex, accumulateQuestionTime, tickQuestionTimer]);
 };
 
 export default useElapsedTimer;

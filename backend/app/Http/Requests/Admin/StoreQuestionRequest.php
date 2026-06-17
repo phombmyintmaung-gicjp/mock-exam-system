@@ -19,7 +19,7 @@ class StoreQuestionRequest extends FormRequest
         return [
             'text'                      => ['required', 'string'],
             'difficulty'                => ['required', 'in:easy,medium,hard'],
-            'category'                  => ['required', 'string', 'max:100'],
+            'category_id'               => ['required', 'integer', 'exists:categories,id'],
             'explanation'               => ['required', 'string'],
             'choices'                   => ['required', 'array', 'min:2', 'max:6'],
             'choices.*.text'            => ['required', 'string', 'max:500'],
