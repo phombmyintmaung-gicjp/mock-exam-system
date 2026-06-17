@@ -22,7 +22,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: ../docker/backend/Dockerfile
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       APP_ENV: ${APP_ENV:-local}
@@ -54,7 +54,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: ../docker/frontend/Dockerfile
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       BACKEND_URL: http://backend:8000
