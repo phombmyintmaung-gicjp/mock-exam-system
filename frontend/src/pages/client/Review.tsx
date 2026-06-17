@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Shimmer, ReviewItemSkeleton } from '@/components/ui/Shimmer';
 import useResults from '@/hooks/useResults';
+import { CheckIcon, XIcon } from '@/components/ui/Icons';
 
 const Review = () => {
   const { t } = useTranslation();
@@ -69,13 +70,9 @@ const Review = () => {
                       )}
                     >
                       {item.isCorrect ? (
-                        <svg className="h-3 w-3" style={{animation:'scale-in 0.15s ease-out'}} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
+                        <CheckIcon className="h-3 w-3" strokeWidth={3} style={{ animation: 'scale-in 0.15s ease-out' }} />
                       ) : (
-                        <svg className="h-3 w-3" style={{animation:'scale-in 0.15s ease-out'}} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <XIcon className="h-3 w-3" strokeWidth={3} style={{ animation: 'scale-in 0.15s ease-out' }} />
                       )}
                     </span>
                     <div>

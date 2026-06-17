@@ -17,7 +17,7 @@ export default defineConfig({
       usePolling: true,
     },
     hmr: {
-      host: 'localhost',
+      host: 'localhost', // switch to WiFi IP (e.g. 192.168.200.62) for LAN testing
       port: 5173,
     },
     proxy: {

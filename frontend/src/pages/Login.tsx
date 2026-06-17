@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { login } from '@/services/authService';
 import { useAuthStore } from '@/store/authStore';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
+import { ArrowLeftIcon, BookOpenIcon } from '@/components/ui/Icons';
 
 const Login = () => {
   const { t } = useTranslation();
@@ -55,9 +56,7 @@ const Login = () => {
         to="/"
         className="absolute top-5 left-5 z-20 flex items-center gap-1.5 rounded-full border border-white/10 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-slate-700 backdrop-blur-sm transition-colors hover:bg-white/20 dark:text-white/70 dark:hover:text-white"
       >
-        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
+        <ArrowLeftIcon className="h-4 w-4" />
         {t('auth.backToHome')}
       </Link>
 
@@ -175,6 +174,16 @@ const Login = () => {
                 {t('auth.signUpLink')}
               </Link>
             </p>
+
+            <div className="mt-4 border-t border-slate-100 pt-4 dark:border-white/10">
+              <Link
+                to="/study"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:border-amber-400 hover:text-amber-600 dark:border-white/10 dark:text-white/50 dark:hover:border-amber-400/50 dark:hover:text-amber-400"
+              >
+                <BookOpenIcon className="h-4 w-4" />
+                {t('auth.studyWithoutAccount')}
+              </Link>
+            </div>
           </div>
         </div>
       </div>

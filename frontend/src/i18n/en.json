@@ -49,7 +49,20 @@
     "noAccount": "Don't have an account?",
     "signUpLink": "Sign Up",
     "backToHome": "Back to Home",
-    "rememberEmail": "Remember email"
+    "backToLogin": "Back to Login",
+    "rememberEmail": "Remember email",
+    "studyWithoutAccount": "Study without an account",
+    "nameRequired": "Name is required",
+    "passwordHint": "Minimum 8 characters",
+    "registerPage": {
+      "heroTitle": "Start Your Learning Journey",
+      "heroSubtitle": "GIC Japan employees — create your account and start preparing for your next certification.",
+      "subtitle": "GIC Japan employees only",
+      "benefit1": "IT Certifications",
+      "benefit2": "JLPT N1–N5",
+      "benefit3": "Progress Tracking",
+      "benefit3Desc": "Analytics and weak area detection"
+    }
   },
   "nav": {
     "admin": "Admin",
@@ -72,7 +85,8 @@
     "jlptPractice": "JLPT Practice",
     "contentGroup": "Content",
     "usersGroup": "Users",
-    "systemGroup": "System"
+    "systemGroup": "System",
+    "flashcards": "Flashcards"
   },
   "exam": {
     "startButton": "Start Exam",
@@ -336,17 +350,61 @@
       "fieldCategory": "Category",
       "noCategory": "No Category",
       "fieldContent": "Content"
+    },
+    "flashcards": {
+      "title": "Flashcard Management",
+      "subtitle": "{{count}} cards total",
+      "newButton": "+ New Card",
+      "allTypes": "All Types",
+      "colType": "Type",
+      "colLevel": "Level",
+      "colFront": "Front",
+      "colReading": "Reading",
+      "colMeaning": "Meaning",
+      "newTitle": "New Flashcard",
+      "editTitle": "Edit Flashcard",
+      "fieldType": "Type",
+      "fieldLevel": "Level",
+      "fieldFront": "Front (Kanji / Word / Pattern)",
+      "fieldReading": "Reading (Hiragana)",
+      "fieldMeaning": "Meaning (English)",
+      "fieldExample": "Example Sentence",
+      "fieldExampleTranslation": "Example Translation"
+    }
+  },
+  "study": {
+    "title": "Study Mode",
+    "subtitle": "Practice kanji, vocabulary, and grammar with flashcards — no account needed",
+    "startButton": "Start studying",
+    "backToLogin": "Back to Login",
+    "backToDashboard": "Dashboard",
+    "backToStudy": "Study Menu",
+    "shuffle": "Shuffle",
+    "noCards": "No cards found for this filter",
+    "allDone": "You've reviewed all cards!",
+    "kanji": {
+      "title": "Kanji",
+      "description": "Learn kanji readings and meanings"
+    },
+    "vocab": {
+      "title": "Vocabulary",
+      "description": "Build your JLPT vocabulary"
+    },
+    "grammar": {
+      "title": "Grammar",
+      "description": "Study grammar patterns and usage"
     }
   },
   "home": {
     "hero": {
-      "badge": "IT Certifications + JLPT N1–N5",
-      "titleLine1": "Master Your Exams,",
-      "titleLine2": "Your Way",
-      "subtitle": "Practice IT certifications and JLPT with realistic mock exams, instant feedback, and detailed analytics — all in one place.",
+      "badge": "IT Certifications · JLPT N1–N5 · Free Flashcards",
+      "titleLine1": "Ace Your Next Exam.",
+      "titleLine2": "Study Your Way.",
+      "subtitle": "Realistic mock exams for IT certifications and JLPT, plus free flashcard study — all in one place for GIC Japan employees.",
       "cta": "Sign In to Get Started",
+      "studyCta": "Try Free Flashcards",
       "explore": "Explore Categories",
-      "trustLine": "For GIC Japan employees"
+      "trustLine": "For GIC Japan employees · Flashcard study is free — no account needed"
     },
     "stats": {
       "itCerts": "IT Categories",
@@ -400,6 +458,12 @@
       "n4": "Elementary — basic grammar and vocabulary",
       "n5": "Beginner — simple everyday Japanese"
     },
+    "freeStudy": {
+      "badge": "No Login Required",
+      "title": "Flashcard Study — Free & Open",
+      "subtitle": "Practice kanji readings, JLPT vocabulary, and grammar patterns without an account. All five JLPT levels available for everyone.",
+      "cta": "Start Studying Now"
+    },
     "howItWorks": {
       "title": "How It Works",
       "step1": { "title": "Sign In", "desc": "Log in with your GIC Japan company account credentials." },
@@ -407,11 +471,13 @@
       "step3": { "title": "Practice & Improve", "desc": "Take timed exams or study at your pace, then review analytics to track progress." }
     },
     "cta": {
-      "title": "Ready to start?",
-      "subtitle": "Sign in to access your personalized exam dashboard and start practicing today.",
+      "title": "Ready to get started?",
+      "subtitle": "Sign in to access your personalized exam dashboard, track your progress, and prepare for your next certification.",
       "button": "Sign In",
-      "noAccount": "No account yet?",
-      "signUp": "Create one now"
+      "noAccount": "Don't have an account yet?",
+      "signUp": "Register here",
+      "freeStudy": "Just want to practice?",
+      "freeStudyLink": "Study flashcards without an account →"
     },
     "footer": {
       "copyright": "© 2026 Mock Exam System. All rights reserved."

@@ -19,6 +19,10 @@ import UserForm from '@/pages/admin/UserForm';
 import Reports from '@/pages/admin/Reports';
 import Passages from '@/pages/admin/Passages';
 import Categories from '@/pages/admin/Categories';
+import Flashcards from '@/pages/admin/Flashcards';
+
+import StudyHome from '@/pages/study/StudyHome';
+import FlashcardSession from '@/pages/study/FlashcardSession';
 
 import ExamSelect from '@/pages/client/ExamSelect';
 import ExamSession from '@/pages/client/ExamSession';
@@ -62,6 +66,10 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+        {/* Public study routes — no auth required */}
+        <Route path="/study" element={<StudyHome />} />
+        <Route path="/study/:type" element={<FlashcardSession />} />
+
         {/* Admin routes — require admin role */}
         <Route element={<PrivateRoute requiredRole="admin" />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
@@ -76,6 +84,7 @@ const App = () => {
           <Route path="/admin/reports" element={<Reports />} />
           <Route path="/admin/passages" element={<Passages />} />
           <Route path="/admin/categories" element={<Categories />} />
+          <Route path="/admin/flashcards" element={<Flashcards />} />
         </Route>
 
         {/* Client routes — require employee role */}

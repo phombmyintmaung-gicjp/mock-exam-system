@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import { ClockIcon } from '@/components/ui/Icons';
 
 interface TimerProps {
   seconds: number;
@@ -25,14 +26,9 @@ const Timer = ({ seconds, mode = 'countdown' }: TimerProps) => {
             : 'border border-slate-200 dark:border-white/15 bg-black/5 dark:bg-white/10 text-slate-800 dark:text-white/90',
       )}
     >
-      <svg
+      <ClockIcon
         className={clsx('h-5 w-5', isWarning ? 'text-rose-400' : mode === 'elapsed' ? 'text-amber-500' : 'text-slate-500 dark:text-white/60')}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+      />
       {formatTime(seconds)}
     </div>
   );

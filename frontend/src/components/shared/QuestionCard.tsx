@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { clsx } from 'clsx';
 import type { Question } from '@/types/exam';
+import { CheckIcon, XIcon } from '@/components/ui/Icons';
 
 interface QuestionCardProps {
   question: Question;
@@ -31,19 +32,11 @@ const QuestionCard = ({ question, selectedChoiceId, onSelect, revealed = false }
             if (isCorrect) {
               rowClass = 'border-emerald-400/50 bg-emerald-500/15 text-emerald-800 dark:text-emerald-200';
               badgeClass = 'bg-emerald-500 text-white';
-              icon = (
-                <svg className="h-3 w-3" style={{animation:'scale-in 0.15s ease-out'}} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              );
+              icon = <CheckIcon className="h-3 w-3" strokeWidth={3} style={{ animation: 'scale-in 0.15s ease-out' }} />;
             } else if (isSelected) {
               rowClass = 'border-rose-400/50 bg-rose-500/15 text-rose-800 dark:text-rose-200';
               badgeClass = 'bg-rose-500 text-white';
-              icon = (
-                <svg className="h-3 w-3" style={{animation:'scale-in 0.15s ease-out'}} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              );
+              icon = <XIcon className="h-3 w-3" strokeWidth={3} style={{ animation: 'scale-in 0.15s ease-out' }} />;
             } else {
               rowClass = 'border-slate-200/50 dark:border-white/5 bg-black/3 dark:bg-white/3 text-slate-400 dark:text-white/35';
               badgeClass = 'bg-black/5 dark:bg-white/8 text-slate-300 dark:text-white/25';

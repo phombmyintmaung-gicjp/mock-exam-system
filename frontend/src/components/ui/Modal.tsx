@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { XIcon } from '@/components/ui/Icons';
 
 interface ModalProps {
   isOpen: boolean;
@@ -24,9 +25,7 @@ const Modal = ({ isOpen, title, children, onClose }: ModalProps) => {
             onClick={onClose}
             className="ml-4 rounded-lg p-1.5 text-slate-400 dark:text-white/40 transition-colors hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white/80"
           >
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-            </svg>
+            <XIcon className="h-5 w-5" />
           </button>
         </div>
         <div className="text-sm text-slate-700 dark:text-white/80">{children}</div>

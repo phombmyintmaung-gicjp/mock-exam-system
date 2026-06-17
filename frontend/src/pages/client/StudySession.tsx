@@ -7,6 +7,7 @@ import { QuestionCard } from '@/components/shared/QuestionCard';
 import { Timer } from '@/components/shared/Timer';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/ui/Icons';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import useElapsedTimer from '@/hooks/useElapsedTimer';
 import { submitExam } from '@/services/examService';
@@ -105,7 +106,7 @@ const StudySession = () => {
             variant="secondary"
             disabled={session.currentIndex === 0}
             onClick={prevQuestion}
-            leftIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>}
+            leftIcon={<ChevronLeftIcon className="h-4 w-4" />}
           />
           {isLast ? (
             <Button label={t('exam.submitExam')} variant="danger" onClick={handleFinish} />
@@ -114,7 +115,7 @@ const StudySession = () => {
               label={t('exam.next')}
               disabled={!revealed}
               onClick={nextQuestion}
-              rightIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>}
+              rightIcon={<ChevronRightIcon className="h-4 w-4" />}
             />
           )}
         </div>

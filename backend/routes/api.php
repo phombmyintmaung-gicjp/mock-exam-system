@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\V1\Admin\ExamSettingController;
 use App\Http\Controllers\Api\V1\Admin\PassageController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Admin\ResultAdminController;
+use App\Http\Controllers\Api\V1\Admin\FlashcardAdminController;
+use App\Http\Controllers\Api\V1\FlashcardController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
@@ -26,6 +28,11 @@ use App\Http\Controllers\Api\V1\ProfileController;
 */
 
 Route::prefix('v1')->group(function () {
+
+    // -------------------------------------------------------------------------
+    // Public study routes (no auth required)
+    // -------------------------------------------------------------------------
+    Route::get('study/flashcards', [FlashcardController::class, 'index'])->name('study.flashcards.index');
 
     // -------------------------------------------------------------------------
     // Public auth routes
@@ -104,6 +111,12 @@ Route::prefix('v1')->group(function () {
 
             // Results (all users)
             Route::get('results', [ResultAdminController::class, 'index'])->name('admin.results.index');
+
+            // Flashcard management
+            Route::get('flashcards', [FlashcardAdminController::class, 'index'])->name('admin.flashcards.index');
+            Route::post('flashcards', [FlashcardAdminController::class, 'store'])->name('admin.flashcards.store');
+            Route::put('flashcards/{id}', [FlashcardAdminController::class, 'update'])->name('admin.flashcards.update');
+            Route::delete('flashcards/{id}', [FlashcardAdminController::class, 'destroy'])->name('admin.flashcards.destroy');
 
             // Reading passages
             Route::get('passages', [PassageController::class, 'index'])->name('admin.passages.index');

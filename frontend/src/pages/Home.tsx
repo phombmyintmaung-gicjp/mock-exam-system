@@ -4,17 +4,11 @@ import { useAuthStore } from '@/store/authStore';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { useThemeStore } from '@/store/themeStore';
 import { clsx } from 'clsx';
-
-const SunIcon = () => (
-  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-  </svg>
-);
-const MoonIcon = () => (
-  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-  </svg>
-);
+import {
+  SunIcon, MoonIcon, CloudIcon, GlobeIcon, ShieldCheckIcon, TerminalIcon,
+  ClockIcon, LightbulbIcon, BarChartIcon, DocumentTextIcon, TableCellsIcon,
+  BookOpenIcon,
+} from '@/components/ui/Icons';
 
 const IT_CATEGORIES = [
   {
@@ -23,11 +17,7 @@ const IT_CATEGORIES = [
     descKey: 'home.categories.aws' as const,
     gradient: 'from-orange-500 to-amber-500',
     shadow: 'shadow-orange-500/20',
-    icon: (
-      <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
-      </svg>
-    ),
+    icon: <CloudIcon className="h-5 w-5 text-white" strokeWidth={1.5} />,
   },
   {
     id: 'Network',
@@ -35,11 +25,7 @@ const IT_CATEGORIES = [
     descKey: 'home.categories.network' as const,
     gradient: 'from-blue-500 to-cyan-500',
     shadow: 'shadow-blue-500/20',
-    icon: (
-      <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-      </svg>
-    ),
+    icon: <GlobeIcon className="h-5 w-5 text-white" strokeWidth={1.5} />,
   },
   {
     id: 'Security',
@@ -47,11 +33,7 @@ const IT_CATEGORIES = [
     descKey: 'home.categories.security' as const,
     gradient: 'from-rose-500 to-pink-500',
     shadow: 'shadow-rose-500/20',
-    icon: (
-      <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-      </svg>
-    ),
+    icon: <ShieldCheckIcon className="h-5 w-5 text-white" strokeWidth={1.5} />,
   },
   {
     id: 'Linux',
@@ -59,11 +41,7 @@ const IT_CATEGORIES = [
     descKey: 'home.categories.linux' as const,
     gradient: 'from-emerald-500 to-green-500',
     shadow: 'shadow-emerald-500/20',
-    icon: (
-      <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
-      </svg>
-    ),
+    icon: <TerminalIcon className="h-5 w-5 text-white" strokeWidth={1.5} />,
   },
 ];
 
@@ -109,7 +87,7 @@ const Home = () => {
               className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+              {theme === 'dark' ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
             </button>
             <Link
               to="/login"
@@ -126,7 +104,7 @@ const Home = () => {
         <div className="mx-auto max-w-4xl">
           <div className="mb-5 flex justify-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500 dark:bg-amber-400" aria-hidden="true" />
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500 dark:bg-amber-400" aria-hidden="true" />
               {t('home.hero.badge')}
             </span>
           </div>
@@ -147,12 +125,13 @@ const Home = () => {
             >
               {t('home.hero.cta')}
             </Link>
-            <a
-              href="#categories"
-              className="w-full rounded-xl border border-slate-200 bg-white/80 px-8 py-3.5 text-center text-base font-semibold text-slate-700 backdrop-blur-sm transition-all hover:bg-slate-50 dark:border-white/15 dark:bg-white/8 dark:text-white/85 dark:hover:bg-white/12 sm:w-auto"
+            <Link
+              to="/study"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/80 px-8 py-3.5 text-base font-semibold text-slate-700 backdrop-blur-sm transition-all hover:bg-slate-50 dark:border-white/15 dark:bg-white/8 dark:text-white/85 dark:hover:bg-white/12 sm:w-auto"
             >
-              {t('home.hero.explore')}
-            </a>
+              <BookOpenIcon className="h-4 w-4 text-amber-500" />
+              {t('home.hero.studyCta')}
+            </Link>
           </div>
 
           {/* Trust line */}
@@ -196,28 +175,28 @@ const Home = () => {
                 shadow: 'shadow-amber-500/20',
                 titleKey: 'home.features.exam.title',
                 descKey: 'home.features.exam.desc',
-                icon: <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+                icon: <ClockIcon className="h-5 w-5 text-white" />,
               },
               {
                 gradient: 'from-emerald-500 to-teal-500',
                 shadow: 'shadow-emerald-500/20',
                 titleKey: 'home.features.study.title',
                 descKey: 'home.features.study.desc',
-                icon: <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>,
+                icon: <LightbulbIcon className="h-5 w-5 text-white" />,
               },
               {
                 gradient: 'from-orange-500 to-amber-400',
                 shadow: 'shadow-orange-500/20',
                 titleKey: 'home.features.analytics.title',
                 descKey: 'home.features.analytics.desc',
-                icon: <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
+                icon: <BarChartIcon className="h-5 w-5 text-white" />,
               },
               {
                 gradient: 'from-rose-500 to-pink-500',
                 shadow: 'shadow-rose-500/20',
                 titleKey: 'home.features.jlpt.title',
                 descKey: 'home.features.jlpt.desc',
-                icon: <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+                icon: <DocumentTextIcon className="h-5 w-5 text-white" />,
               },
             ].map((feat) => (
               <div key={feat.titleKey} className="glass-card overflow-hidden rounded-2xl transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
@@ -240,7 +219,7 @@ const Home = () => {
         <div className="mx-auto max-w-5xl">
           <div className="mb-3 flex justify-center">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-500 dark:border-white/15 dark:bg-white/8 dark:text-white/50">
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" /></svg>
+              <TableCellsIcon className="h-3.5 w-3.5" />
               IT
             </span>
           </div>
@@ -325,6 +304,57 @@ const Home = () => {
         </div>
       </section>
 
+      {/* ── Free Study ────────────────────────────────────────── */}
+      <section className="px-4 py-16">
+        <div className="mx-auto max-w-5xl">
+          <div className="glass-card overflow-hidden rounded-3xl">
+            <div className="h-0.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400" />
+            <div className="px-6 py-10 sm:px-10">
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12">
+
+                <div className="lg:flex-1">
+                  <span className="inline-flex rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-bold text-amber-600 dark:text-amber-300 ring-1 ring-amber-500/20">
+                    {t('home.freeStudy.badge')}
+                  </span>
+                  <h2 className="mt-3 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+                    {t('home.freeStudy.title')}
+                  </h2>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-white/50">
+                    {t('home.freeStudy.subtitle')}
+                  </p>
+                  <Link
+                    to="/study"
+                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-amber-500/20 transition-all hover:opacity-90"
+                  >
+                    <BookOpenIcon className="h-4 w-4" />
+                    {t('home.freeStudy.cta')}
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 lg:grid-cols-1 lg:w-60">
+                  {[
+                    { char: '漢', titleKey: 'study.kanji.title' as const, descKey: 'study.kanji.description' as const, gradient: 'from-rose-500 to-rose-600' },
+                    { char: '語', titleKey: 'study.vocab.title' as const, descKey: 'study.vocab.description' as const, gradient: 'from-amber-500 to-orange-500' },
+                    { char: '文', titleKey: 'study.grammar.title' as const, descKey: 'study.grammar.description' as const, gradient: 'from-emerald-500 to-teal-500' },
+                  ].map((item) => (
+                    <div key={item.titleKey} className="flex items-center gap-3 rounded-xl bg-black/3 p-3 ring-1 ring-slate-200/60 dark:bg-white/5 dark:ring-white/10">
+                      <div className={clsx('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-sm font-bold text-white', item.gradient)}>
+                        {item.char}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-800 dark:text-white/90">{t(item.titleKey)}</p>
+                        <p className="truncate text-xs text-slate-400 dark:text-white/40">{t(item.descKey)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── How It Works ──────────────────────────────────────── */}
       <section className="px-4 py-16">
         <div className="mx-auto max-w-4xl">
@@ -364,18 +394,28 @@ const Home = () => {
               </div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">{t('home.cta.title')}</h2>
               <p className="mt-3 text-slate-500 dark:text-white/50">{t('home.cta.subtitle')}</p>
-              <Link
-                to="/login"
-                className="mt-8 inline-block rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:opacity-90"
-              >
-                {t('home.cta.button')}
-              </Link>
-              <p className="mt-4 text-sm text-slate-400 dark:text-white/35">
-                {t('home.cta.noAccount')}{' '}
-                <Link to="/register" className="font-semibold text-amber-600 underline underline-offset-2 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
-                  {t('home.cta.signUp')}
+              <div className="mt-8 flex flex-col items-center gap-3">
+                <Link
+                  to="/login"
+                  className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:opacity-90"
+                >
+                  {t('home.cta.button')}
                 </Link>
-              </p>
+                <p className="text-sm text-slate-400 dark:text-white/35">
+                  {t('home.cta.noAccount')}{' '}
+                  <Link to="/register" className="font-semibold text-amber-600 underline underline-offset-2 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
+                    {t('home.cta.signUp')}
+                  </Link>
+                </p>
+              </div>
+              <div className="mt-6 border-t border-slate-100 dark:border-white/8 pt-6">
+                <p className="text-sm text-slate-400 dark:text-white/35">
+                  {t('home.cta.freeStudy')}{' '}
+                  <Link to="/study" className="font-semibold text-amber-600 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
+                    {t('home.cta.freeStudyLink')}
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import { ExamViolationModal } from '@/components/shared/ExamViolationModal';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
+import { XIcon, ChevronLeftIcon, ChevronRightIcon } from '@/components/ui/Icons';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
 import { useExamSecurity } from '@/hooks/useExamSecurity';
@@ -174,7 +175,8 @@ const ReadingSession = () => {
                   onClick={() => setShowExitModal(true)}
                   className="flex items-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-all"
                 >
-                  ✕ {t('exam.exitConfirmButton')}
+                  <XIcon className="h-4 w-4" />
+                  {t('exam.exitConfirmButton')}
                 </button>
               </>
             )}
@@ -247,7 +249,7 @@ const ReadingSession = () => {
 
             <div className="mt-4 flex justify-between gap-3">
               <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion}
-                leftIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>}
+                leftIcon={<ChevronLeftIcon className="h-4 w-4" />}
               />
               {isLast ? (
                 <Button
@@ -261,7 +263,7 @@ const ReadingSession = () => {
                   label={t('exam.next')}
                   disabled={isStudy && !revealed}
                   onClick={nextQuestion}
-                  rightIcon={<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>}
+                  rightIcon={<ChevronRightIcon className="h-4 w-4" />}
                 />
               )}
             </div>

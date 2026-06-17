@@ -1,0 +1,253 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Flashcard;
+use Illuminate\Database\Seeder;
+
+class FlashcardSeeder extends Seeder
+{
+    public function run(): void
+    {
+        Flashcard::truncate();
+
+        $cards = [
+
+            // ─── N5 KANJI ───────────────────────────────────────────────────
+            ['type'=>'kanji','level'=>'N5','front'=>'日','reading'=>'にち・ひ','meaning'=>'day, sun','example_sentence'=>'今日はいい日ですね。','example_translation'=>'Today is a nice day, isn\'t it?'],
+            ['type'=>'kanji','level'=>'N5','front'=>'本','reading'=>'ほん','meaning'=>'book, origin','example_sentence'=>'この本はおもしろいです。','example_translation'=>'This book is interesting.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'人','reading'=>'ひと・じん','meaning'=>'person, people','example_sentence'=>'あの人はだれですか。','example_translation'=>'Who is that person?'],
+            ['type'=>'kanji','level'=>'N5','front'=>'山','reading'=>'やま','meaning'=>'mountain','example_sentence'=>'富士山はきれいです。','example_translation'=>'Mt. Fuji is beautiful.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'水','reading'=>'みず','meaning'=>'water','example_sentence'=>'水を一杯ください。','example_translation'=>'Please give me a glass of water.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'火','reading'=>'ひ','meaning'=>'fire','example_sentence'=>'火に気をつけてください。','example_translation'=>'Please be careful with fire.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'木','reading'=>'き','meaning'=>'tree, wood','example_sentence'=>'公園に木がたくさんあります。','example_translation'=>'There are many trees in the park.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'金','reading'=>'きん・かね','meaning'=>'gold, money','example_sentence'=>'お金がありません。','example_translation'=>'I have no money.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'月','reading'=>'つき・がつ','meaning'=>'moon, month','example_sentence'=>'今夜の月は明るいです。','example_translation'=>'The moon tonight is bright.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'年','reading'=>'とし・ねん','meaning'=>'year','example_sentence'=>'今年は何年ですか。','example_translation'=>'What year is this year?'],
+            ['type'=>'kanji','level'=>'N5','front'=>'大','reading'=>'おお・だい','meaning'=>'big, large','example_sentence'=>'大きい犬ですね。','example_translation'=>'That is a big dog.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'小','reading'=>'ちい・しょう','meaning'=>'small, little','example_sentence'=>'小さい子どもが遊んでいます。','example_translation'=>'A small child is playing.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'上','reading'=>'うえ・じょう','meaning'=>'above, up','example_sentence'=>'机の上に本があります。','example_translation'=>'There is a book on the desk.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'下','reading'=>'した・か','meaning'=>'below, down','example_sentence'=>'椅子の下に猫がいます。','example_translation'=>'There is a cat under the chair.'],
+            ['type'=>'kanji','level'=>'N5','front'=>'口','reading'=>'くち','meaning'=>'mouth','example_sentence'=>'口を開けてください。','example_translation'=>'Please open your mouth.'],
+
+            // ─── N5 VOCAB ───────────────────────────────────────────────────
+            ['type'=>'vocab','level'=>'N5','front'=>'食べる','reading'=>'たべる','meaning'=>'to eat','example_sentence'=>'毎朝ご飯を食べます。','example_translation'=>'I eat rice every morning.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'飲む','reading'=>'のむ','meaning'=>'to drink','example_sentence'=>'水をたくさん飲んでください。','example_translation'=>'Please drink a lot of water.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'行く','reading'=>'いく','meaning'=>'to go','example_sentence'=>'学校に行きます。','example_translation'=>'I go to school.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'来る','reading'=>'くる','meaning'=>'to come','example_sentence'=>'友達が来ました。','example_translation'=>'My friend came.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'見る','reading'=>'みる','meaning'=>'to see, to watch','example_sentence'=>'テレビを見ます。','example_translation'=>'I watch TV.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'聞く','reading'=>'きく','meaning'=>'to listen, to ask','example_sentence'=>'音楽を聞きます。','example_translation'=>'I listen to music.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'話す','reading'=>'はなす','meaning'=>'to speak, to talk','example_sentence'=>'日本語で話してください。','example_translation'=>'Please speak in Japanese.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'書く','reading'=>'かく','meaning'=>'to write','example_sentence'=>'名前を書いてください。','example_translation'=>'Please write your name.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'読む','reading'=>'よむ','meaning'=>'to read','example_sentence'=>'毎日本を読みます。','example_translation'=>'I read books every day.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'買う','reading'=>'かう','meaning'=>'to buy','example_sentence'=>'スーパーで野菜を買います。','example_translation'=>'I buy vegetables at the supermarket.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'大きい','reading'=>'おおきい','meaning'=>'big, large','example_sentence'=>'大きいりんごを食べました。','example_translation'=>'I ate a big apple.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'小さい','reading'=>'ちいさい','meaning'=>'small, little','example_sentence'=>'小さい箱に入れてください。','example_translation'=>'Please put it in the small box.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'新しい','reading'=>'あたらしい','meaning'=>'new','example_sentence'=>'新しい車を買いました。','example_translation'=>'I bought a new car.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'古い','reading'=>'ふるい','meaning'=>'old (things)','example_sentence'=>'古い建物が好きです。','example_translation'=>'I like old buildings.'],
+            ['type'=>'vocab','level'=>'N5','front'=>'高い','reading'=>'たかい','meaning'=>'high, expensive','example_sentence'=>'このレストランは高いです。','example_translation'=>'This restaurant is expensive.'],
+
+            // ─── N5 GRAMMAR ─────────────────────────────────────────────────
+            ['type'=>'grammar','level'=>'N5','front'=>'～は～です','reading'=>null,'meaning'=>'[Topic] is [X] — basic copula','example_sentence'=>'私は学生です。','example_translation'=>'I am a student.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～が好きです','reading'=>null,'meaning'=>'to like [something]','example_sentence'=>'音楽が好きです。','example_translation'=>'I like music.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～てください','reading'=>null,'meaning'=>'Please do ~ (polite request)','example_sentence'=>'ゆっくり話してください。','example_translation'=>'Please speak slowly.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～ています','reading'=>null,'meaning'=>'is doing ~ / ongoing state','example_sentence'=>'今、雨が降っています。','example_translation'=>'It is raining now.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～たいです','reading'=>null,'meaning'=>'I want to do ~','example_sentence'=>'日本に行きたいです。','example_translation'=>'I want to go to Japan.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～ませんか','reading'=>null,'meaning'=>'Shall we ~? (invitation)','example_sentence'=>'一緒に映画を見ませんか。','example_translation'=>'Shall we watch a movie together?'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～も','reading'=>null,'meaning'=>'also, too (addition)','example_sentence'=>'私も日本語を勉強しています。','example_translation'=>'I am also studying Japanese.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～より','reading'=>null,'meaning'=>'than ~ (comparison)','example_sentence'=>'バスより電車の方が速いです。','example_translation'=>'The train is faster than the bus.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～に行きます','reading'=>null,'meaning'=>'to go to [place] / to go in order to do ~','example_sentence'=>'買い物に行きます。','example_translation'=>'I am going shopping.'],
+            ['type'=>'grammar','level'=>'N5','front'=>'～から','reading'=>null,'meaning'=>'because ~ / from ~ (reason or starting point)','example_sentence'=>'忙しいから、行けません。','example_translation'=>'I cannot go because I am busy.'],
+
+            // ─── N4 KANJI ───────────────────────────────────────────────────
+            ['type'=>'kanji','level'=>'N4','front'=>'駅','reading'=>'えき','meaning'=>'station','example_sentence'=>'駅まで歩きましょう。','example_translation'=>'Let\'s walk to the station.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'電','reading'=>'でん','meaning'=>'electricity, telegram','example_sentence'=>'電車で通勤しています。','example_translation'=>'I commute by train.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'車','reading'=>'くるま・しゃ','meaning'=>'car, vehicle','example_sentence'=>'車で行きましょう。','example_translation'=>'Let\'s go by car.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'道','reading'=>'みち・どう','meaning'=>'road, way, path','example_sentence'=>'この道をまっすぐ行ってください。','example_translation'=>'Please go straight along this road.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'週','reading'=>'しゅう','meaning'=>'week','example_sentence'=>'来週、試験があります。','example_translation'=>'There is an exam next week.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'間','reading'=>'あいだ・かん','meaning'=>'between, interval, time','example_sentence'=>'二時間待ちました。','example_translation'=>'I waited for two hours.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'国','reading'=>'くに・こく','meaning'=>'country, nation','example_sentence'=>'あなたの国はどこですか。','example_translation'=>'What country are you from?'],
+            ['type'=>'kanji','level'=>'N4','front'=>'開','reading'=>'ひら・かい','meaning'=>'open','example_sentence'=>'ドアを開けてください。','example_translation'=>'Please open the door.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'閉','reading'=>'し・へい','meaning'=>'close, shut','example_sentence'=>'窓を閉めてください。','example_translation'=>'Please close the window.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'急','reading'=>'いそ・きゅう','meaning'=>'hurry, sudden','example_sentence'=>'急いで来てください。','example_translation'=>'Please come quickly.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'重','reading'=>'おも・じゅう','meaning'=>'heavy, important','example_sentence'=>'この荷物は重いです。','example_translation'=>'This luggage is heavy.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'度','reading'=>'ど','meaning'=>'degree, time (occurrences)','example_sentence'=>'もう一度言ってください。','example_translation'=>'Please say it one more time.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'図','reading'=>'ず・と','meaning'=>'figure, diagram, map','example_sentence'=>'地図を見てください。','example_translation'=>'Please look at the map.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'地','reading'=>'ち','meaning'=>'ground, earth','example_sentence'=>'この地域は自然が豊かです。','example_translation'=>'This area is rich in nature.'],
+            ['type'=>'kanji','level'=>'N4','front'=>'初','reading'=>'はじ・しょ','meaning'=>'first, beginning','example_sentence'=>'初めて日本を訪れました。','example_translation'=>'I visited Japan for the first time.'],
+
+            // ─── N4 VOCAB ───────────────────────────────────────────────────
+            ['type'=>'vocab','level'=>'N4','front'=>'残念','reading'=>'ざんねん','meaning'=>'unfortunate, regrettable','example_sentence'=>'行けなくて残念です。','example_translation'=>'It is unfortunate that I cannot go.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'丁寧','reading'=>'ていねい','meaning'=>'polite, careful','example_sentence'=>'丁寧に話してください。','example_translation'=>'Please speak politely.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'便利','reading'=>'べんり','meaning'=>'convenient, handy','example_sentence'=>'スマホはとても便利です。','example_translation'=>'Smartphones are very convenient.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'特別','reading'=>'とくべつ','meaning'=>'special, particular','example_sentence'=>'今日は特別な日です。','example_translation'=>'Today is a special day.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'普通','reading'=>'ふつう','meaning'=>'ordinary, normal','example_sentence'=>'普通の生活を送っています。','example_translation'=>'I lead a normal life.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'意見','reading'=>'いけん','meaning'=>'opinion, view','example_sentence'=>'あなたの意見を聞かせてください。','example_translation'=>'Please let me hear your opinion.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'経験','reading'=>'けいけん','meaning'=>'experience','example_sentence'=>'仕事の経験がありますか。','example_translation'=>'Do you have work experience?'],
+            ['type'=>'vocab','level'=>'N4','front'=>'連絡','reading'=>'れんらく','meaning'=>'contact, communication','example_sentence'=>'後で連絡します。','example_translation'=>'I will contact you later.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'準備','reading'=>'じゅんび','meaning'=>'preparation, getting ready','example_sentence'=>'旅行の準備をしています。','example_translation'=>'I am preparing for the trip.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'集める','reading'=>'あつめる','meaning'=>'to collect, to gather','example_sentence'=>'切手を集めています。','example_translation'=>'I am collecting stamps.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'疲れる','reading'=>'つかれる','meaning'=>'to get tired','example_sentence'=>'今日はとても疲れました。','example_translation'=>'I am very tired today.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'困る','reading'=>'こまる','meaning'=>'to be troubled, to be in trouble','example_sentence'=>'道に迷って困っています。','example_translation'=>'I am in trouble because I am lost.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'直す','reading'=>'なおす','meaning'=>'to fix, to correct','example_sentence'=>'壊れた時計を直しました。','example_translation'=>'I fixed the broken watch.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'決める','reading'=>'きめる','meaning'=>'to decide','example_sentence'=>'場所を決めましょう。','example_translation'=>'Let\'s decide on a place.'],
+            ['type'=>'vocab','level'=>'N4','front'=>'続ける','reading'=>'つづける','meaning'=>'to continue','example_sentence'=>'毎日練習を続けています。','example_translation'=>'I continue practicing every day.'],
+
+            // ─── N4 GRAMMAR ─────────────────────────────────────────────────
+            ['type'=>'grammar','level'=>'N4','front'=>'～てから','reading'=>null,'meaning'=>'after doing ~','example_sentence'=>'宿題をしてから、テレビを見ます。','example_translation'=>'I watch TV after doing my homework.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～ために','reading'=>null,'meaning'=>'in order to ~, for the purpose of ~','example_sentence'=>'健康のために毎日運動します。','example_translation'=>'I exercise every day for my health.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～ながら','reading'=>null,'meaning'=>'while doing ~ (simultaneous actions)','example_sentence'=>'音楽を聴きながら勉強します。','example_translation'=>'I study while listening to music.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～かもしれない','reading'=>null,'meaning'=>'might be ~, perhaps ~','example_sentence'=>'明日、雨が降るかもしれません。','example_translation'=>'It might rain tomorrow.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～てしまう','reading'=>null,'meaning'=>'completely did ~ / unfortunately did ~','example_sentence'=>'財布を忘れてしまいました。','example_translation'=>'I unfortunately left my wallet behind.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～ばよかった','reading'=>null,'meaning'=>'should have done ~ (regret)','example_sentence'=>'もっと勉強すればよかった。','example_translation'=>'I should have studied more.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～そうです','reading'=>null,'meaning'=>'looks like ~, seems like ~ (appearance)','example_sentence'=>'この料理はおいしそうです。','example_translation'=>'This dish looks delicious.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～ようにする','reading'=>null,'meaning'=>'to try to do ~, to make sure to do ~','example_sentence'=>'毎日早起きするようにしています。','example_translation'=>'I make sure to wake up early every day.'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～てもいいです','reading'=>null,'meaning'=>'it is okay to do ~ (permission)','example_sentence'=>'ここに座ってもいいですか。','example_translation'=>'May I sit here?'],
+            ['type'=>'grammar','level'=>'N4','front'=>'～なければならない','reading'=>null,'meaning'=>'must do ~, have to do ~','example_sentence'=>'明日までに報告書を書かなければならない。','example_translation'=>'I must write the report by tomorrow.'],
+
+            // ─── N3 KANJI ───────────────────────────────────────────────────
+            ['type'=>'kanji','level'=>'N3','front'=>'族','reading'=>'ぞく','meaning'=>'tribe, family, group','example_sentence'=>'家族と旅行に行きました。','example_translation'=>'I traveled with my family.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'化','reading'=>'か・け','meaning'=>'change, transformation','example_sentence'=>'社会は急速に変化しています。','example_translation'=>'Society is changing rapidly.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'職','reading'=>'しょく','meaning'=>'occupation, post','example_sentence'=>'新しい職場に慣れました。','example_translation'=>'I got used to my new workplace.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'予','reading'=>'よ','meaning'=>'beforehand, in advance','example_sentence'=>'予約をしてください。','example_translation'=>'Please make a reservation.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'定','reading'=>'てい・さだ','meaning'=>'determine, fix, decide','example_sentence'=>'日程を定めました。','example_translation'=>'I set the schedule.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'関','reading'=>'かん','meaning'=>'connection, barrier','example_sentence'=>'それは私とは関係ありません。','example_translation'=>'That has nothing to do with me.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'以','reading'=>'い','meaning'=>'by means of, from','example_sentence'=>'18歳以上が対象です。','example_translation'=>'This is for those 18 and older.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'共','reading'=>'とも・きょう','meaning'=>'together, both','example_sentence'=>'共に頑張りましょう。','example_translation'=>'Let\'s work hard together.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'末','reading'=>'すえ・まつ','meaning'=>'end, tip','example_sentence'=>'週末に何をしますか。','example_translation'=>'What do you do on weekends?'],
+            ['type'=>'kanji','level'=>'N3','front'=>'働','reading'=>'はたら','meaning'=>'work, labor','example_sentence'=>'週五日働いています。','example_translation'=>'I work five days a week.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'受','reading'=>'う','meaning'=>'receive, accept','example_sentence'=>'試験を受けました。','example_translation'=>'I took the exam.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'選','reading'=>'えら・せん','meaning'=>'select, choose','example_sentence'=>'どちらを選びますか。','example_translation'=>'Which will you choose?'],
+            ['type'=>'kanji','level'=>'N3','front'=>'産','reading'=>'うむ・さん','meaning'=>'produce, birth','example_sentence'=>'この地域は果物の産地です。','example_translation'=>'This region is a fruit-producing area.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'際','reading'=>'さい・きわ','meaning'=>'occasion, time, edge','example_sentence'=>'緊急の際は119番に電話してください。','example_translation'=>'In an emergency, please call 119.'],
+            ['type'=>'kanji','level'=>'N3','front'=>'比','reading'=>'くら・ひ','meaning'=>'compare, ratio','example_sentence'=>'去年と比べて暖かいです。','example_translation'=>'It is warmer compared to last year.'],
+
+            // ─── N3 VOCAB ───────────────────────────────────────────────────
+            ['type'=>'vocab','level'=>'N3','front'=>'必要','reading'=>'ひつよう','meaning'=>'necessary, needed','example_sentence'=>'パスポートが必要です。','example_translation'=>'A passport is necessary.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'重要','reading'=>'じゅうよう','meaning'=>'important, significant','example_sentence'=>'健康は最も重要です。','example_translation'=>'Health is the most important.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'安全','reading'=>'あんぜん','meaning'=>'safety, security','example_sentence'=>'安全に運転してください。','example_translation'=>'Please drive safely.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'自由','reading'=>'じゆう','meaning'=>'freedom, liberty','example_sentence'=>'言論の自由は大切です。','example_translation'=>'Freedom of speech is important.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'複雑','reading'=>'ふくざつ','meaning'=>'complicated, complex','example_sentence'=>'この問題は複雑です。','example_translation'=>'This problem is complicated.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'確認','reading'=>'かくにん','meaning'=>'confirmation, verification','example_sentence'=>'予約を確認しました。','example_translation'=>'I confirmed the reservation.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'影響','reading'=>'えいきょう','meaning'=>'influence, effect','example_sentence'=>'天気は気分に影響します。','example_translation'=>'The weather affects your mood.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'状況','reading'=>'じょうきょう','meaning'=>'situation, circumstances','example_sentence'=>'状況を説明してください。','example_translation'=>'Please explain the situation.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'努力','reading'=>'どりょく','meaning'=>'effort, endeavor','example_sentence'=>'毎日努力することが大切です。','example_translation'=>'It is important to make effort every day.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'判断','reading'=>'はんだん','meaning'=>'judgment, decision','example_sentence'=>'自分で判断してください。','example_translation'=>'Please make your own judgment.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'比べる','reading'=>'くらべる','meaning'=>'to compare','example_sentence'=>'二つの商品を比べました。','example_translation'=>'I compared two products.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'断る','reading'=>'ことわる','meaning'=>'to refuse, to decline','example_sentence'=>'その依頼を断りました。','example_translation'=>'I refused that request.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'増える','reading'=>'ふえる','meaning'=>'to increase','example_sentence'=>'外国人旅行者が増えています。','example_translation'=>'The number of foreign tourists is increasing.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'減る','reading'=>'へる','meaning'=>'to decrease','example_sentence'=>'人口が減っています。','example_translation'=>'The population is decreasing.'],
+            ['type'=>'vocab','level'=>'N3','front'=>'想像','reading'=>'そうぞう','meaning'=>'imagination','example_sentence'=>'将来を想像してみてください。','example_translation'=>'Try to imagine the future.'],
+
+            // ─── N3 GRAMMAR ─────────────────────────────────────────────────
+            ['type'=>'grammar','level'=>'N3','front'=>'～によって','reading'=>null,'meaning'=>'depending on ~, by means of ~, due to ~','example_sentence'=>'人によって意見が違います。','example_translation'=>'Opinions differ depending on the person.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～に対して','reading'=>null,'meaning'=>'towards ~, regarding ~, in contrast to ~','example_sentence'=>'先生に対して失礼なことを言いました。','example_translation'=>'I said something rude to the teacher.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～わけだ','reading'=>null,'meaning'=>'that is why ~, it means that ~','example_sentence'=>'彼は留学していたから、英語が上手なわけだ。','example_translation'=>'He studied abroad, so that is why his English is good.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～ことになっている','reading'=>null,'meaning'=>'it has been decided that ~, supposed to ~','example_sentence'=>'来週、会議があることになっています。','example_translation'=>'It has been decided that there will be a meeting next week.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～さえ～ば','reading'=>null,'meaning'=>'if only ~, as long as ~','example_sentence'=>'お金さえあれば、問題ありません。','example_translation'=>'If only I had money, there would be no problem.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～ものの','reading'=>null,'meaning'=>'although ~, even though ~ (different result)','example_sentence'=>'勉強したものの、試験に落ちました。','example_translation'=>'Although I studied, I failed the exam.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～に関して','reading'=>null,'meaning'=>'regarding ~, concerning ~','example_sentence'=>'この件に関してご意見をください。','example_translation'=>'Please give me your opinion regarding this matter.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～ほど','reading'=>null,'meaning'=>'to the extent that ~, the more ~ the more ~','example_sentence'=>'日本語は勉強すればするほど難しくなります。','example_translation'=>'The more you study Japanese, the more difficult it becomes.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～たびに','reading'=>null,'meaning'=>'every time ~, whenever ~','example_sentence'=>'日本に来るたびに、この店に寄ります。','example_translation'=>'Every time I come to Japan, I stop by this shop.'],
+            ['type'=>'grammar','level'=>'N3','front'=>'～として','reading'=>null,'meaning'=>'as ~, in the capacity of ~','example_sentence'=>'彼はガイドとして働いています。','example_translation'=>'He works as a guide.'],
+
+            // ─── N2 KANJI ───────────────────────────────────────────────────
+            ['type'=>'kanji','level'=>'N2','front'=>'環','reading'=>'かん','meaning'=>'ring, surround, environment','example_sentence'=>'環境保護が重要です。','example_translation'=>'Environmental protection is important.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'境','reading'=>'きょう・さかい','meaning'=>'boundary, border','example_sentence'=>'国境を越えました。','example_translation'=>'I crossed the national border.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'就','reading'=>'しゅう・つ','meaning'=>'take up, engage in, employment','example_sentence'=>'就職活動が大変です。','example_translation'=>'Job hunting is tough.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'著','reading'=>'いちじる・ちょ','meaning'=>'remarkable, author, write','example_sentence'=>'著しく成長しました。','example_translation'=>'It grew remarkably.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'触','reading'=>'ふ・しょく','meaning'=>'touch, contact','example_sentence'=>'自然に触れることが好きです。','example_translation'=>'I like to be in contact with nature.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'拡','reading'=>'ひろ・かく','meaning'=>'spread, expand','example_sentence'=>'事業を拡大しました。','example_translation'=>'We expanded the business.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'縮','reading'=>'ちぢ・しゅく','meaning'=>'shrink, contract','example_sentence'=>'服が洗濯で縮みました。','example_translation'=>'The clothes shrank in the wash.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'承','reading'=>'しょう','meaning'=>'consent, inherit, receive','example_sentence'=>'ご要望を承りました。','example_translation'=>'I have received your request.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'促','reading'=>'うなが・そく','meaning'=>'urge, promote, hasten','example_sentence'=>'改革を促す必要があります。','example_translation'=>'It is necessary to urge reform.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'派','reading'=>'は','meaning'=>'faction, sect, dispatch','example_sentence'=>'海外に社員を派遣しました。','example_translation'=>'We dispatched an employee overseas.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'獲','reading'=>'え・かく','meaning'=>'acquire, get, reap','example_sentence'=>'金メダルを獲得しました。','example_translation'=>'I won a gold medal.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'維','reading'=>'い','meaning'=>'maintain, fiber','example_sentence'=>'現状を維持することが難しい。','example_translation'=>'It is difficult to maintain the current situation.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'担','reading'=>'にな・たん','meaning'=>'shoulder, bear, carry','example_sentence'=>'責任を担っています。','example_translation'=>'I am bearing responsibility.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'批','reading'=>'ひ','meaning'=>'criticism, judgment','example_sentence'=>'批判的に考えることが大切です。','example_translation'=>'It is important to think critically.'],
+            ['type'=>'kanji','level'=>'N2','front'=>'供','reading'=>'とも・きょう','meaning'=>'companion, supply, offer','example_sentence'=>'サービスを提供しています。','example_translation'=>'We are providing the service.'],
+
+            // ─── N2 VOCAB ───────────────────────────────────────────────────
+            ['type'=>'vocab','level'=>'N2','front'=>'把握','reading'=>'はあく','meaning'=>'grasp, comprehend, understand','example_sentence'=>'状況を把握してください。','example_translation'=>'Please grasp the situation.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'懸念','reading'=>'けねん','meaning'=>'concern, anxiety, worry','example_sentence'=>'安全への懸念が高まっています。','example_translation'=>'Concerns about safety are growing.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'緩和','reading'=>'かんわ','meaning'=>'relaxation, alleviation, easing','example_sentence'=>'規制が緩和されました。','example_translation'=>'The regulations have been eased.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'促進','reading'=>'そくしん','meaning'=>'promotion, acceleration, facilitation','example_sentence'=>'経済の促進が必要です。','example_translation'=>'Economic promotion is necessary.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'概念','reading'=>'がいねん','meaning'=>'concept, notion, general idea','example_sentence'=>'その概念を理解するのは難しい。','example_translation'=>'It is difficult to understand that concept.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'姿勢','reading'=>'しせい','meaning'=>'posture, attitude, stance','example_sentence'=>'正しい姿勢で座ってください。','example_translation'=>'Please sit with proper posture.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'配慮','reading'=>'はいりょ','meaning'=>'consideration, thoughtfulness','example_sentence'=>'環境への配慮が大切です。','example_translation'=>'Consideration for the environment is important.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'妥当','reading'=>'だとう','meaning'=>'appropriate, valid, reasonable','example_sentence'=>'その判断は妥当だと思います。','example_translation'=>'I think that judgment is appropriate.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'顕著','reading'=>'けんちょ','meaning'=>'remarkable, notable, conspicuous','example_sentence'=>'顕著な改善が見られます。','example_translation'=>'A remarkable improvement can be seen.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'喪失','reading'=>'そうしつ','meaning'=>'loss, forfeit','example_sentence'=>'記憶を喪失しました。','example_translation'=>'I lost my memory.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'一貫','reading'=>'いっかん','meaning'=>'consistent, coherent','example_sentence'=>'一貫した方針を持っています。','example_translation'=>'We have a consistent policy.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'補完','reading'=>'ほかん','meaning'=>'complement, supplement','example_sentence'=>'二つの計画が互いを補完しています。','example_translation'=>'The two plans complement each other.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'相互','reading'=>'そうご','meaning'=>'mutual, reciprocal','example_sentence'=>'相互理解が大切です。','example_translation'=>'Mutual understanding is important.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'暫定','reading'=>'ざんてい','meaning'=>'provisional, temporary','example_sentence'=>'暫定措置として実施します。','example_translation'=>'It will be implemented as a provisional measure.'],
+            ['type'=>'vocab','level'=>'N2','front'=>'模索','reading'=>'もさく','meaning'=>'groping, searching, exploring','example_sentence'=>'解決策を模索しています。','example_translation'=>'We are searching for a solution.'],
+
+            // ─── N2 GRAMMAR ─────────────────────────────────────────────────
+            ['type'=>'grammar','level'=>'N2','front'=>'～にもかかわらず','reading'=>null,'meaning'=>'despite ~, in spite of ~','example_sentence'=>'努力したにもかかわらず、失敗しました。','example_translation'=>'Despite my efforts, I failed.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～に従って','reading'=>null,'meaning'=>'following ~, in accordance with ~, as ~ progresses','example_sentence'=>'時代の変化に従って、法律も変わります。','example_translation'=>'As times change, laws also change.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～に基づいて','reading'=>null,'meaning'=>'based on ~, founded on ~','example_sentence'=>'データに基づいて判断しました。','example_translation'=>'I made a decision based on the data.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～を通じて','reading'=>null,'meaning'=>'through ~, via ~, throughout ~','example_sentence'=>'友人を通じて仕事を見つけました。','example_translation'=>'I found work through a friend.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～に加えて','reading'=>null,'meaning'=>'in addition to ~, on top of ~','example_sentence'=>'英語に加えて、日本語も話せます。','example_translation'=>'In addition to English, I can also speak Japanese.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～をはじめ','reading'=>null,'meaning'=>'starting with ~, ~ and others','example_sentence'=>'東京をはじめ、多くの都市で開催されます。','example_translation'=>'It will be held in many cities, starting with Tokyo.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～かねない','reading'=>null,'meaning'=>'might possibly ~, there is a risk of ~ (negative)','example_sentence'=>'このままでは失敗しかねない。','example_translation'=>'At this rate, there is a risk of failure.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～ざるを得ない','reading'=>null,'meaning'=>'cannot help but ~, have no choice but to ~','example_sentence'=>'状況から判断して、行かざるを得ない。','example_translation'=>'Judging from the situation, I have no choice but to go.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～に反して','reading'=>null,'meaning'=>'contrary to ~, against ~','example_sentence'=>'予想に反して、試験は簡単でした。','example_translation'=>'Contrary to expectations, the exam was easy.'],
+            ['type'=>'grammar','level'=>'N2','front'=>'～にしたがって','reading'=>null,'meaning'=>'as ~ progresses / according to ~','example_sentence'=>'年齢が上がるにしたがって、責任も増えます。','example_translation'=>'As age increases, responsibilities also increase.'],
+
+            // ─── N1 KANJI ───────────────────────────────────────────────────
+            ['type'=>'kanji','level'=>'N1','front'=>'憂','reading'=>'うれ・ゆう','meaning'=>'grief, gloom, melancholy','example_sentence'=>'将来を憂えています。','example_translation'=>'I am worried about the future.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'錯','reading'=>'さく','meaning'=>'confused, mix up, be wrong','example_sentence'=>'錯覚を起こしました。','example_translation'=>'I experienced an illusion.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'徴','reading'=>'ちょう','meaning'=>'sign, indication, collect','example_sentence'=>'その徴候が見られます。','example_translation'=>'Those symptoms can be seen.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'懸','reading'=>'か・けん','meaning'=>'hang, suspend, depend','example_sentence'=>'命懸けで挑みました。','example_translation'=>'I challenged with my life on the line.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'遵','reading'=>'じゅん','meaning'=>'obey, follow, abide by','example_sentence'=>'法律を遵守してください。','example_translation'=>'Please abide by the law.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'醸','reading'=>'かも・じょう','meaning'=>'brew, create (atmosphere)','example_sentence'=>'良い雰囲気を醸し出しています。','example_translation'=>'It creates a good atmosphere.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'凌','reading'=>'しの','meaning'=>'endure, surpass','example_sentence'=>'困難を凌いできました。','example_translation'=>'I have endured difficulties.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'抑','reading'=>'おさ・よく','meaning'=>'suppress, control, restrain','example_sentence'=>'感情を抑えてください。','example_translation'=>'Please suppress your emotions.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'陥','reading'=>'おちい・かん','meaning'=>'fall into, collapse, cave in','example_sentence'=>'危機に陥っています。','example_translation'=>'We have fallen into a crisis.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'贈','reading'=>'おく・ぞう','meaning'=>'give, present, bestow','example_sentence'=>'友人に花束を贈りました。','example_translation'=>'I gave a bouquet to my friend.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'漠','reading'=>'ばく','meaning'=>'vague, obscure, vast desert','example_sentence'=>'漠然とした不安があります。','example_translation'=>'I have a vague sense of anxiety.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'賄','reading'=>'まかな','meaning'=>'bribe, supply, manage','example_sentence'=>'賄賂を受け取ることは違法です。','example_translation'=>'Receiving a bribe is illegal.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'紡','reading'=>'つむ・ぼう','meaning'=>'spin, yarn, weave','example_sentence'=>'言葉を紡いで詩を作りました。','example_translation'=>'I wove words to create a poem.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'隷','reading'=>'れい','meaning'=>'slave, servant, follower','example_sentence'=>'隷属状態から解放されました。','example_translation'=>'They were liberated from a state of servitude.'],
+            ['type'=>'kanji','level'=>'N1','front'=>'凄','reading'=>'すご・せい','meaning'=>'tremendous, awful, eerie','example_sentence'=>'凄まじい速さで走りました。','example_translation'=>'He ran at tremendous speed.'],
+
+            // ─── N1 VOCAB ───────────────────────────────────────────────────
+            ['type'=>'vocab','level'=>'N1','front'=>'克服','reading'=>'こくふく','meaning'=>'overcome, conquest','example_sentence'=>'困難を克服しました。','example_translation'=>'I overcame the difficulty.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'漠然','reading'=>'ばくぜん','meaning'=>'vague, obscure, hazy','example_sentence'=>'漠然とした計画しかありません。','example_translation'=>'I only have a vague plan.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'貢献','reading'=>'こうけん','meaning'=>'contribution, service','example_sentence'=>'社会に貢献したいです。','example_translation'=>'I want to contribute to society.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'逡巡','reading'=>'しゅんじゅん','meaning'=>'hesitation, wavering, indecision','example_sentence'=>'逡巡することなく決断しました。','example_translation'=>'I made the decision without hesitation.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'齟齬','reading'=>'そご','meaning'=>'discrepancy, inconsistency, mismatch','example_sentence'=>'意見に齟齬が生じました。','example_translation'=>'A discrepancy arose in our opinions.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'瑕疵','reading'=>'かし','meaning'=>'defect, flaw, blemish','example_sentence'=>'製品に瑕疵が見つかりました。','example_translation'=>'A defect was found in the product.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'凌駕','reading'=>'りょうが','meaning'=>'surpass, outstrip, transcend','example_sentence'=>'予想を凌駕する成果でした。','example_translation'=>'It was a result that surpassed expectations.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'形骸化','reading'=>'けいがいか','meaning'=>'becoming a mere formality, hollowing out','example_sentence'=>'その制度は形骸化しています。','example_translation'=>'That system has become a mere formality.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'憂慮','reading'=>'ゆうりょ','meaning'=>'concern, apprehension, anxiety','example_sentence'=>'事態を憂慮しています。','example_translation'=>'I am concerned about the situation.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'拮抗','reading'=>'きっこう','meaning'=>'rivalry, antagonism, neck and neck','example_sentence'=>'二チームが拮抗しています。','example_translation'=>'The two teams are neck and neck.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'措置','reading'=>'そち','meaning'=>'measure, step, action','example_sentence'=>'緊急措置を取りました。','example_translation'=>'We took emergency measures.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'是正','reading'=>'ぜせい','meaning'=>'correction, rectification, remedy','example_sentence'=>'問題を是正する必要があります。','example_translation'=>'It is necessary to correct the problem.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'様相','reading'=>'ようそう','meaning'=>'aspect, appearance, phase','example_sentence'=>'状況は新しい様相を呈しています。','example_translation'=>'The situation is taking on a new aspect.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'蔑視','reading'=>'べっし','meaning'=>'contempt, disdain, scorn','example_sentence'=>'人を蔑視することは許されない。','example_translation'=>'Showing contempt for people is not permitted.'],
+            ['type'=>'vocab','level'=>'N1','front'=>'潤滑','reading'=>'じゅんかつ','meaning'=>'lubrication, smooth operation','example_sentence'=>'人間関係を潤滑にする努力が必要です。','example_translation'=>'Efforts to smooth human relations are necessary.'],
+
+            // ─── N1 GRAMMAR ─────────────────────────────────────────────────
+            ['type'=>'grammar','level'=>'N1','front'=>'～をもって','reading'=>null,'meaning'=>'with ~, by means of ~, as of (time)','example_sentence'=>'本日をもって退職いたします。','example_translation'=>'I will retire as of today.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～いかんによらず','reading'=>null,'meaning'=>'regardless of ~, irrespective of ~','example_sentence'=>'理由のいかんによらず、遅刻は許されない。','example_translation'=>'Regardless of the reason, being late is not permitted.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～に至っては','reading'=>null,'meaning'=>'when it comes to ~, even ~ (extreme case)','example_sentence'=>'彼に至っては、全く練習していなかった。','example_translation'=>'When it comes to him, he had not practiced at all.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～ないまでも','reading'=>null,'meaning'=>'even if not ~, if not quite ~, at least','example_sentence'=>'完璧でないまでも、十分な仕事をしました。','example_translation'=>'Even if not perfect, he did sufficient work.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～とあれば','reading'=>null,'meaning'=>'if it is the case that ~, given that ~','example_sentence'=>'お役に立てるとあれば、喜んで参ります。','example_translation'=>'If I can be of help, I will gladly attend.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～んばかりに','reading'=>null,'meaning'=>'as if about to ~, to the point of ~ (extreme degree)','example_sentence'=>'泣き出さんばかりの表情をしていました。','example_translation'=>'She had an expression as if she were about to cry.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～ごとき','reading'=>null,'meaning'=>'like ~, such as ~ (often self-deprecating)','example_sentence'=>'私ごとき者にはわかりません。','example_translation'=>'Someone like me would not understand.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～に足る','reading'=>null,'meaning'=>'worthy of ~, worth doing ~','example_sentence'=>'信頼するに足る人物です。','example_translation'=>'He is a person worthy of trust.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～であれ','reading'=>null,'meaning'=>'even if it is ~, no matter what ~','example_sentence'=>'たとえ困難であれ、諦めません。','example_translation'=>'Even if it is difficult, I will not give up.'],
+            ['type'=>'grammar','level'=>'N1','front'=>'～を皮切りに','reading'=>null,'meaning'=>'starting with ~, beginning with ~ (as a trigger)','example_sentence'=>'東京を皮切りに全国ツアーを行います。','example_translation'=>'We will conduct a nationwide tour starting with Tokyo.'],
+        ];
+
+        foreach ($cards as $card) {
+            Flashcard::create($card);
+        }
+
+        $this->command->info('Flashcard seeder complete: ' . count($cards) . ' cards inserted.');
+    }
+}

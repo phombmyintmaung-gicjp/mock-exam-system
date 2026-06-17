@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             PassageSeeder::class,
             JLPTQuestionSeeder::class,
             ExamHistorySeeder::class,
+            FlashcardSeeder::class,
         ]);
     }
 }

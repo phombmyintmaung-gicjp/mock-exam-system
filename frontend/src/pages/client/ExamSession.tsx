@@ -11,6 +11,7 @@ import { ExamViolationModal } from '@/components/shared/ExamViolationModal';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
+import { FlagIcon, XIcon, ChevronLeftIcon, ChevronRightIcon, TriangleAlertIcon } from '@/components/ui/Icons';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
 import { useExamSecurity } from '@/hooks/useExamSecurity';
@@ -162,18 +163,14 @@ const ExamSession = () => {
                       : 'border border-slate-200 dark:border-white/15 bg-black/5 dark:bg-white/8 text-slate-500 dark:text-white/50 hover:bg-black/8 dark:hover:bg-white/15 hover:text-slate-700 dark:hover:text-white/80',
                   )}
                 >
-                  <svg className={clsx('h-4 w-4 transition-transform duration-150', isFlagged ? 'scale-110' : 'group-hover:scale-125')} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 21V4m0 0l9-2 9 2v11l-9-2-9 2V4z" />
-                  </svg>
+                  <FlagIcon className={clsx('h-4 w-4 transition-transform duration-150', isFlagged ? 'scale-110' : 'group-hover:scale-125')} />
                   {t('exam.flag')}
                 </button>
                 <button
                   onClick={() => setShowExitModal(true)}
                   className="group flex items-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition-all"
                 >
-                  <svg className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <XIcon className="h-4 w-4 transition-transform duration-200 group-hover:rotate-90" />
                   {t('exam.exitConfirmButton')}
                 </button>
               </div>
@@ -191,10 +188,10 @@ const ExamSession = () => {
 
           <div className="mt-6 flex justify-between gap-3">
             <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion}
-              leftIcon={<svg className="h-4 w-4 transition-transform duration-150 group-hover:-translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>}
+              leftIcon={<ChevronLeftIcon className="h-4 w-4 transition-transform duration-150 group-hover:-translate-x-0.5" />}
             />
             <Button label={t('exam.next')} disabled={isLast} onClick={nextQuestion}
-              rightIcon={<svg className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>}
+              rightIcon={<ChevronRightIcon className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" />}
             />
           </div>
 
@@ -224,9 +221,7 @@ const ExamSession = () => {
         {unansweredCount > 0 ? (
           <>
             <div className="mb-5 flex items-start gap-3 rounded-xl border border-amber-300 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 p-4">
-              <svg className="mt-0.5 h-5 w-5 shrink-0 animate-pulse text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-              </svg>
+              <TriangleAlertIcon className="mt-0.5 h-5 w-5 shrink-0 animate-pulse text-amber-600 dark:text-amber-400" />
               <p className="text-sm text-amber-800 dark:text-amber-200">
                 {t('exam.unansweredWarningMessage_other', { count: unansweredCount })}
               </p>

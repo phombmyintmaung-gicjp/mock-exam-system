@@ -49,7 +49,20 @@
     "noAccount": "アカウントをお持ちでない方は",
     "signUpLink": "こちら",
     "backToHome": "ホームへ戻る",
-    "rememberEmail": "メールアドレスを記憶する"
+    "backToLogin": "ログインへ戻る",
+    "rememberEmail": "メールアドレスを記憶する",
+    "studyWithoutAccount": "アカウントなしで学習する",
+    "nameRequired": "氏名を入力してください",
+    "passwordHint": "8文字以上で入力してください",
+    "registerPage": {
+      "heroTitle": "学習の旅を始めよう",
+      "heroSubtitle": "GICジャパン社員限定 — アカウントを作成して、次の試験の準備を始めましょう。",
+      "subtitle": "GICジャパン社員専用",
+      "benefit1": "IT資格",
+      "benefit2": "JLPT N1〜N5",
+      "benefit3": "学習進捗管理",
+      "benefit3Desc": "分析と弱点検出"
+    }
   },
   "nav": {
     "admin": "管理者",
@@ -72,7 +85,8 @@
     "jlptPractice": "JLPT練習",
     "contentGroup": "コンテンツ",
     "usersGroup": "ユーザー",
-    "systemGroup": "システム"
+    "systemGroup": "システム",
+    "flashcards": "フラッシュカード"
   },
   "exam": {
     "startButton": "試験を開始する",
@@ -336,17 +350,61 @@
       "fieldCategory": "カテゴリ",
       "noCategory": "カテゴリなし",
       "fieldContent": "本文"
+    },
+    "flashcards": {
+      "title": "フラッシュカード管理",
+      "subtitle": "合計 {{count}} 枚",
+      "newButton": "+ 新しいカード",
+      "allTypes": "全種別",
+      "colType": "種別",
+      "colLevel": "レベル",
+      "colFront": "表面",
+      "colReading": "読み方",
+      "colMeaning": "意味",
+      "newTitle": "新しいフラッシュカード",
+      "editTitle": "フラッシュカードを編集",
+      "fieldType": "種別",
+      "fieldLevel": "レベル",
+      "fieldFront": "表面（漢字・語彙・文法）",
+      "fieldReading": "読み方（ひらがな）",
+      "fieldMeaning": "意味（英語）",
+      "fieldExample": "例文",
+      "fieldExampleTranslation": "例文の翻訳"
+    }
+  },
+  "study": {
+    "title": "学習モード",
+    "subtitle": "漢字・語彙・文法をフラッシュカードで学習 — アカウント不要",
+    "startButton": "学習を始める",
+    "backToLogin": "ログインへ戻る",
+    "backToDashboard": "ダッシュボード",
+    "backToStudy": "学習メニュー",
+    "shuffle": "シャッフル",
+    "noCards": "該当するカードがありません",
+    "allDone": "全カードを確認しました！",
+    "kanji": {
+      "title": "漢字",
+      "description": "漢字の読み方と意味を学ぶ"
+    },
+    "vocab": {
+      "title": "語彙",
+      "description": "JLPTの語彙を増やす"
+    },
+    "grammar": {
+      "title": "文法",
+      "description": "文法パターンと使い方を学ぶ"
     }
   },
   "home": {
     "hero": {
-      "badge": "IT資格 ＋ JLPT N1〜N5 対応",
-      "titleLine1": "試験対策を、",
-      "titleLine2": "自分のペースで",
-      "subtitle": "IT資格とJLPTを模擬試験・即時フィードバック・詳細な分析でまとめて対策。すべてが一箇所に揃っています。",
+      "badge": "IT資格 ・ JLPT N1〜N5 ・ フラッシュカード無料",
+      "titleLine1": "次の試験に合格しよう。",
+      "titleLine2": "自分のスタイルで。",
+      "subtitle": "IT資格とJLPTの本格模擬試験、さらに無料のフラッシュカード学習まで。GICジャパン社員のために、すべてが一箇所に。",
       "cta": "ログインして始める",
+      "studyCta": "無料フラッシュカードを試す",
       "explore": "カテゴリを見る",
-      "trustLine": "GICジャパン社員向け"
+      "trustLine": "GICジャパン社員向け ・ フラッシュカードはアカウント不要で無料"
     },
     "stats": {
       "itCerts": "ITカテゴリ",
@@ -400,6 +458,12 @@
       "n4": "初級 — 基本的な文法と語彙",
       "n5": "入門 — 簡単な日常的な日本語"
     },
+    "freeStudy": {
+      "badge": "ログイン不要",
+      "title": "フラッシュカード学習 — 無料・制限なし",
+      "subtitle": "漢字の読み方、JLPTの語彙、文法パターンをアカウントなしで練習できます。N1〜N5 全レベル対応。",
+      "cta": "今すぐ学習を始める"
+    },
     "howItWorks": {
       "title": "使い方",
       "step1": { "title": "ログイン", "desc": "GICジャパンの会社アカウントでログインします。" },
@@ -408,10 +472,12 @@
     },
     "cta": {
       "title": "さっそく始めよう",
-      "subtitle": "ログインしてパーソナライズされた試験ダッシュボードにアクセスしましょう。",
+      "subtitle": "ログインしてパーソナライズされた試験ダッシュボードにアクセスし、進捗を管理しながら資格取得を目指しましょう。",
       "button": "ログインする",
       "noAccount": "アカウントをお持ちでない方は",
-      "signUp": "こちらから登録"
+      "signUp": "こちらから登録",
+      "freeStudy": "まず練習だけしてみたい方は",
+      "freeStudyLink": "アカウントなしでフラッシュカード学習 →"
     },
     "footer": {
       "copyright": "© 2026 Mock Exam System. All rights reserved."
