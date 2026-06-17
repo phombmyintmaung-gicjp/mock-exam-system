@@ -7,6 +7,8 @@ Users can practice certification exams (**AWS**, **Network**, **Security**, **Li
 
 The system supports two modes: a timed **Exam Mode** that mirrors real certification conditions, and a **Study Mode** for learning at your own pace with immediate inline feedback per question.
 
+A **free Flashcard Study** section (`/study`) is publicly accessible — no login required — covering kanji readings, JLPT vocabulary, and grammar patterns across all five JLPT levels.
+
 ---
 
 ## Users
@@ -30,8 +32,10 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 
 ### Authentication & Authorization
 - JWT-based authentication (email domain restricted to `@gicjp.com`)
+- Self-registration for new employees (`/register`)
 - Role-based access control (Admin / Employee)
 - Session persistence with token refresh
+- Public flashcard study at `/study` — no account needed
 
 ---
 
@@ -63,6 +67,11 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 **User Management**
 - Create and update employee accounts
 - Assign department and target certification
+
+**Flashcard Management**
+- Create / update / delete flashcards (kanji, vocabulary, grammar)
+- Assign JLPT level (N1–N5) and type per card
+- Fields: front (kanji/word/pattern), reading (hiragana), meaning (English), example sentence
 
 ---
 
@@ -110,6 +119,12 @@ The system supports two modes: a timed **Exam Mode** that mirrors real certifica
 - Target exam / certification goal
 - Exam history and score trends
 - Weak area analysis
+
+**Free Flashcard Study** (`/study` — no login required)
+- Kanji readings, JLPT vocabulary, and grammar patterns
+- Filter by JLPT level (N1–N5) and card type
+- Flip card animation — front shows the word, back shows reading + meaning + example
+- Shuffle mode for randomised practice
 
 ---
 
@@ -172,6 +187,7 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
 | `exam_results` | Score, status (pass/fail), denormalised `user_id` |
 | `answer_records` | Per-question answer with pre-computed `is_correct` |
 | `exam_settings` | Per-category question count, time limit, passing score |
+| `flashcards` | Kanji / vocabulary / grammar cards with reading, meaning, example |
 
 ---
 
@@ -183,33 +199,37 @@ mock-exam-system/
 │   ├── src/
 │   │   ├── components/         # ui/, layout/, shared/
 │   │   ├── pages/
-│   │   │   ├── admin/          # Dashboard, Questions, Passages, Users, Settings
-│   │   │   └── client/         # ExamSelect, ExamSession, StudySession,
-│   │   │                       #   ReadingSession, Results, Review, History,
-│   │   │                       #   Profile, WeakAreas
+│   │   │   ├── admin/          # Dashboard, Questions, Passages, Flashcards, Users, Settings
+│   │   │   ├── client/         # ExamSelect, ExamSession, StudySession,
+│   │   │   │                   #   ReadingSession, Results, Review, History,
+│   │   │   │                   #   Profile, WeakAreas
+│   │   │   └── study/          # StudyHome, FlashcardSession (public — no login)
 │   │   ├── hooks/              # Custom React hooks
-│   │   ├── services/           # API call functions (examService, authService, …)
+│   │   ├── services/           # API call functions (examService, authService,
+│   │   │                       #   flashcardService, publicApi, …)
 │   │   ├── store/              # Zustand: authStore, examSessionStore
-│   │   ├── types/              # TypeScript interfaces (exam, user, result, …)
+│   │   ├── types/              # TypeScript interfaces (exam, user, result, flashcard, …)
 │   │   └── i18n/               # ja.json, en.json
+│   ├── Dockerfile
 │   └── package.json
 │
 ├── backend/                    # Laravel 11 (PHP 8.2)
 │   ├── app/
-│   │   ├── Models/             # User, Question, Passage, ExamSession, …
+│   │   ├── Models/             # User, Question, Passage, ExamSession, Flashcard, …
 │   │   ├── Http/
 │   │   │   ├── Controllers/Api/V1/  # Thin controllers
 │   │   │   ├── Requests/            # FormRequest validation
 │   │   │   └── Middleware/          # AdminOnly
 │   │   └── Services/           # ExamService, ResultService, AnalyticsService,
-│   │                           #   PassageService
+│   │                           #   PassageService, FlashcardService
 │   ├── database/
 │   │   ├── migrations/         # Schema migrations
 │   │   └── seeders/            # DepartmentSeeder, UserSeeder,
 │   │                           #   ExamSettingSeeder, QuestionSeeder,
 │   │                           #   PassageSeeder, JLPTQuestionSeeder,
-│   │                           #   ExamHistorySeeder
+│   │                           #   FlashcardSeeder, ExamHistorySeeder
 │   ├── resources/views/pdf/    # Blade PDF templates (result.blade.php)
+│   ├── Dockerfile
 │   └── routes/api.php
 │
 ├── docker-compose.yml
