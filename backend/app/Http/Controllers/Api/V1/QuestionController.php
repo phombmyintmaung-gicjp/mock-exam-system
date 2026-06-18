@@ -17,7 +17,6 @@ class QuestionController extends Controller
      *     operationId="listQuestions",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(name="category", in="query", required=false, @OA\Schema(type="string"), description="Filter by category, e.g. AWS SAA"),
-     *     @OA\Parameter(name="difficulty", in="query", required=false, @OA\Schema(type="string", enum={"easy","medium","hard"})),
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
      *     @OA\Response(
      *         response=200,
@@ -27,7 +26,6 @@ class QuestionController extends Controller
      *                 @OA\Property(property="id", type="integer"),
      *                 @OA\Property(property="text", type="string"),
      *                 @OA\Property(property="category", type="string"),
-     *                 @OA\Property(property="difficulty", type="string"),
      *                 @OA\Property(property="choices", type="array", @OA\Items(type="object"))
      *             )),
      *             @OA\Property(property="count", type="integer"),
@@ -44,10 +42,6 @@ class QuestionController extends Controller
 
         if ($request->filled('category')) {
             $query->byCategory($request->string('category')->toString());
-        }
-
-        if ($request->filled('difficulty')) {
-            $query->where('difficulty', $request->input('difficulty'));
         }
 
         $perPage = min((int) $request->input('per_page', 20), 500);

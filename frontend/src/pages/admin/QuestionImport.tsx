@@ -11,12 +11,12 @@ import { CheckIcon, DownloadIcon } from '@/components/ui/Icons';
 
 const SAMPLE_ROWS = [
   // header
-  ['text', 'category', 'difficulty', 'question_type', 'explanation', 'choice1', 'choice2', 'choice3', 'choice4', 'correct_index'],
+  ['text', 'category', 'question_type', 'explanation', 'choice1', 'choice2', 'choice3', 'choice4', 'correct_index'],
   // IT example
-  ['Which AWS service provides scalable object storage?', 'AWS', 'medium', '', 'S3 is Amazon\'s object storage service.', 'EC2', 'S3', 'RDS', 'Lambda', 2],
-  ['What does TCP stand for?', 'Network', 'easy', '', 'TCP stands for Transmission Control Protocol.', 'Transfer Control Protocol', 'Transmission Control Protocol', 'Trusted Communication Protocol', 'Terminal Connection Port', 2],
+  ['Which AWS service provides scalable object storage?', 'AWS', '', 'S3 is Amazon\'s object storage service.', 'EC2', 'S3', 'RDS', 'Lambda', 2],
+  ['What does TCP stand for?', 'Network', '', 'TCP stands for Transmission Control Protocol.', 'Transfer Control Protocol', 'Transmission Control Protocol', 'Trusted Communication Protocol', 'Terminal Connection Port', 2],
   // JLPT example
-  ['次の言葉の読み方として正しいものを選びなさい。「人口」', 'JLPT-N5-文字語彙', 'easy', '問題1', '人口の読み方は「じんこう」です。', 'じんこう', 'にんこう', 'ひとくち', 'ひとぐち', 1],
+  ['次の言葉の読み方として正しいものを選びなさい。「人口」', 'JLPT-N5-文字語彙', '問題1', '人口の読み方は「じんこう」です。', 'じんこう', 'にんこう', 'ひとくち', 'ひとぐち', 1],
 ];
 
 const downloadSample = () => {
@@ -27,7 +27,6 @@ const downloadSample = () => {
   ws['!cols'] = [
     { wch: 50 }, // text
     { wch: 22 }, // category
-    { wch: 10 }, // difficulty
     { wch: 12 }, // question_type
     { wch: 40 }, // explanation
     { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, // choices
@@ -50,7 +49,6 @@ interface ImportResult {
 const COLUMNS = [
   { field: 'text',          required: true },
   { field: 'category',      required: true },
-  { field: 'difficulty',    required: true },
   { field: 'question_type', required: false },
   { field: 'explanation',   required: true },
   { field: 'choice1–4',     required: true },

@@ -65,8 +65,10 @@ When writing analytics queries:
 |--------|------|-------|
 | `id` | BIGINT PK AUTO_INCREMENT | |
 | `text` | TEXT | question body |
-| `difficulty` | ENUM('easy','medium','hard') | |
-| `category` | VARCHAR(100) | certification category |
+| `category` | VARCHAR(100) | certification category (denormalised string) |
+| `category_id` | BIGINT FK → categories.id | nullable; set on create/import |
+| `question_type` | VARCHAR(30) | JLPT sub-type (問題1–問題6); null for IT |
+| `passage_id` | BIGINT FK → passages.id | nullable; JLPT 読解 questions only |
 | `explanation` | TEXT | shown after answer |
 | `deleted_at` | TIMESTAMP | SoftDeletes — nullable |
 | `created_at` | TIMESTAMP | timestamps() |

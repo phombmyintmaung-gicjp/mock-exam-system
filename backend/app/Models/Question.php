@@ -22,7 +22,6 @@ class Question extends Model
     protected $fillable = [
         'passage_id',
         'text',
-        'difficulty',
         'category',
         'category_id',
         'question_type',
@@ -71,6 +70,6 @@ class Question extends Model
 
     public function __toString(): string
     {
-        return "[{$this->difficulty}] {$this->category}: " . substr($this->text, 0, 60);
+        return "{$this->category}: " . substr($this->text, 0, 60);
     }
 }

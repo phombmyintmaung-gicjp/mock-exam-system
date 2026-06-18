@@ -50,16 +50,17 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 
 **Question Management**
 - Create / update / soft-delete questions
-- Assign category and difficulty level (Easy / Medium / Hard)
-- Assign `question_type` sub-label for JLPT ordering (問題1–5 / もんだい１–６)
+- Assign category per question
+- Assign `question_type` sub-label for JLPT ordering (問題1–6)
 - Add explanation per question (shown during answer review)
-- Bulk import questions from EXCEL or JSON
-- Search and filter by category, difficulty, keyword
+- Bulk import questions from Excel (.xlsx / .xls)
+- Search and filter by category and keyword; JLPT tab filtered by level, section, and 問題 type
+- Coverage overview matrix shows question count per level × 問題 type at a glance
 
 **Passage Management**
 - Create / update / delete reading passages used by JLPT 文法読解 questions
 - Assign JLPT level (N1–N5)
-- Passages with Ⓐ/Ⓑ blanks (もんだい３), short readings (もんだい４/５), and notices (もんだい６)
+- Passages with Ⓐ/Ⓑ blanks (問題3), short readings (問題4/5), and notices (問題6)
 
 **Exam Settings**
 - Configured **per exam category**
@@ -81,17 +82,37 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 
 ### Client Site (Employees)
 
-**JLPT Practice** (`/exam/select`)
-- Level selector: N1 / N2 / N3 / N4 / N5
-- Two sections per level:
-  - **言語知識（文字・語彙）** — 問題1 (kanji reading), 問題2 (kanji writing), 問題3 (fill-in vocab), 問題4 (paraphrase), 問題5 (usage)
-  - **言語知識（文法）・読解** — もんだい１ (grammar fill-in), もんだい２ (★ sentence ordering), もんだい３ (Ⓐ/Ⓑ passage), もんだい４ (short reading), もんだい５ (medium reading), もんだい６ (information retrieval / notices)
+**JLPT Practice** (`/exam/select?type=jlpt`)
+
+Three practice modes selectable per level (N1–N5):
+
+| Mode | Description |
+|------|-------------|
+| **本番形式 (Full Exam)** | Simulates the real exam under official time limits. N1/N2: single combined paper (語彙＋文法＋読解). N3/N4/N5: two separate papers matching official schedules. |
+| **Section Practice** | Drill a specific section (Vocabulary, Kanji, Grammar, or Reading) with custom question count (10 / 20 / all). |
+| **問題 Drill** | Multi-select individual 問題 types (e.g. 問題1, 問題4) from either section; question counts shown per type. |
+
+Section breakdown per level:
+- **言語知識（文字・語彙）** — 問題1 (kanji reading), 問題2 (kanji writing), 問題3 (fill-in vocab), 問題4 (paraphrase), 問題5 (usage)
+- **言語知識（文法）・読解** — 問題1 (grammar fill-in), 問題2 (★ sentence ordering), 問題3 (Ⓐ/Ⓑ passage), 問題4 (short reading), 問題5 (medium reading), 問題6 (information retrieval / notices)
+
+Official time limits used:
+
+| Level | 文字語彙 | 文法読解 | Notes |
+|-------|---------|---------|-------|
+| N1    | —       | —       | Combined paper: **110 min** |
+| N2    | —       | —       | Combined paper: **105 min** |
+| N3    | 30 min  | 70 min  | Separate papers |
+| N4    | 25 min  | 55 min  | Separate papers |
+| N5    | 20 min  | 40 min  | Separate papers |
+
 - Questions display in official JLPT sub-type order
-- 読解 section uses a split-screen layout: passage panel on the left, question on the right
+- 読解 section uses a split-screen layout: passage on the left, question on the right
+- No-passage questions (vocabulary section) in Full Exam sessions use a full-width single-column layout
 
 **IT Certification Practice** (separate category selection)
 - Categories: AWS, Network, Security, Linux
-- Difficulty-balanced question selection (Easy / Medium / Hard)
+- Random question selection per category
 
 **Exam Mode**
 - Timed exam with countdown timer

@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
+import { API_BASE_PATH } from '@/constants';
 
 const api = axios.create({
-  baseURL: '/api/v1/',
+  baseURL: `${API_BASE_PATH}/`,
 });
 
 api.interceptors.request.use((config) => {

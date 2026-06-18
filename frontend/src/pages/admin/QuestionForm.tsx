@@ -8,6 +8,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { QuestionCard } from '@/components/shared/QuestionCard';
 import { getAdminQuestion, createQuestion, updateQuestion } from '@/services/questionService';
 import { getCategories, createCategory } from '@/services/categoryService';
+import { MONDAI_VOCAB, MONDAI_GRAMMAR } from '@/constants';
 import type { Question } from '@/types/exam';
 import type { Category } from '@/types/category';
 
@@ -44,7 +45,7 @@ const QuestionForm = () => {
   const [isAddingCategory, setIsAddingCategory] = useState(false);
 
   const [text, setText] = useState('');
-  const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  const [questionType, setQuestionType] = useState('');
   const [explanation, setExplanation] = useState('');
   const [choices, setChoices] = useState<ChoiceField[]>(emptyChoices());
 
@@ -63,7 +64,6 @@ const QuestionForm = () => {
         try {
           const q = await getAdminQuestion(Number(id));
           setText(q.text);
-          setDifficulty(q.difficulty);
           setExplanation(q.explanation ?? '');
 
           // 1. Try category_id from the raw backend response first
@@ -81,6 +81,8 @@ const QuestionForm = () => {
               setNewCategoryName(q.category);
             }
           }
+
+          setQuestionType((q as unknown as { question_type?: string | null }).question_type ?? '');
 
           if (q.choices.length > 0) {
             setChoices(
@@ -138,7 +140,13 @@ const QuestionForm = () => {
     }
     setIsSaving(true);
     setError(null);
-    const payload = { text, category_id: categoryId, difficulty, explanation, choices };
+    const payload = {
+      text,
+      category_id: categoryId,
+      question_type: questionType || null,
+      explanation,
+      choices,
+    };
     try {
       if (isEdit && id) {
         await updateQuestion(Number(id), payload);
@@ -161,10 +169,14 @@ const QuestionForm = () => {
 
   const selectedCategoryName = categories.find((c) => c.id === categoryId)?.name ?? '';
 
+  const isJlpt = selectedCategoryName.startsWith('JLPT-');
+  const mondaiOptions: readonly string[] = selectedCategoryName.includes('文字語彙')
+    ? MONDAI_VOCAB
+    : MONDAI_GRAMMAR;
+
   const previewQuestion: Question = {
     id: 0,
     text: text || t('admin.questionForm.previewEmpty'),
-    difficulty,
     category: selectedCategoryName,
     choices: choices.map((c, i) => ({
       id: i,
@@ -247,7 +259,10 @@ const QuestionForm = () => {
                     if (val === '__new__') {
                       setShowNewCategory(true);
                     } else {
-                      setCategoryId(Number(val));
+                      const newId = Number(val);
+                      const newCatName = categories.find((c) => c.id === newId)?.name ?? '';
+                      if (!newCatName.startsWith('JLPT-')) setQuestionType('');
+                      setCategoryId(newId);
                     }
                   }}
                   className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -287,18 +302,21 @@ const QuestionForm = () => {
                   </div>
                 )}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.difficulty')}</label>
-                <select
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value as 'easy' | 'medium' | 'hard')}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none"
-                >
-                  <option value="easy">{t('common.difficulty.easy')}</option>
-                  <option value="medium">{t('common.difficulty.medium')}</option>
-                  <option value="hard">{t('common.difficulty.hard')}</option>
-                </select>
-              </div>
+              {isJlpt && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.questionType')}</label>
+                  <select
+                    value={questionType}
+                    onChange={(e) => setQuestionType(e.target.value)}
+                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none"
+                  >
+                    <option value="">{t('admin.questionForm.questionTypePlaceholder')}</option>
+                    {mondaiOptions.map((m) => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             <div>

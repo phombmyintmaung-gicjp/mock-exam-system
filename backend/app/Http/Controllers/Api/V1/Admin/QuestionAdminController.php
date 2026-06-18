@@ -23,7 +23,6 @@ class QuestionAdminController extends Controller
      *     operationId="adminListQuestions",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(name="category", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="difficulty", in="query", required=false, @OA\Schema(type="string", enum={"easy","medium","hard"})),
      *     @OA\Parameter(name="with_trashed", in="query", required=false, @OA\Schema(type="boolean"), description="Include soft-deleted questions"),
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Paginated questions",
@@ -52,10 +51,6 @@ class QuestionAdminController extends Controller
             }
         }
 
-        if ($request->filled('difficulty')) {
-            $query->where('difficulty', $request->input('difficulty'));
-        }
-
         if ($request->boolean('with_trashed')) {
             $query->withTrashed();
         }
@@ -81,9 +76,8 @@ class QuestionAdminController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"text","difficulty","category","explanation","choices"},
+     *             required={"text","category","explanation","choices"},
      *             @OA\Property(property="text", type="string"),
-     *             @OA\Property(property="difficulty", type="string", enum={"easy","medium","hard"}),
      *             @OA\Property(property="category", type="string"),
      *             @OA\Property(property="explanation", type="string"),
      *             @OA\Property(property="choices", type="array", @OA\Items(type="object",
@@ -108,11 +102,11 @@ class QuestionAdminController extends Controller
 
             /** @var Question $question */
             $question = Question::create([
-                'text'        => $validated['text'],
-                'difficulty'  => $validated['difficulty'],
-                'category'    => $category->name,
-                'category_id' => $category->id,
-                'explanation' => $validated['explanation'],
+                'text'          => $validated['text'],
+                'category'      => $category->name,
+                'category_id'   => $category->id,
+                'question_type' => $validated['question_type'] ?? null,
+                'explanation'   => $validated['explanation'],
             ]);
 
             foreach ($validated['choices'] as $choiceData) {
@@ -157,7 +151,6 @@ class QuestionAdminController extends Controller
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             @OA\Property(property="text", type="string"),
-     *             @OA\Property(property="difficulty", type="string", enum={"easy","medium","hard"}),
      *             @OA\Property(property="category", type="string"),
      *             @OA\Property(property="explanation", type="string"),
      *             @OA\Property(property="choices", type="array", @OA\Items(type="object"))
@@ -178,9 +171,14 @@ class QuestionAdminController extends Controller
         $question = DB::transaction(function () use ($question, $validated): Question {
             $updateData = array_filter([
                 'text'        => $validated['text'] ?? null,
-                'difficulty'  => $validated['difficulty'] ?? null,
                 'explanation' => $validated['explanation'] ?? null,
             ], fn ($v) => $v !== null);
+
+            // question_type can legitimately be null (IT questions), so handle it
+            // separately from the non-null filter above.
+            if (array_key_exists('question_type', $validated)) {
+                $updateData['question_type'] = $validated['question_type'];
+            }
 
             if (isset($validated['category_id'])) {
                 $category = Category::findOrFail($validated['category_id']);
@@ -271,19 +269,24 @@ class QuestionAdminController extends Controller
 
         foreach ($rows as $index => $row) {
             // Row numbers shown to the user are 1-based and skip the header, so +2.
-            $lineNum = $index + 2;
+            $lineNum     = $index + 2;
+            $categoryStr = $row['category'];
 
-            $missingFields = array_keys(array_filter(
-                ['text' => $row['text'], 'category' => $row['category'], 'difficulty' => $row['difficulty'], 'explanation' => $row['explanation']],
-                fn ($v) => empty($v)
-            ));
+            // Required field check.
+            $missingFields = [];
+            if (empty($row['text']))        $missingFields[] = 'text';
+            if (empty($categoryStr))        $missingFields[] = 'category';
+            if (empty($row['explanation'])) $missingFields[] = 'explanation';
+
             if (!empty($missingFields)) {
                 $errors[] = "Row {$lineNum}: missing " . implode(', ', $missingFields);
                 continue;
             }
 
-            if (!in_array($row['difficulty'], ['easy', 'medium', 'hard'], true)) {
-                $errors[] = "Row {$lineNum}: difficulty must be easy, medium, or hard (got \"{$row['difficulty']}\").";
+            // Resolve category FK — the category string must match a record in the categories table.
+            $category = Category::where('name', $categoryStr)->first();
+            if (!$category) {
+                $errors[] = "Row {$lineNum}: category \"{$categoryStr}\" not found — use one of the values from the Category Values reference.";
                 continue;
             }
 
@@ -301,7 +304,7 @@ class QuestionAdminController extends Controller
 
             // Duplicate check: same text + category (including soft-deleted) is considered the same question.
             $exists = Question::withTrashed()
-                ->where('category', $row['category'])
+                ->where('category', $categoryStr)
                 ->where('text', $row['text'])
                 ->exists();
 
@@ -311,12 +314,12 @@ class QuestionAdminController extends Controller
             }
 
             try {
-                DB::transaction(function () use ($row): void {
+                DB::transaction(function () use ($row, $category): void {
                     /** @var Question $question */
                     $question = Question::create([
                         'text'          => $row['text'],
-                        'category'      => $row['category'],
-                        'difficulty'    => $row['difficulty'],
+                        'category'      => $category->name,
+                        'category_id'   => $category->id,
                         'question_type' => $row['question_type'] ?: null,
                         'explanation'   => $row['explanation'],
                     ]);
@@ -352,7 +355,7 @@ class QuestionAdminController extends Controller
      * Read an .xlsx / .xls file and return normalised row data.
      *
      * Expected columns (row 1 = header, data starts at row 2):
-     *   text | category | difficulty | question_type | explanation
+     *   text | category | question_type | explanation
      *   choice1 | choice2 | choice3 | choice4 | correct_index
      *
      * correct_index is 1-based (1 = choice1 … 4 = choice4).
@@ -400,7 +403,6 @@ class QuestionAdminController extends Controller
             $rows[] = [
                 'text'          => $get('text'),
                 'category'      => $get('category'),
-                'difficulty'    => $get('difficulty'),
                 'question_type' => $get('question_type'),
                 'explanation'   => $get('explanation'),
                 'choices'       => $choices,

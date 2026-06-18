@@ -13,7 +13,6 @@ class QuestionSeeder extends Seeder
             // ── AWS ──────────────────────────────────────────────────────────────
             [
                 'text'        => 'Which AWS service provides a managed relational database that is compatible with MySQL and PostgreSQL?',
-                'difficulty'  => 'easy',
                 'category'    => 'AWS',
                 'explanation' => 'Amazon Aurora is a managed relational database engine compatible with MySQL and PostgreSQL. It is part of the Amazon RDS family and offers up to 5× the throughput of MySQL.',
                 'choices'     => [
@@ -25,7 +24,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'Which AWS service is best suited for hosting a static website with global low-latency delivery?',
-                'difficulty'  => 'easy',
                 'category'    => 'AWS',
                 'explanation' => 'Amazon S3 can host static websites, but pairing it with Amazon CloudFront (a CDN) provides global low-latency delivery. CloudFront caches content at edge locations worldwide.',
                 'choices'     => [
@@ -37,7 +35,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'What is the primary purpose of AWS IAM roles when assigned to an EC2 instance?',
-                'difficulty'  => 'medium',
                 'category'    => 'AWS',
                 'explanation' => 'IAM roles attached to EC2 instances provide temporary, automatically-rotated credentials via the instance metadata service. This allows the instance to call AWS APIs without embedding long-term access keys in code or configuration files.',
                 'choices'     => [
@@ -49,7 +46,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'A company needs to run a batch workload that can tolerate interruptions and requires the lowest possible cost. Which EC2 purchasing option should they choose?',
-                'difficulty'  => 'medium',
                 'category'    => 'AWS',
                 'explanation' => 'Spot Instances use spare EC2 capacity and can be up to 90% cheaper than On-Demand pricing. They can be interrupted with a 2-minute notice, making them ideal for fault-tolerant batch jobs.',
                 'choices'     => [
@@ -61,7 +57,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'Which AWS service would you use to decouple microservices using a fully managed message queue?',
-                'difficulty'  => 'medium',
                 'category'    => 'AWS',
                 'explanation' => 'Amazon SQS (Simple Queue Service) is a fully managed message queuing service that decouples application components. It allows services to communicate asynchronously, improving resilience and scalability.',
                 'choices'     => [
@@ -73,7 +68,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'An application needs sub-millisecond read latency for a session store. Which AWS service is the best fit?',
-                'difficulty'  => 'hard',
                 'category'    => 'AWS',
                 'explanation' => 'Amazon ElastiCache (with Redis or Memcached) is an in-memory caching service offering sub-millisecond latency. It is commonly used for session stores, leaderboards, and real-time analytics.',
                 'choices'     => [
@@ -87,7 +81,6 @@ class QuestionSeeder extends Seeder
             // ── Network ──────────────────────────────────────────────────────────
             [
                 'text'        => 'Which layer of the OSI model does TCP operate at?',
-                'difficulty'  => 'easy',
                 'category'    => 'Network',
                 'explanation' => 'TCP (Transmission Control Protocol) operates at Layer 4 (Transport layer) of the OSI model. It provides reliable, ordered, and error-checked delivery of a stream of data between applications.',
                 'choices'     => [
@@ -99,7 +92,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'What is the default subnet mask for a Class C IP address?',
-                'difficulty'  => 'easy',
                 'category'    => 'Network',
                 'explanation' => 'Class C addresses (192.0.0.0–223.255.255.255) use a default subnet mask of 255.255.255.0 (/24), which provides 254 usable host addresses per network.',
                 'choices'     => [
@@ -111,7 +103,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'Which protocol is used to dynamically assign IP addresses to devices on a network?',
-                'difficulty'  => 'easy',
                 'category'    => 'Network',
                 'explanation' => 'DHCP (Dynamic Host Configuration Protocol) automatically assigns IP addresses, subnet masks, gateways, and DNS servers to network devices, eliminating the need for manual configuration.',
                 'choices'     => [
@@ -123,7 +114,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'What is the purpose of a VLAN?',
-                'difficulty'  => 'medium',
                 'category'    => 'Network',
                 'explanation' => 'A VLAN (Virtual Local Area Network) segments a physical network into multiple logical networks at Layer 2. This improves security by isolating broadcast domains and allows administrators to group devices logically regardless of physical location.',
                 'choices'     => [
@@ -135,7 +125,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'In BGP, what is the term for the path attribute that specifies the list of autonomous systems a route has passed through?',
-                'difficulty'  => 'hard',
                 'category'    => 'Network',
                 'explanation' => 'The AS_PATH attribute is a well-known mandatory BGP attribute that records the sequence of Autonomous System numbers a route has traversed. It is used for loop prevention and as one of the primary factors in BGP path selection.',
                 'choices'     => [
@@ -149,7 +138,6 @@ class QuestionSeeder extends Seeder
             // ── Security ─────────────────────────────────────────────────────────
             [
                 'text'        => 'Which attack type involves sending more data to a buffer than it can hold, potentially allowing arbitrary code execution?',
-                'difficulty'  => 'easy',
                 'category'    => 'Security',
                 'explanation' => 'A buffer overflow attack writes data beyond the allocated memory buffer boundary. An attacker can overwrite adjacent memory, including return addresses, to redirect execution to malicious code.',
                 'choices'     => [
@@ -161,7 +149,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'What does the principle of "least privilege" mean in information security?',
-                'difficulty'  => 'easy',
                 'category'    => 'Security',
                 'explanation' => 'The principle of least privilege states that users, processes, and systems should be granted only the minimum permissions necessary to perform their required functions. This limits the damage that can be caused by accidents, errors, or security breaches.',
                 'choices'     => [
@@ -173,7 +160,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'Which symmetric encryption algorithm uses a 256-bit key and is considered the current gold standard for data encryption?',
-                'difficulty'  => 'medium',
                 'category'    => 'Security',
                 'explanation' => 'AES-256 (Advanced Encryption Standard with a 256-bit key) is widely considered the gold standard for symmetric encryption. It is approved by NIST and used in TLS, disk encryption, and many government/military applications.',
                 'choices'     => [
@@ -185,7 +171,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'What type of attack involves an attacker intercepting and potentially altering communication between two parties without their knowledge?',
-                'difficulty'  => 'medium',
                 'category'    => 'Security',
                 'explanation' => 'A Man-in-the-Middle (MitM) attack occurs when an attacker secretly intercepts and relays messages between two parties who believe they are communicating directly. TLS/SSL and certificate pinning are common defenses.',
                 'choices'     => [
@@ -197,7 +182,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'In a PKI (Public Key Infrastructure), what is the role of a Certificate Authority (CA)?',
-                'difficulty'  => 'hard',
                 'category'    => 'Security',
                 'explanation' => 'A Certificate Authority (CA) is a trusted entity that issues digital certificates. These certificates bind a public key to an identity (person, organization, or domain). Browsers and operating systems maintain a list of trusted root CAs to establish chains of trust for TLS connections.',
                 'choices'     => [
@@ -211,7 +195,6 @@ class QuestionSeeder extends Seeder
             // ── Linux ─────────────────────────────────────────────────────────────
             [
                 'text'        => 'Which command displays the current disk usage of all mounted filesystems in human-readable format?',
-                'difficulty'  => 'easy',
                 'category'    => 'Linux',
                 'explanation' => '`df -h` reports disk space usage for all mounted filesystems. The `-h` flag formats sizes in human-readable units (KB, MB, GB). Use `du -sh` to check usage for a specific directory.',
                 'choices'     => [
@@ -223,7 +206,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'What does the chmod command `chmod 755 script.sh` set as the file permissions?',
-                'difficulty'  => 'medium',
                 'category'    => 'Linux',
                 'explanation' => 'chmod 755 sets: owner = read+write+execute (7), group = read+execute (5), others = read+execute (5). This is a common permission for executable scripts — owner can modify, everyone can execute.',
                 'choices'     => [
@@ -235,7 +217,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'Which Linux command shows real-time resource usage (CPU, memory, processes) in an interactive view?',
-                'difficulty'  => 'easy',
                 'category'    => 'Linux',
                 'explanation' => '`top` provides a real-time, interactive view of running processes and system resource usage including CPU and memory. `htop` is a more feature-rich alternative. `ps` shows a static snapshot of processes.',
                 'choices'     => [
@@ -247,7 +228,6 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'text'        => 'A process with PID 1234 is unresponsive and `kill 1234` has no effect. What command forcefully terminates it?',
-                'difficulty'  => 'medium',
                 'category'    => 'Linux',
                 'explanation' => '`kill -9 PID` sends SIGKILL, which cannot be caught or ignored by the process. Unlike SIGTERM (the default), SIGKILL forces the kernel to immediately terminate the process.',
                 'choices'     => [

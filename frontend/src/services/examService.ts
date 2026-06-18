@@ -15,6 +15,17 @@ export const countQuestionsByTypes = async (
   return raw.filter((q) => questionTypes.includes(q.question_type ?? '')).length;
 };
 
+export const countByQuestionType = async (category: string): Promise<Record<string, number>> => {
+  const res = await api.get('/exams/questions', { params: { category, per_page: 500 } });
+  const raw = res.data.data as Array<{ question_type?: string }>;
+  const counts: Record<string, number> = {};
+  for (const q of raw) {
+    const type = q.question_type ?? '';
+    counts[type] = (counts[type] ?? 0) + 1;
+  }
+  return counts;
+};
+
 export const startExamSession = async (
   category: string,
   mode: ExamMode,
@@ -43,7 +54,6 @@ export const startExamSession = async (
       return {
         id: raw.id as number,
         text: raw.text as string,
-        difficulty: raw.difficulty as Question['difficulty'],
         category: raw.category as string,
         questionType: raw.question_type as string | undefined,
         explanation: raw.explanation as string | undefined,

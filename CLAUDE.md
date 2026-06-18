@@ -100,12 +100,34 @@ JLPT categories follow the pattern `JLPT-{level}-{section}`:
 | Category | Section | Sub-types (question_type) |
 |----------|---------|--------------------------|
 | `JLPT-N5-文字語彙` … `JLPT-N1-文字語彙` | げんごちしき（もじ・ごい） | 問題1, 問題2, 問題3, 問題4, 問題5 |
-| `JLPT-N5-文法読解` … `JLPT-N1-文法読解` | 言語知識（文法）・読解 | もんだい１, もんだい２, もんだい３, もんだい４, もんだい５, もんだい６ |
+| `JLPT-N5-文法読解` … `JLPT-N1-文法読解` | 言語知識（文法）・読解 | 問題1, 問題2, 問題3, 問題4, 問題5, 問題6 |
+| `JLPT-N1-Full`, `JLPT-N2-Full` | Combined paper (N1/N2 only) | All 文字語彙 + 文法読解 sub-types in order |
 
 - `question_type` column on `questions` table drives in-session ordering (CASE WHEN sort in ExamService)
 - 文法読解 questions with `passage_id` are grouped by passage in ExamService
-- もんだい３–６ have associated `passages` records; もんだい１–２ do not
-- Frontend `ReadingSession` page renders split-screen (passage left, question right) for 文法読解
+- 問題3–6 have associated `passages` records; 問題1–2 do not
+- Frontend `ReadingSession` page renders split-screen (passage left, question right) when `passage` is present
+- When `passage` is null (vocabulary questions in Full Exam sessions), `ReadingSession` switches to full-width single-column layout
+
+## JLPT Practice Modes (ExamSelect)
+
+`/exam/select?type=jlpt` shows three tabs per level:
+
+| Mode | Category used | Route | Notes |
+|------|--------------|-------|-------|
+| **本番形式 (Full Exam)** | `JLPT-N1-Full` / `JLPT-N2-Full` (N1/N2); `JLPT-Nx-文字語彙` + `JLPT-Nx-文法読解` (N3/N4/N5) | `/reading/session/…` | Real official time limits |
+| **Section Practice** | `JLPT-Nx-文字語彙` or `JLPT-Nx-文法読解` | `/exam/session/…` or `/reading/session/…` | Custom question count (10/20/all) |
+| **問題 Drill** | `JLPT-Nx-文字語彙` or `JLPT-Nx-文法読解` with `question_types` filter | As above | Multi-select 問題 chips with per-type counts |
+
+Official time limits used in Full Exam mode:
+
+| Level | 文字語彙 | 文法読解 | Notes |
+|-------|---------|---------|-------|
+| N1    | —       | —       | Combined 110 min (`JLPT-N1-Full`) |
+| N2    | —       | —       | Combined 105 min (`JLPT-N2-Full`) |
+| N3    | 30 min  | 70 min  | Separate papers |
+| N4    | 25 min  | 55 min  | Separate papers |
+| N5    | 20 min  | 40 min  | Separate papers |
 
 ## Seeder Order
 

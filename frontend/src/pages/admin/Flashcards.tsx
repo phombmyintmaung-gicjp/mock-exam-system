@@ -192,10 +192,10 @@ const Flashcards = () => {
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50 dark:border-white/8 dark:bg-white/5">
                 <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">{t('admin.flashcards.colType')}</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">{t('admin.flashcards.colLevel')}</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">{t('admin.flashcards.colFront')}</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">{t('admin.flashcards.colReading')}</th>
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40">{t('admin.flashcards.colMeaning')}</th>
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 whitespace-nowrap">{t('admin.flashcards.colLevel')}</th>
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 whitespace-nowrap">{t('admin.flashcards.colFront')}</th>
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 whitespace-nowrap">{t('admin.flashcards.colReading')}</th>
+                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-white/40 whitespace-nowrap">{t('admin.flashcards.colMeaning')}</th>
                 <th className="px-5 py-3" />
               </tr>
             </thead>
@@ -213,20 +213,20 @@ const Flashcards = () => {
                 : cards.map((card) => (
                     <tr key={card.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 dark:border-white/5 dark:hover:bg-white/4">
                       <td className="px-5 py-3">
-                        <span className={clsx('inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize', typeColor[card.type])}>
+                        <span className={clsx('inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize whitespace-nowrap', typeColor[card.type])}>
                           {t(`study.${card.type}.title`)}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-xs font-semibold text-slate-500 dark:text-white/50">{card.level}</td>
-                      <td className="px-5 py-3 text-lg font-bold text-slate-900 dark:text-white">{card.front}</td>
+                      <td className="px-5 py-3 text-xs font-semibold text-slate-500 dark:text-white/50 whitespace-nowrap">{card.level}</td>
+                      <td className="px-5 py-3 text-lg font-bold text-slate-900 dark:text-white whitespace-nowrap">{card.front}</td>
                       <td className="px-5 py-3 text-slate-500 dark:text-white/50">{card.reading ?? '—'}</td>
                       <td className="max-w-xs truncate px-5 py-3 text-slate-700 dark:text-white/70">{card.meaning}</td>
                       <td className="px-5 py-3">
                         <div className="flex items-center justify-end gap-3">
-                          <button onClick={() => openEdit(card)} className="text-xs font-medium text-amber-500 hover:text-amber-700 dark:text-amber-400">
+                          <button onClick={() => openEdit(card)} className="text-xs font-medium text-amber-500 hover:text-amber-700 dark:text-amber-400 whitespace-nowrap">
                             {t('common.edit')}
                           </button>
-                          <button onClick={() => setDeleteTarget(card)} className="text-xs font-medium text-red-400 hover:text-red-600">
+                          <button onClick={() => setDeleteTarget(card)} className="text-xs font-medium text-red-400 hover:text-red-600 whitespace-nowrap">
                             {t('common.delete')}
                           </button>
                         </div>

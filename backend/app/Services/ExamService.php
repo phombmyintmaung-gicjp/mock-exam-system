@@ -24,9 +24,50 @@ class ExamService
     public function getSessionQuestions(ExamSession $session, int $count = 20, array $questionTypes = []): Collection
     {
         if (str_starts_with($session->category, 'JLPT-')) {
+            if (str_ends_with($session->category, '-Full')) {
+                return $this->getJLPTFullExamQuestions($session);
+            }
             return $this->getJLPTQuestions($session, $count, $questionTypes);
         }
         return $this->getBalancedQuestions($session, $count);
+    }
+
+    private function getJLPTFullExamQuestions(ExamSession $session): Collection
+    {
+        preg_match('/JLPT-(N\d)-Full/', $session->category, $m);
+        $level = $m[1] ?? 'N5';
+
+        // Vocab/Kanji section — 問題1→5, no passages
+        $vocabQuestions = Question::with(['choices'])
+            ->where('category', "JLPT-{$level}-文字語彙")
+            ->orderByRaw("CASE question_type
+                WHEN '問題1' THEN 1
+                WHEN '問題2' THEN 2
+                WHEN '問題3' THEN 3
+                WHEN '問題4' THEN 4
+                WHEN '問題5' THEN 5
+                ELSE 99 END")
+            ->get();
+
+        // Grammar/Reading section — 問題1→６, load passages
+        $grammarQuestions = Question::with(['choices', 'passage'])
+            ->where('category', "JLPT-{$level}-文法読解")
+            ->orderByRaw("CASE question_type
+                WHEN '問題1' THEN 1
+                WHEN '問題2' THEN 2
+                WHEN '問題3' THEN 3
+                WHEN '問題4' THEN 4
+                WHEN '問題5' THEN 5
+                WHEN '問題6' THEN 6
+                ELSE 99 END")
+            ->get();
+
+        // Keep passage-linked questions grouped by passage_id
+        $noPassage  = $grammarQuestions->filter(fn ($q) => is_null($q->passage_id));
+        $hasPassage = $grammarQuestions->filter(fn ($q) => !is_null($q->passage_id));
+        $grouped    = $hasPassage->groupBy(fn ($q) => $q->passage_id)->values()->flatten(1);
+
+        return $vocabQuestions->concat($noPassage)->concat($grouped)->values();
     }
 
     private function getJLPTQuestions(ExamSession $session, int $count, array $questionTypes = []): Collection
@@ -52,12 +93,7 @@ class ExamService
                 WHEN '問題3'     THEN 3
                 WHEN '問題4'     THEN 4
                 WHEN '問題5'     THEN 5
-                WHEN 'もんだい１' THEN 1
-                WHEN 'もんだい２' THEN 2
-                WHEN 'もんだい３' THEN 3
-                WHEN 'もんだい４' THEN 4
-                WHEN 'もんだい５' THEN 5
-                WHEN 'もんだい６' THEN 6
+                WHEN '問題6'     THEN 6
                 ELSE 99 END, RAND()");
 
         $questions = empty($questionTypes)
@@ -76,51 +112,14 @@ class ExamService
 
     private function getBalancedQuestions(ExamSession $session, int $count): Collection
     {
-        $isReading = str_ends_with($session->category, '-Reading');
-        $with      = $isReading ? ['choices', 'passage'] : ['choices'];
+        $with = ['choices'];
 
-        $difficulties = ['easy', 'medium', 'hard'];
-        $base         = intdiv($count, count($difficulties));
-        $remainder    = $count % count($difficulties);
-
-        $allocations = [];
-        foreach ($difficulties as $i => $diff) {
-            $allocations[$diff] = $base + ($i < $remainder ? 1 : 0);
-        }
-
-        $selected   = new Collection();
-        $shortfalls = [];
-
-        foreach ($allocations as $diff => $needed) {
-            $fetched = Question::with($with)
-                ->byCategory($session->category)
-                ->where('difficulty', $diff)
-                ->inRandomOrder()
-                ->limit($needed)
-                ->get();
-
-            $selected  = $selected->concat($fetched);
-            $shortfall = $needed - $fetched->count();
-            if ($shortfall > 0) {
-                $shortfalls[$diff] = $shortfall;
-            }
-        }
-
-        if (array_sum($shortfalls) > 0) {
-            $excludeIds = $selected->pluck('id')->all();
-            $filler = Question::with($with)
-                ->byCategory($session->category)
-                ->whereNotIn('id', $excludeIds)
-                ->inRandomOrder()
-                ->limit(array_sum($shortfalls))
-                ->get();
-            $selected = $selected->concat($filler);
-        }
-
-        if ($isReading) {
-            return $selected->groupBy(fn ($q) => $q->passage_id ?? 0)->shuffle()->flatten(1)->values();
-        }
-
-        return $selected->shuffle()->values();
+        return Question::with($with)
+            ->byCategory($session->category)
+            ->inRandomOrder()
+            ->limit($count)
+            ->get()
+            ->shuffle()
+            ->values();
     }
 }

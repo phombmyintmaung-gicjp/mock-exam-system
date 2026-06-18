@@ -1,6 +1,7 @@
 import api from './api';
 import type { ExamResult, HistoryItem, PassFailStatus } from '@/types/result';
 import type { PaginatedResponse } from '@/types/api';
+import { PDF_FILENAME_PREFIX } from '@/constants';
 
 export const getResult = async (resultId: number): Promise<ExamResult> => {
   const res = await api.get(`/results/${resultId}`);
@@ -51,7 +52,7 @@ export const exportResultPdf = async (resultId: number, category?: string, userN
   const sanitize = (s: string) => s.replace(/[/\\:*?"<>|]/g, '').replace(/\s+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
   const examPart = category ? sanitize(category) : String(resultId);
   const userPart = userName ? sanitize(userName) : '';
-  a.download = userPart ? `Result_${examPart}_${userPart}.pdf` : `Result_${examPart}.pdf`;
+  a.download = userPart ? `${PDF_FILENAME_PREFIX}_${examPart}_${userPart}.pdf` : `${PDF_FILENAME_PREFIX}_${examPart}.pdf`;
   a.click();
   URL.revokeObjectURL(url);
 };

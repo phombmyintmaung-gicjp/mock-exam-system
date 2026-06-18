@@ -87,6 +87,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { to: '/exam/select', search: '?type=jlpt', label: t('nav.jlptPractice'), icon: <BookOpenIcon className={si} /> },
   ];
 
+  const flashcardLinks: NavLinkItem[] = [
+    { to: '/study', label: t('nav.flashcards'), icon: <LayersIcon className={si} /> },
+  ];
+
   const profileLinks: NavLinkItem[] = [
     { to: '/profile/history',    label: t('nav.history'),   icon: <ClockIcon className={si} /> },
     { to: '/profile/weak-areas', label: t('nav.weakAreas'), icon: <BoltIcon className={si} /> },
@@ -195,6 +199,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {isAdmin && renderAdminSections()}
           {!isAdmin && renderSection(t('nav.itExam'), itLinks, 'amber')}
           {!isAdmin && renderSection(t('nav.japaneseExam'), jlptLinks, 'rose')}
+          {!isAdmin && renderSection(t('nav.flashcardStudy'), flashcardLinks)}
           {!isAdmin && renderSection(t('nav.myAccount'), profileLinks)}
         </nav>
 
