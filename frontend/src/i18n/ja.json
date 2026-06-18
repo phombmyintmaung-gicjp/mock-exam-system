@@ -19,12 +19,8 @@
     "saving": "保存中...",
     "or": "または",
     "noData": "データがありません",
-    "noQuestionsAvailable": "このセクションにはまだ問題がありません。",
-    "difficulty": {
-      "easy": "初級",
-      "medium": "中級",
-      "hard": "上級"
-    }
+    "pageOf": "{{current}} / {{total}} ページ",
+    "noQuestionsAvailable": "このセクションにはまだ問題がありません。"
   },
   "auth": {
     "login": "ログイン",
@@ -86,7 +82,8 @@
     "contentGroup": "コンテンツ",
     "usersGroup": "ユーザー",
     "systemGroup": "システム",
-    "flashcards": "フラッシュカード"
+    "flashcards": "フラッシュカード",
+    "flashcardStudy": "フラッシュカード学習"
   },
   "exam": {
     "startButton": "試験を開始する",
@@ -121,13 +118,18 @@
     "questionCount": "{{count}}問",
     "numQuestions": "問題数",
     "numQuestionsAll": "全問",
+    "selectCountTitle": "問題数を選択",
+    "startExam": "試験を開始",
+    "exitStudy": "終了",
+    "exitStudyConfirmTitle": "学習を終了しますか？",
+    "exitStudyConfirmBody": "進捗は保存されません。本当に終了しますか？",
     "jlpt": {
       "title": "JLPT 練習",
       "subtitle": "レベルとセクションを選んで練習しましょう",
       "mojiGoi": "言語知識（文字・語彙）",
       "mojiGoiDesc": "問題1〜5：漢字・語彙・文字の知識",
       "bunpoKaido": "言語知識（文法）・読解",
-      "bunpoKaidoDesc": "もんだい1〜6：文法・文章読解",
+      "bunpoKaidoDesc": "問題1〜6：文法・文章読解",
       "levelSelected": "{{level}} レベルを選択中",
       "vocab": "語彙",
       "vocabDesc": "問題4〜5：語の意味と使い方",
@@ -136,7 +138,21 @@
       "grammar": "文法",
       "grammarDesc": "問題1〜2：文法パターンと文の構造",
       "reading": "読解",
-      "readingDesc": "問題3〜6：文章読解"
+      "readingDesc": "問題3〜6：文章読解",
+      "modeFullExam": "本番形式",
+      "modeSectionPractice": "セクション練習",
+      "modeDrill": "問題ドリル",
+      "fullExamTitle": "本番形式シミュレーション",
+      "fullExamCombinedDesc": "語彙・文法・読解をまとめて通しで解く",
+      "fullExamNoDataHint": "この試験の問題がまだ登録されていません。管理者に問題のインポートを依頼してください。",
+      "fullExamPaper1": "第1時限 — 文字語彙",
+      "fullExamPaper2": "第2時限 — 文法読解",
+      "vocabSection": "文字語彙",
+      "grammarSection": "文法読解",
+      "drillSelectHint": "練習する問題の種類を1つ以上選んでください。複数選択も可能です。",
+      "drillStartExam": "ドリル開始（試験）",
+      "drillStartStudy": "ドリル開始（学習）",
+      "drillNoneSelected": "問題の種類を1つ以上選んでください。"
     },
     "it": {
       "title": "IT資格試験",
@@ -204,7 +220,6 @@
       "newCategoryPlaceholder": "新しいカテゴリ名を入力 (例: AWS SAA)",
       "newCategoryAdd": "追加",
       "newCategoryCancel": "キャンセル",
-      "difficulty": "難易度",
       "explanation": "解説",
       "explanationPlaceholder": "正解の解説を入力...",
       "choices": "選択肢",
@@ -212,6 +227,8 @@
       "noCorrectAnswer": "正解の選択肢を1つマークしてください。",
       "markCorrect": "正解にする",
       "choicePlaceholder": "選択肢 {{number}}",
+      "questionType": "問題種別",
+      "questionTypePlaceholder": "問題種別を選択",
       "saveButton": "問題を保存する",
       "editTab": "編集",
       "previewTab": "プレビュー",
@@ -240,16 +257,14 @@
       "colRequired": "必須",
       "colNotes": "備考",
       "field_text": "問題文",
-      "field_category": "例：AWS、JLPT-N5-文字語彙",
-      "field_difficulty": "easy · medium · hard",
-      "field_question_type": "JLPTのみ — 問題1〜5、もんだい１〜６",
+      "field_category": "カテゴリの値と完全に一致する必要があります（カテゴリ一覧を参照）",
+      "field_question_type": "JLPTのみ — 問題1〜問題6",
       "field_explanation": "解答後に表示される解説",
       "field_choice": "choice1〜choice4（最低2つ）",
       "field_correct_index": "1=choice1、2=choice2 …",
       "tipsTitle": "注意事項",
-      "tip1": "difficultyは小文字で：easy・medium・hard",
-      "tip2": "correct_indexは数字：1・2・3・4",
-      "tip3": "IT問題はquestion_typeを空白のままにしてください"
+      "tip1": "correct_indexは数字：1・2・3・4",
+      "tip2": "IT問題はquestion_typeを空白のままにしてください"
     },
     "questions": {
       "title": "問題管理",
@@ -259,12 +274,10 @@
       "newButton": "+ 新しい問題",
       "importButton": "インポート",
       "searchPlaceholder": "問題を検索...",
-      "allDifficulties": "全難易度",
       "tabIT": "IT試験",
       "tabJapanese": "日本語検定",
       "columnQuestion": "問題",
       "columnCategory": "カテゴリ",
-      "columnDifficulty": "難易度",
       "columnLevel": "レベル",
       "columnSection": "セクション",
       "columnType": "問題種別",
@@ -275,7 +288,14 @@
       "sectionMojiGoi": "文字語彙",
       "sectionBunpo": "文法読解",
       "rowCount": "{{count}}件表示中",
-      "noData": "問題がありません。最初の問題を追加してください。"
+      "noData": "問題がありません。最初の問題を追加してください。",
+      "coverageTitle": "カバレッジ概要",
+      "coverageLegend": "セルをクリックで絞り込み",
+      "coverageFullExam": "本番形式",
+      "coverageLegendLabel": "凡例",
+      "coverageGap": "不足",
+      "coverageLow": "少ない",
+      "coverageGood": "十分"
     },
     "reports": {
       "title": "レポート",

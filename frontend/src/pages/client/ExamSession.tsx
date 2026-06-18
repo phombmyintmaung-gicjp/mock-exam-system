@@ -17,8 +17,9 @@ import { useExamGuardStore } from '@/store/examGuardStore';
 import { useExamSecurity } from '@/hooks/useExamSecurity';
 import useTimer from '@/hooks/useTimer';
 import { submitExam } from '@/services/examService';
+import { EXAM_SECURITY_THRESHOLD } from '@/constants';
 
-const SECURITY_THRESHOLD = 3;
+const SECURITY_THRESHOLD = EXAM_SECURITY_THRESHOLD;
 
 const ExamSession = () => {
   const { t } = useTranslation();
@@ -75,13 +76,22 @@ const ExamSession = () => {
     return () => window.removeEventListener('popstate', handler);
   }, []);
 
-  const handleConfirmExit = () => {
-    isFinishing.current = true;
-    resetSession();
-    deactivateGuard();
+  const handleConfirmExit = async () => {
+    if (!session?.sessionId || isSubmitting) return;
     setShowExitModal(false);
-    navigate(pendingPath ?? '/exam/select');
-    setPendingPath(null);
+    setIsSubmitting(true);
+    const questionIds = session.questions.map((q) => q.id);
+    try {
+      isFinishing.current = true;
+      const result = await submitExam(session.sessionId, session.answers, questionIds);
+      resetSession();
+      deactivateGuard();
+      setPendingPath(null);
+      navigate(`/exam/results/${result.id}`);
+    } catch {
+      isFinishing.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancelExit = () => {
@@ -209,7 +219,7 @@ const ExamSession = () => {
         <p className="mb-6 text-slate-600 dark:text-white/75">{t('exam.exitConfirmMessage')}</p>
         <div className="flex justify-end gap-3">
           <Button label={t('common.cancel')} variant="secondary" onClick={handleCancelExit} />
-          <Button label={t('exam.exitConfirmButton')} variant="danger" onClick={handleConfirmExit} />
+          <Button label={isSubmitting ? t('common.saving') : t('exam.exitConfirmButton')} variant="danger" disabled={isSubmitting} onClick={handleConfirmExit} />
         </div>
       </Modal>
 

@@ -6,6 +6,7 @@ import { ProgressBar } from '@/components/shared/ProgressBar';
 import { QuestionCard } from '@/components/shared/QuestionCard';
 import { Timer } from '@/components/shared/Timer';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/ui/Icons';
 import { useExamSessionStore } from '@/store/examSessionStore';
@@ -23,6 +24,7 @@ const StudySession = () => {
   const resetSession          = useExamSessionStore((s) => s.resetSession);
 
   const [revealed, setRevealed] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
   const isFinishing = useRef(false);
 
   useElapsedTimer(session?.currentIndex ?? 0);
@@ -37,6 +39,12 @@ const StudySession = () => {
     if (!currentQ || revealed) return;
     setAnswer(currentQ.id, choiceId);
     setRevealed(true);
+  };
+
+  const handleExit = () => {
+    isFinishing.current = true;
+    resetSession();
+    navigate('/exam/select', { replace: true });
   };
 
   const handleFinish = async () => {
@@ -79,10 +87,27 @@ const StudySession = () => {
               <span className="text-sm text-slate-500 dark:text-white/50">
                 {t('exam.questionOf', { current: session.currentIndex + 1, total: session.questions.length })}
               </span>
+              <Button
+                label={t('exam.exitStudy')}
+                variant="secondary"
+                onClick={() => setShowExitModal(true)}
+              />
             </div>
           </div>
           <ProgressBar current={session.currentIndex + 1} total={session.questions.length} />
         </div>
+
+        <Modal
+          isOpen={showExitModal}
+          title={t('exam.exitStudyConfirmTitle')}
+          onClose={() => setShowExitModal(false)}
+        >
+          <p className="mb-5 text-slate-600 dark:text-white/70">{t('exam.exitStudyConfirmBody')}</p>
+          <div className="flex gap-3">
+            <Button label={t('common.cancel')} variant="secondary" onClick={() => setShowExitModal(false)} className="flex-1" />
+            <Button label={t('common.confirm')} variant="danger" onClick={handleExit} className="flex-1" />
+          </div>
+        </Modal>
 
         {currentQ && (
           <QuestionCard

@@ -44,10 +44,15 @@ const Breadcrumb = () => {
   const crumbs: Crumb[] = [];
   let path = '';
 
-  for (const seg of segments) {
+  for (let i = 0; i < segments.length; i++) {
+    const seg = segments[i];
     path += '/' + seg;
     if (SKIP_SEGMENTS.has(seg) || IS_NUMERIC(seg)) continue;
-    crumbs.push({ label: labelMap[seg] ?? seg, href: path });
+    // If the next segment is a numeric ID (e.g. /exam/results/40), include it in
+    // this crumb's href so the link resolves to a real route instead of /exam/results.
+    const nextSeg = segments[i + 1];
+    const href = nextSeg && IS_NUMERIC(nextSeg) ? path + '/' + nextSeg : path;
+    crumbs.push({ label: labelMap[seg] ?? seg, href });
   }
 
   const isHome = location.pathname === homeHref;

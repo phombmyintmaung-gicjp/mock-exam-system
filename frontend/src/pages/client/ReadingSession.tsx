@@ -18,8 +18,9 @@ import useTimer from '@/hooks/useTimer';
 import useElapsedTimer from '@/hooks/useElapsedTimer';
 import { submitExam } from '@/services/examService';
 import type { Passage } from '@/types/exam';
+import { EXAM_SECURITY_THRESHOLD } from '@/constants';
 
-const SECURITY_THRESHOLD = 3;
+const SECURITY_THRESHOLD = EXAM_SECURITY_THRESHOLD;
 
 const ReadingSession = () => {
   const { t } = useTranslation();
@@ -84,13 +85,22 @@ const ReadingSession = () => {
     return () => window.removeEventListener('popstate', handler);
   }, [isStudy]);
 
-  const handleConfirmExit = () => {
-    isFinishing.current = true;
-    resetSession();
-    deactivateGuard();
+  const handleConfirmExit = async () => {
+    if (!session?.sessionId || isSubmitting) return;
     setShowExitModal(false);
-    navigate(pendingPath ?? '/exam/select');
-    setPendingPath(null);
+    setIsSubmitting(true);
+    const questionIds = session.questions.map((q) => q.id);
+    try {
+      isFinishing.current = true;
+      const result = await submitExam(session.sessionId, session.answers, questionIds);
+      resetSession();
+      deactivateGuard();
+      setPendingPath(null);
+      navigate(`/exam/results/${result.id}`);
+    } catch {
+      isFinishing.current = false;
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancelExit = () => {
@@ -185,27 +195,23 @@ const ReadingSession = () => {
 
         <ProgressBar current={session.currentIndex + 1} total={session.questions.length} />
 
-        {/* Split layout */}
-        <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:gap-6">
+        {/* Layout: split when passage exists, full-width otherwise */}
+        <div className={clsx('mt-4 flex flex-col gap-4', passage && 'lg:flex-row lg:gap-6')}>
 
-          {/* Passage panel */}
-          <div className="lg:w-1/2">
-            <div className="sticky top-20 glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
-              {passage ? (
-                <>
-                  <h2 className="mb-3 text-base font-semibold text-slate-800 dark:text-white/90">{passage.title}</h2>
-                  <div className="max-h-[60vh] overflow-y-auto text-sm leading-7 text-slate-600 dark:text-white/70 whitespace-pre-wrap scrollbar-thin">
-                    {passage.content}
-                  </div>
-                </>
-              ) : (
-                <p className="text-sm text-slate-300 dark:text-white/35">{t('common.noData')}</p>
-              )}
+          {/* Passage panel — only rendered when a passage is attached */}
+          {passage && (
+            <div className="lg:w-1/2">
+              <div className="sticky top-20 glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
+                <h2 className="mb-3 text-base font-semibold text-slate-800 dark:text-white/90">{passage.title}</h2>
+                <div className="max-h-[60vh] overflow-y-auto text-sm leading-7 text-slate-600 dark:text-white/70 whitespace-pre-wrap scrollbar-thin">
+                  {passage.content}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Question panel */}
-          <div className="lg:w-1/2">
+          <div className={passage ? 'lg:w-1/2' : 'w-full'}>
             {currentQ && (
               <div className="glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
                 <p className="mb-4 text-base font-medium text-slate-800 dark:text-white/90">{currentQ.text}</p>
@@ -279,7 +285,7 @@ const ReadingSession = () => {
         <p className="mb-6 text-slate-600 dark:text-white/75">{t('exam.exitConfirmMessage')}</p>
         <div className="flex justify-end gap-3">
           <Button label={t('common.cancel')} variant="secondary" onClick={handleCancelExit} />
-          <Button label={t('exam.exitConfirmButton')} variant="danger" onClick={handleConfirmExit} />
+          <Button label={isSubmitting ? t('common.saving') : t('exam.exitConfirmButton')} variant="danger" disabled={isSubmitting} onClick={handleConfirmExit} />
         </div>
       </Modal>
 

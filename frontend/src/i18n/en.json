@@ -19,12 +19,8 @@
     "saving": "Saving...",
     "or": "or",
     "noData": "No data available.",
-    "noQuestionsAvailable": "No questions available for this section yet.",
-    "difficulty": {
-      "easy": "Easy",
-      "medium": "Medium",
-      "hard": "Hard"
-    }
+    "pageOf": "Page {{current}} of {{total}}",
+    "noQuestionsAvailable": "No questions available for this section yet."
   },
   "auth": {
     "login": "Login",
@@ -86,7 +82,8 @@
     "contentGroup": "Content",
     "usersGroup": "Users",
     "systemGroup": "System",
-    "flashcards": "Flashcards"
+    "flashcards": "Flashcards",
+    "flashcardStudy": "Flashcard Study"
   },
   "exam": {
     "startButton": "Start Exam",
@@ -121,6 +118,11 @@
     "questionCount": "{{count}} questions",
     "numQuestions": "Questions",
     "numQuestionsAll": "All",
+    "selectCountTitle": "Select Number of Questions",
+    "startExam": "Start Exam",
+    "exitStudy": "Exit",
+    "exitStudyConfirmTitle": "Exit Study Session?",
+    "exitStudyConfirmBody": "Your progress will not be saved. Are you sure you want to exit?",
     "jlpt": {
       "title": "JLPT Practice",
       "subtitle": "Choose a level and section to start practicing",
@@ -136,7 +138,21 @@
       "grammar": "Grammar",
       "grammarDesc": "Q1–2: Grammar patterns and sentence structure",
       "reading": "Reading",
-      "readingDesc": "Q3–6: Reading comprehension passages"
+      "readingDesc": "Q3–6: Reading comprehension passages",
+      "modeFullExam": "Full Exam",
+      "modeSectionPractice": "Section Practice",
+      "modeDrill": "問題 Drill",
+      "fullExamTitle": "Full Exam Simulation",
+      "fullExamCombinedDesc": "All sections combined — vocabulary, grammar & reading",
+      "fullExamNoDataHint": "No questions have been added for this exam yet. Ask your admin to import questions.",
+      "fullExamPaper1": "Paper 1 — Vocabulary",
+      "fullExamPaper2": "Paper 2 — Grammar & Reading",
+      "vocabSection": "文字語彙",
+      "grammarSection": "文法読解",
+      "drillSelectHint": "Select one or more 問題 types to drill. Multiple types are combined into one session.",
+      "drillStartExam": "Start Drill (Exam)",
+      "drillStartStudy": "Start Drill (Study)",
+      "drillNoneSelected": "Select at least one 問題 type above to begin."
     },
     "it": {
       "title": "IT Certification Exam",
@@ -204,7 +220,6 @@
       "newCategoryPlaceholder": "New category name (e.g. AWS SAA)",
       "newCategoryAdd": "Add",
       "newCategoryCancel": "Cancel",
-      "difficulty": "Difficulty",
       "explanation": "Explanation",
       "explanationPlaceholder": "Explain the correct answer...",
       "choices": "Answer Choices",
@@ -212,6 +227,8 @@
       "noCorrectAnswer": "Please mark one choice as correct.",
       "markCorrect": "Mark as correct",
       "choicePlaceholder": "Choice {{number}}",
+      "questionType": "Question Type (問題)",
+      "questionTypePlaceholder": "Select 問題 type",
       "saveButton": "Save Question",
       "editTab": "Edit",
       "previewTab": "Preview",
@@ -240,16 +257,14 @@
       "colRequired": "Req.",
       "colNotes": "Notes",
       "field_text": "Question text",
-      "field_category": "e.g. AWS, JLPT-N5-文字語彙",
-      "field_difficulty": "easy · medium · hard",
-      "field_question_type": "JLPT only — 問題1–5, もんだい１–６",
+      "field_category": "Must match a category name exactly (see Category Values)",
+      "field_question_type": "JLPT only — 問題1–問題6",
       "field_explanation": "Shown after answer",
       "field_choice": "choice1 to choice4 — at least 2",
       "field_correct_index": "1 = choice1, 2 = choice2 …",
       "tipsTitle": "Tips",
-      "tip1": "difficulty must be exactly: easy, medium, or hard (lowercase)",
-      "tip2": "correct_index is a number: 1, 2, 3, or 4",
-      "tip3": "Leave question_type blank for IT questions"
+      "tip1": "correct_index is a number: 1, 2, 3, or 4",
+      "tip2": "Leave question_type blank for IT questions"
     },
     "questions": {
       "title": "Question Management",
@@ -259,12 +274,10 @@
       "newButton": "+ New Question",
       "importButton": "Import",
       "searchPlaceholder": "Search questions...",
-      "allDifficulties": "All difficulties",
       "tabIT": "IT Exam",
       "tabJapanese": "Japanese Language",
       "columnQuestion": "Question",
       "columnCategory": "Category",
-      "columnDifficulty": "Difficulty",
       "columnLevel": "Level",
       "columnSection": "Section",
       "columnType": "Type",
@@ -275,7 +288,14 @@
       "sectionMojiGoi": "文字語彙",
       "sectionBunpo": "文法読解",
       "rowCount": "{{count}} questions shown",
-      "noData": "No questions yet. Add your first question."
+      "noData": "No questions yet. Add your first question.",
+      "coverageTitle": "Coverage Overview",
+      "coverageLegend": "Click a cell to filter the list below",
+      "coverageFullExam": "Full Exam",
+      "coverageLegendLabel": "Legend",
+      "coverageGap": "gap",
+      "coverageLow": "low",
+      "coverageGood": "good"
     },
     "reports": {
       "title": "Reports",
