@@ -11,7 +11,7 @@ export const register = async (
   email: string,
   password: string,
   passwordConfirmation: string,
-): Promise<{ token: string; user: User }> => {
+): Promise<{ message: string }> => {
   const res = await api.post('/auth/register', {
     name,
     email,

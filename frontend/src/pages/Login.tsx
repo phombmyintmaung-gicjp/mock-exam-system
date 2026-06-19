@@ -42,8 +42,18 @@ const Login = () => {
       }
       setAuth(newUser, newToken);
       navigate(newUser.role === 'admin' ? '/admin/dashboard' : '/exam/select', { replace: true });
-    } catch {
-      setError(t('auth.invalidCredentials'));
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number; data?: { error?: string } } })?.response?.status;
+      const code = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      if (status === 403 && code === 'pending') {
+        setError(t('auth.accountPending'));
+      } else if (status === 403 && code === 'rejected') {
+        setError(t('auth.accountRejected'));
+      } else if (status === 403 && code === 'inactive') {
+        setError(t('auth.accountInactive'));
+      } else {
+        setError(t('auth.invalidCredentials'));
+      }
     } finally {
       setLoading(false);
     }

@@ -52,3 +52,22 @@ export const getDepartments = async (): Promise<Department[]> => {
   const res = await api.get('/admin/departments');
   return res.data.data;
 };
+
+export const toggleUserActive = async (id: number, isActive: boolean): Promise<User> => {
+  const res = await api.put(`/admin/users/${id}`, { is_active: isActive });
+  return res.data.data;
+};
+
+export const deleteAdminUser = async (id: number): Promise<void> => {
+  await api.delete(`/admin/users/${id}`);
+};
+
+export const approveUser = async (id: number): Promise<User> => {
+  const res = await api.post(`/admin/users/${id}/approve`);
+  return res.data.data;
+};
+
+export const rejectUser = async (id: number): Promise<User> => {
+  const res = await api.post(`/admin/users/${id}/reject`);
+  return res.data.data;
+};

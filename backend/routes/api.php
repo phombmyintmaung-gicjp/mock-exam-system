@@ -98,6 +98,9 @@ Route::prefix('v1')->group(function () {
             Route::post('users', [UserAdminController::class, 'store'])->name('admin.users.store');
             Route::get('users/{id}', [UserAdminController::class, 'show'])->name('admin.users.show');
             Route::put('users/{id}', [UserAdminController::class, 'update'])->name('admin.users.update');
+            Route::delete('users/{id}', [UserAdminController::class, 'destroy'])->name('admin.users.destroy');
+            Route::post('users/{id}/approve', [UserAdminController::class, 'approve'])->name('admin.users.approve');
+            Route::post('users/{id}/reject', [UserAdminController::class, 'reject'])->name('admin.users.reject');
 
             // Exam settings (per-category)
             Route::get('exam-settings', [ExamSettingController::class, 'index'])->name('admin.exam-settings.index');

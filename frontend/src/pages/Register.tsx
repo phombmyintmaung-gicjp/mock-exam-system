@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { Button } from '@/components/ui/Button';
 import { register } from '@/services/authService';
@@ -12,8 +12,7 @@ const ALLOWED_DOMAIN = '@gicjp.com';
 
 const Register = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { token, user, setAuth } = useAuthStore();
+  const { token, user } = useAuthStore();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,6 +21,7 @@ const Register = () => {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [registered, setRegistered] = useState(false);
 
   if (token && user) {
     return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/exam/select'} replace />;
@@ -43,11 +43,12 @@ const Register = () => {
     if (!validate()) return;
     setLoading(true);
     try {
-      const { token: newToken, user: newUser } = await register(name, email, password, confirmPassword);
-      setAuth(newUser, newToken);
-      navigate('/exam/select', { replace: true });
-    } catch {
-      setServerError(t('common.error'));
+      await register(name, email, password, confirmPassword);
+      setRegistered(true);
+    } catch (err: unknown) {
+      const res = (err as { response?: { data?: { errors?: Record<string, string[]>; message?: string; error?: string } } })?.response?.data;
+      const firstFieldError = res?.errors ? Object.values(res.errors)[0]?.[0] : undefined;
+      setServerError(firstFieldError ?? res?.error ?? res?.message ?? t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -59,7 +60,7 @@ const Register = () => {
     { color: 'bg-emerald-500', label: t('auth.registerPage.benefit3'), desc: t('auth.registerPage.benefit3Desc') },
   ];
 
-  return (
+  const pageShell = (children: ReactNode) => (
     <div className="relative flex min-h-screen bg-app overflow-hidden">
       {/* Back to Login */}
       <Link
@@ -105,10 +106,9 @@ const Register = () => {
         </div>
       </div>
 
-      {/* Right: register form */}
+      {/* Right panel */}
       <div className="relative flex flex-1 flex-col items-center justify-center px-4 py-12 sm:px-6 lg:max-w-[480px] lg:px-12">
         <div className="w-full max-w-md">
-
           {/* Mobile logo */}
           <div className="mb-8 flex flex-col items-center gap-3 lg:hidden">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/40">
@@ -116,121 +116,151 @@ const Register = () => {
             </div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('app.title')}</h1>
           </div>
-
-          <div className="mb-8 flex items-start justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('auth.register')}</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-white/50">{t('auth.registerPage.subtitle')}</p>
-            </div>
-            <LanguageToggle />
-          </div>
-
-          <div className="glass-card rounded-2xl p-8 shadow-2xl shadow-black/15 dark:shadow-black/40">
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-
-              {/* Name */}
-              <div>
-                <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-                  {t('auth.name')}
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: '' })); }}
-                  placeholder={t('auth.namePlaceholder')}
-                  required
-                  className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.name && 'ring-1 ring-rose-400')}
-                />
-                {fieldErrors.name && <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.name}</p>}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-                  {t('auth.email')}
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: '' })); }}
-                  placeholder={`yourname${ALLOWED_DOMAIN}`}
-                  required
-                  className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.email && 'ring-1 ring-rose-400')}
-                />
-                {fieldErrors.email
-                  ? <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.email}</p>
-                  : <p className="mt-1 text-xs text-slate-400 dark:text-white/30">{ALLOWED_DOMAIN} only</p>
-                }
-              </div>
-
-              {/* Password */}
-              <div>
-                <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-                  {t('auth.password')}
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setFieldErrors((p) => ({ ...p, password: '' })); }}
-                  placeholder="••••••••"
-                  required
-                  className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.password && 'ring-1 ring-rose-400')}
-                />
-                {fieldErrors.password
-                  ? <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.password}</p>
-                  : <p className="mt-1 text-xs text-slate-400 dark:text-white/30">{t('auth.passwordHint')}</p>
-                }
-              </div>
-
-              {/* Confirm Password */}
-              <div>
-                <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-                  {t('auth.confirmPassword')}
-                </label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => { setConfirmPassword(e.target.value); setFieldErrors((p) => ({ ...p, confirmPassword: '' })); }}
-                  placeholder="••••••••"
-                  required
-                  className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.confirmPassword && 'ring-1 ring-rose-400')}
-                />
-                {fieldErrors.confirmPassword && (
-                  <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.confirmPassword}</p>
-                )}
-              </div>
-
-              {serverError && (
-                <div className="rounded-xl border border-rose-400/30 bg-rose-500/15 px-4 py-3 text-sm text-rose-300">
-                  {serverError}
-                </div>
-              )}
-
-              <Button
-                label={loading ? t('auth.registering') : t('auth.registerButton')}
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 text-base"
-              />
-            </form>
-
-            <p className="mt-6 text-center text-sm text-slate-400 dark:text-white/40">
-              {t('auth.alreadyHaveAccount')}{' '}
-              <Link
-                to="/login"
-                className="font-semibold text-amber-500 transition-colors hover:text-amber-400 hover:underline dark:text-amber-300 dark:hover:text-amber-200"
-              >
-                {t('auth.login')}
-              </Link>
-            </p>
-          </div>
+          {children}
         </div>
       </div>
     </div>
+  );
+
+  if (registered) {
+    return pageShell(
+      <div className="glass-card rounded-2xl p-8 shadow-2xl shadow-black/15 dark:shadow-black/40 text-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-500/20">
+          <svg className="h-8 w-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
+          {t('auth.registerPendingTitle')}
+        </h2>
+        <p className="text-sm text-slate-500 dark:text-white/50 mb-6">
+          {t('auth.registerPendingBody')}
+        </p>
+        <Link
+          to="/login"
+          className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          {t('auth.registerPendingBack')}
+        </Link>
+      </div>
+    );
+  }
+
+  return pageShell(
+    <>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('auth.register')}</h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-white/50">{t('auth.registerPage.subtitle')}</p>
+        </div>
+        <LanguageToggle />
+      </div>
+
+      <div className="glass-card rounded-2xl p-8 shadow-2xl shadow-black/15 dark:shadow-black/40">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+
+          {/* Name */}
+          <div>
+            <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
+              {t('auth.name')}
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: '' })); }}
+              placeholder={t('auth.namePlaceholder')}
+              required
+              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.name && 'ring-1 ring-rose-400')}
+            />
+            {fieldErrors.name && <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.name}</p>}
+          </div>
+
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
+              {t('auth.email')}
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: '' })); }}
+              placeholder={`yourname${ALLOWED_DOMAIN}`}
+              required
+              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.email && 'ring-1 ring-rose-400')}
+            />
+            {fieldErrors.email
+              ? <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.email}</p>
+              : <p className="mt-1 text-xs text-slate-400 dark:text-white/30">{ALLOWED_DOMAIN} only</p>
+            }
+          </div>
+
+          {/* Password */}
+          <div>
+            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
+              {t('auth.password')}
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setFieldErrors((p) => ({ ...p, password: '' })); }}
+              placeholder="••••••••"
+              required
+              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.password && 'ring-1 ring-rose-400')}
+            />
+            {fieldErrors.password
+              ? <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.password}</p>
+              : <p className="mt-1 text-xs text-slate-400 dark:text-white/30">{t('auth.passwordHint')}</p>
+            }
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
+              {t('auth.confirmPassword')}
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => { setConfirmPassword(e.target.value); setFieldErrors((p) => ({ ...p, confirmPassword: '' })); }}
+              placeholder="••••••••"
+              required
+              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.confirmPassword && 'ring-1 ring-rose-400')}
+            />
+            {fieldErrors.confirmPassword && (
+              <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.confirmPassword}</p>
+            )}
+          </div>
+
+          {serverError && (
+            <div className="rounded-xl border border-rose-400/30 bg-rose-500/15 px-4 py-3 text-sm text-rose-300">
+              {serverError}
+            </div>
+          )}
+
+          <Button
+            label={loading ? t('auth.registering') : t('auth.registerButton')}
+            type="submit"
+            disabled={loading}
+            className="w-full py-2.5 text-base"
+          />
+        </form>
+
+        <p className="mt-6 text-center text-sm text-slate-400 dark:text-white/40">
+          {t('auth.alreadyHaveAccount')}{' '}
+          <Link
+            to="/login"
+            className="font-semibold text-amber-500 transition-colors hover:text-amber-400 hover:underline dark:text-amber-300 dark:hover:text-amber-200"
+          >
+            {t('auth.login')}
+          </Link>
+        </p>
+      </div>
+    </>
   );
 };
 

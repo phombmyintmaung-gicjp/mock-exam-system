@@ -84,6 +84,18 @@ class AuthController extends Controller
     {
         $result = $this->authService->login($request->validated());
 
+        if ($result === 'pending') {
+            return response()->json(['error' => 'pending'], 403);
+        }
+
+        if ($result === 'rejected') {
+            return response()->json(['error' => 'rejected'], 403);
+        }
+
+        if ($result === 'inactive') {
+            return response()->json(['error' => 'inactive'], 403);
+        }
+
         if ($result === null) {
             return response()->json(['error' => 'Invalid credentials.'], 401);
         }

@@ -49,6 +49,10 @@ class UserAdminController extends Controller
             $query->where('is_active', $request->boolean('is_active'));
         }
 
+        if ($request->filled('approval_status')) {
+            $query->where('approval_status', $request->input('approval_status'));
+        }
+
         $paginator = $query->orderBy('name')->paginate(perPage: 25);
 
         return response()->json([
@@ -141,6 +145,35 @@ class UserAdminController extends Controller
         $user = User::findOrFail($id);
         $user->update($request->validated());
 
+        return response()->json(['data' => $user->load('department')]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        /** @var \App\Models\User $authUser */
+        $authUser = auth()->user();
+
+        if ($authUser->id === $id) {
+            return response()->json(['error' => 'You cannot delete your own account.'], 422);
+        }
+
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['data' => ['message' => 'User deleted.']], 200);
+    }
+
+    public function approve(int $id): JsonResponse
+    {
+        $user = User::findOrFail($id);
+        $user->update(['approval_status' => 'approved', 'is_active' => true]);
+        return response()->json(['data' => $user->load('department')]);
+    }
+
+    public function reject(int $id): JsonResponse
+    {
+        $user = User::findOrFail($id);
+        $user->update(['approval_status' => 'rejected', 'is_active' => false]);
         return response()->json(['data' => $user->load('department')]);
     }
 }

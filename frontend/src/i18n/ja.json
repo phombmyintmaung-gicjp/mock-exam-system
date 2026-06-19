@@ -50,10 +50,16 @@
     "studyWithoutAccount": "アカウントなしで学習する",
     "nameRequired": "氏名を入力してください",
     "passwordHint": "8文字以上で入力してください",
+    "accountPending": "アカウントは管理者の承認待ちです。",
+    "accountRejected": "アカウント登録が拒否されました。管理者にお問い合わせください。",
+    "accountInactive": "アカウントが無効化されています。管理者にお問い合わせください。",
+    "registerPendingTitle": "登録を受け付けました",
+    "registerPendingBody": "管理者がアカウントを審査します。承認後にログインできます。",
+    "registerPendingBack": "ログインに戻る",
     "registerPage": {
       "heroTitle": "学習の旅を始めよう",
-      "heroSubtitle": "GICジャパン社員限定 — アカウントを作成して、次の試験の準備を始めましょう。",
-      "subtitle": "GICジャパン社員専用",
+      "heroSubtitle": "GIC宮崎社員限定 — アカウントを作成して、次の試験の準備を始めましょう。",
+      "subtitle": "GIC宮崎社員専用",
       "benefit1": "IT資格",
       "benefit2": "JLPT N1〜N5",
       "benefit3": "学習進捗管理",
@@ -315,7 +321,24 @@
       "columnDepartment": "部門",
       "columnRole": "役割",
       "columnActions": "操作",
-      "noData": "ユーザーがいません"
+      "noData": "ユーザーがいません",
+      "pendingApprovals": "承認待ち",
+      "approve": "承認",
+      "reject": "拒否",
+      "noPending": "承認待ちの登録はありません",
+      "columnStatus": "ステータス",
+      "statusActive": "有効",
+      "statusInactive": "無効",
+      "deactivateTitle": "ユーザーを無効化する",
+      "deactivateBody": "このユーザーはログインできなくなります。いつでも再有効化できます。",
+      "deactivateConfirm": "無効化する",
+      "activateTitle": "ユーザーを有効化する",
+      "activateBody": "このユーザーは再びログインできるようになります。",
+      "activateConfirm": "有効化する",
+      "deleteConfirmTitle": "ユーザーを削除する",
+      "deleteConfirmBody": "このユーザーとすべての受験履歴を完全に削除します。この操作は取り消せません。",
+      "cannotDeleteSelf": "自分のアカウントは削除できません。",
+      "deleting": "削除中..."
     },
     "userForm": {
       "title": "新しいユーザー",
@@ -455,11 +478,11 @@
       "badge": "IT資格 ・ JLPT N1〜N5 ・ フラッシュカード無料",
       "titleLine1": "次の試験に合格しよう。",
       "titleLine2": "自分のスタイルで。",
-      "subtitle": "IT資格とJLPTの本格模擬試験、さらに無料のフラッシュカード学習まで。GICジャパン社員のために、すべてが一箇所に。",
+      "subtitle": "IT資格とJLPTの本格模擬試験、さらに無料のフラッシュカード学習まで。GIC宮崎社員のために、すべてが一箇所に。",
       "cta": "ログインして始める",
       "studyCta": "無料フラッシュカードを試す",
       "explore": "カテゴリを見る",
-      "trustLine": "GICジャパン社員向け ・ フラッシュカードはアカウント不要で無料"
+      "trustLine": "GIC宮崎社員向け ・ フラッシュカードはアカウント不要で無料"
     },
     "stats": {
       "itCerts": "ITカテゴリ",
@@ -521,7 +544,7 @@
     },
     "howItWorks": {
       "title": "使い方",
-      "step1": { "title": "ログイン", "desc": "GICジャパンの会社アカウントでログインします。" },
+      "step1": { "title": "ログイン", "desc": "GIC宮崎の会社アカウントでログインします。" },
       "step2": { "title": "試験を選ぶ", "desc": "ITカテゴリまたはJLPTのレベル・セクションを選択します。" },
       "step3": { "title": "練習して上達", "desc": "時間制限ありの試験か自分のペースで学習し、分析で進捗を確認しましょう。" }
     },

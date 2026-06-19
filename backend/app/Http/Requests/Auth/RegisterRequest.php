@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterRequest extends FormRequest
 {
@@ -16,7 +17,14 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name'     => ['required', 'string', 'max:150'],
-            'email'    => ['required', 'email', 'unique:users,email', 'regex:/@gicjp\.com$/i'],
+            'email'    => [
+                'required', 'email', 'regex:/@gicjp\.com$/i',
+                // Allow re-registration only if the existing account was rejected.
+                // Pending and approved accounts block new registrations.
+                Rule::unique('users', 'email')->where(
+                    fn ($q) => $q->whereIn('approval_status', ['pending', 'approved'])
+                ),
+            ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }

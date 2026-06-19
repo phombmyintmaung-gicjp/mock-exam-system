@@ -11,12 +11,29 @@ class AuthService
 {
     /**
      * Validate credentials and return a token + user payload.
+     * Returns 'pending' or 'rejected' string if account is not approved.
+     * Returns null on wrong credentials.
      *
      * @param  array{email: string, password: string} $credentials
-     * @return array{token: string, user: User}|null  Returns null on failure.
+     * @return array{token: string, user: User}|string|null
      */
-    public function login(array $credentials): ?array
+    public function login(array $credentials): array|string|null
     {
+        // Check approval status before attempting JWT auth
+        $user = User::where('email', $credentials['email'])->first();
+
+        if ($user) {
+            if ($user->approval_status === 'pending') {
+                return 'pending';
+            }
+            if ($user->approval_status === 'rejected') {
+                return 'rejected';
+            }
+            if (! $user->is_active) {
+                return 'inactive';
+            }
+        }
+
         $token = Auth::guard('api')->attempt([
             'email'     => $credentials['email'],
             'password'  => $credentials['password'],
@@ -39,29 +56,38 @@ class AuthService
     }
 
     /**
-     * Create a new employee account and return a token + user payload.
+     * Create a new employee account pending admin approval.
+     * Does NOT auto-login — returns a message array instead.
      *
      * @param  array{name: string, email: string, password: string} $data
-     * @return array{token: string, token_type: string, expires_in: int, user: User}
+     * @return array{message: string}
      */
     public function register(array $data): array
     {
-        $user = User::create([
-            'name'      => $data['name'],
-            'email'     => $data['email'],
-            'password'  => $data['password'],
-            'role'      => 'employee',
-            'is_active' => true,
-        ]);
+        $existing = User::where('email', $data['email'])
+            ->where('approval_status', 'rejected')
+            ->first();
 
-        /** @var string $token */
-        $token = Auth::guard('api')->login($user);
+        if ($existing) {
+            $existing->update([
+                'name'            => $data['name'],
+                'password'        => $data['password'],
+                'is_active'       => false,
+                'approval_status' => 'pending',
+            ]);
+        } else {
+            User::create([
+                'name'            => $data['name'],
+                'email'           => $data['email'],
+                'password'        => $data['password'],
+                'role'            => 'employee',
+                'is_active'       => false,
+                'approval_status' => 'pending',
+            ]);
+        }
 
         return [
-            'token'      => $token,
-            'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60,
-            'user'       => $user,
+            'message' => 'Registration submitted. Awaiting admin approval.',
         ];
     }
 
