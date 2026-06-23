@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\V1\Admin\PassageController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Admin\ResultAdminController;
 use App\Http\Controllers\Api\V1\Admin\FlashcardAdminController;
+use App\Http\Controllers\Api\V1\Admin\CustomSetController;
+use App\Http\Controllers\Api\V1\CustomExamController;
 use App\Http\Controllers\Api\V1\FlashcardController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
@@ -128,6 +130,26 @@ Route::prefix('v1')->group(function () {
             Route::get('passages/{id}', [PassageController::class, 'show'])->name('admin.passages.show');
             Route::put('passages/{id}', [PassageController::class, 'update'])->name('admin.passages.update');
             Route::delete('passages/{id}', [PassageController::class, 'destroy'])->name('admin.passages.destroy');
+
+            // Custom question sets
+            Route::get('custom-sets', [CustomSetController::class, 'index'])->name('admin.custom-sets.index');
+            Route::post('custom-sets', [CustomSetController::class, 'store'])->name('admin.custom-sets.store');
+            Route::get('custom-sets/{id}', [CustomSetController::class, 'show'])->name('admin.custom-sets.show');
+            Route::put('custom-sets/{id}', [CustomSetController::class, 'update'])->name('admin.custom-sets.update');
+            Route::delete('custom-sets/{id}', [CustomSetController::class, 'destroy'])->name('admin.custom-sets.destroy');
+            Route::post('custom-sets/{id}/questions', [CustomSetController::class, 'addQuestion'])->name('admin.custom-sets.questions.add');
+            Route::delete('custom-sets/{id}/questions/{questionId}', [CustomSetController::class, 'removeQuestion'])->name('admin.custom-sets.questions.remove');
+            Route::post('custom-sets/{id}/questions/create', [CustomSetController::class, 'createQuestion'])->name('admin.custom-sets.questions.create');
+            Route::put('custom-sets/{id}/reorder', [CustomSetController::class, 'reorder'])->name('admin.custom-sets.reorder');
+            Route::get('custom-sets/{id}/results', [CustomSetController::class, 'results'])->name('admin.custom-sets.results');
+        });
+
+        // Custom exam sessions (employee-facing, auth required, not admin-only)
+        Route::prefix('custom-exams')->group(function () {
+            Route::get('{slug}', [CustomExamController::class, 'show'])->name('custom-exams.show');
+            Route::post('{slug}/sessions', [CustomExamController::class, 'startSession'])->name('custom-exams.sessions.start');
+            Route::post('sessions/{id}/submit', [CustomExamController::class, 'submitSession'])->name('custom-exams.sessions.submit');
+            Route::get('results/{id}', [CustomExamController::class, 'getResult'])->name('custom-exams.results.show');
         });
     });
 });

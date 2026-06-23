@@ -5,34 +5,21 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateExamSettingRequest;
 use App\Models\ExamSetting;
-use App\Models\Question;
 use Illuminate\Http\JsonResponse;
 
 class ExamSettingController extends Controller
 {
     /**
-     * Return settings for every category that has at least one question.
-     * Categories without a row in exam_settings return config/hard-coded defaults.
+     * Return all rows from exam_settings, sorted by category name.
      */
     public function index(): JsonResponse
     {
-        $categories = Question::distinct()->pluck('category')->sort()->values();
-
-        $saved = ExamSetting::whereIn('category', $categories)
-            ->get()
-            ->keyBy('category');
-
-        $data = $categories->map(function (string $cat) use ($saved) {
-            /** @var ExamSetting|null $s */
-            $s = $saved->get($cat);
-
-            return [
-                'category'           => $cat,
-                'time_limit_seconds' => $s?->time_limit_seconds ?? config('exam.default_time_limit', 3600),
-                'passing_score'      => $s?->passing_score      ?? config('exam.passing_score', 70),
-                'question_count'     => $s?->question_count     ?? config('exam.default_question_count', 20),
-            ];
-        });
+        $data = ExamSetting::orderBy('category')->get()->map(fn (ExamSetting $s) => [
+            'category'           => $s->category,
+            'time_limit_seconds' => $s->time_limit_seconds,
+            'passing_score'      => $s->passing_score,
+            'question_count'     => $s->question_count,
+        ]);
 
         return response()->json(['data' => $data]);
     }

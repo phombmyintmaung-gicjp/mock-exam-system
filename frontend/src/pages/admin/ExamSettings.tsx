@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { fetchExamSettings, updateExamSetting } from '@/services/examSettingsService';
 import type { CategoryExamSetting } from '@/types/exam';
+
+type FilterType = 'all' | 'it' | 'jlpt';
 
 interface CardState {
   category: string;
@@ -30,6 +32,8 @@ const ExamSettings = () => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [cards, setCards] = useState<CardState[]>([]);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<FilterType>('all');
 
   useEffect(() => {
     let cancelled = false;
@@ -42,24 +46,42 @@ const ExamSettings = () => {
     return () => { cancelled = true; };
   }, []);
 
+  const visibleCards = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return cards.filter((card) => {
+      const isJLPT = card.category.startsWith('JLPT');
+      if (filter === 'it'   &&  isJLPT) return false;
+      if (filter === 'jlpt' && !isJLPT) return false;
+      if (q && !card.category.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [cards, search, filter]);
+
   const updateCard = (index: number, patch: Partial<CardState>) => {
     setCards((prev) => prev.map((c, i) => (i === index ? { ...c, ...patch } : c)));
   };
 
   const handleSave = async (index: number) => {
-    const card = cards[index];
-    updateCard(index, { saving: true, message: null });
+    const card = visibleCards[index];
+    const globalIndex = cards.findIndex((c) => c.category === card.category);
+    updateCard(globalIndex, { saving: true, message: null });
     try {
       await updateExamSetting(card.category, {
         time_limit_seconds: card.timeLimitMinutes * 60,
         question_count: card.questionCount,
         passing_score: card.passingScore,
       });
-      updateCard(index, { saving: false, message: { type: 'success', text: t('admin.examSettings.saved') } });
+      updateCard(globalIndex, { saving: false, message: { type: 'success', text: t('admin.examSettings.saved') } });
     } catch {
-      updateCard(index, { saving: false, message: { type: 'error', text: t('common.error') } });
+      updateCard(globalIndex, { saving: false, message: { type: 'error', text: t('common.error') } });
     }
   };
+
+  const FILTERS: { key: FilterType; label: string }[] = [
+    { key: 'all',  label: t('admin.examSettings.filterAll') },
+    { key: 'it',   label: t('admin.examSettings.filterIT') },
+    { key: 'jlpt', label: t('admin.examSettings.filterJLPT') },
+  ];
 
   return (
     <PageShell>
@@ -68,15 +90,41 @@ const ExamSettings = () => {
         <p className="mt-1 text-sm text-gray-500">{t('admin.examSettings.subtitle')}</p>
       </div>
 
+      {/* Search + Filter */}
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={t('admin.examSettings.searchPlaceholder')}
+          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:max-w-xs"
+        />
+        <div className="flex gap-2">
+          {FILTERS.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setFilter(key)}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                filter === key
+                  ? 'bg-amber-500 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {isLoading ? (
         <div className="flex min-h-[30vh] items-center justify-center">
           <Spinner size="lg" />
         </div>
-      ) : cards.length === 0 ? (
+      ) : visibleCards.length === 0 ? (
         <p className="text-sm text-gray-500">{t('common.noData')}</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2">
-          {cards.map((card, index) => (
+          {visibleCards.map((card, index) => (
             <div key={card.category} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold text-gray-900">{card.category}</h2>
 

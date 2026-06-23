@@ -23,6 +23,9 @@ import Passages from '@/pages/admin/Passages';
 import Categories from '@/pages/admin/Categories';
 import Flashcards from '@/pages/admin/Flashcards';
 import FlashcardImport from '@/pages/admin/FlashcardImport';
+import CustomSetList from '@/pages/admin/CustomSetList';
+import CustomSetEditor from '@/pages/admin/CustomSetEditor';
+import CustomSetResults from '@/pages/admin/CustomSetResults';
 
 import StudyHome from '@/pages/study/StudyHome';
 import FlashcardSession from '@/pages/study/FlashcardSession';
@@ -36,6 +39,9 @@ import History from '@/pages/client/History';
 import Profile from '@/pages/client/Profile';
 import WeakAreas from '@/pages/client/WeakAreas';
 import ReadingSession from '@/pages/client/ReadingSession';
+import CustomExamLanding from '@/pages/client/CustomExamLanding';
+import CustomExamSession from '@/pages/client/CustomExamSession';
+import CustomExamResult from '@/pages/client/CustomExamResult';
 
 const SITE = 'Mock Exam System';
 const TITLE_MAP: Array<[RegExp, string]> = [
@@ -55,6 +61,13 @@ const TITLE_MAP: Array<[RegExp, string]> = [
   [/^\/admin\/categories$/,           'pageTitle.adminCategories'],
   [/^\/admin\/flashcards\/import$/,   'pageTitle.adminFlashcardsImport'],
   [/^\/admin\/flashcards$/,           'pageTitle.adminFlashcards'],
+  [/^\/admin\/custom-sets\/create$/,  'pageTitle.adminCustomSetsCreate'],
+  [/^\/admin\/custom-sets\/\d+\/edit$/, 'pageTitle.adminCustomSetsEdit'],
+  [/^\/admin\/custom-sets\/\d+\/results$/, 'pageTitle.adminCustomSetsResults'],
+  [/^\/admin\/custom-sets$/,          'pageTitle.adminCustomSets'],
+  [/^\/exam\/custom\/results\/\d+$/,  'pageTitle.customExamResult'],
+  [/^\/exam\/custom\/session$/,       'pageTitle.customExamSession'],
+  [/^\/exam\/custom\//,               'pageTitle.customExamLanding'],
   [/^\/exam\/results\/\d+\/review$/,  'pageTitle.examReview'],
   [/^\/exam\/results\//,              'pageTitle.examResults'],
   [/^\/exam\/session\//,              'pageTitle.examSession'],
@@ -131,6 +144,10 @@ const App = () => {
           <Route path="/admin/categories" element={<Categories />} />
           <Route path="/admin/flashcards" element={<Flashcards />} />
           <Route path="/admin/flashcards/import" element={<FlashcardImport />} />
+          <Route path="/admin/custom-sets" element={<CustomSetList />} />
+          <Route path="/admin/custom-sets/create" element={<CustomSetEditor />} />
+          <Route path="/admin/custom-sets/:id/edit" element={<CustomSetEditor />} />
+          <Route path="/admin/custom-sets/:id/results" element={<CustomSetResults />} />
         </Route>
 
         {/* Client routes — require employee role */}
@@ -144,6 +161,9 @@ const App = () => {
           <Route path="/profile/history" element={<History />} />
           <Route path="/profile/weak-areas" element={<WeakAreas />} />
           <Route path="/reading/session/:category" element={<ReadingSession />} />
+          <Route path="/exam/custom/:slug" element={<CustomExamLanding />} />
+          <Route path="/exam/custom/session" element={<CustomExamSession />} />
+          <Route path="/exam/custom/results/:id" element={<CustomExamResult />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

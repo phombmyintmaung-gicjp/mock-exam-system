@@ -11,6 +11,9 @@ interface Crumb {
 const SESSION_PATHS = ['/exam/session', '/study/session', '/reading/session'];
 const SKIP_SEGMENTS = new Set(['admin', 'exam', 'study', 'reading']);
 const IS_NUMERIC = (s: string) => /^\d+$/.test(s);
+// Segments whose resource pages are /:id/edit — not /:id detail pages.
+// For these, a numeric next-segment should NOT be appended to the crumb href.
+const LIST_ONLY_SEGMENTS = new Set(['custom-sets', 'questions', 'users', 'passages']);
 
 const Breadcrumb = () => {
   const { t } = useTranslation();
@@ -27,9 +30,10 @@ const Breadcrumb = () => {
     questions:    t('nav.questions'),
     users:        t('nav.users'),
     exams:        t('nav.examSettings'),
-    passages:     t('nav.passages'),
-    reports:      t('nav.reports'),
-    select:       t('exam.selectTitle'),
+    passages:      t('nav.passages'),
+    reports:       t('nav.reports'),
+    'custom-sets': t('nav.customSets'),
+    select:        t('exam.selectTitle'),
     results:      t('result.title'),
     review:       t('result.review.title'),
     profile:      t('nav.profile'),
@@ -48,10 +52,13 @@ const Breadcrumb = () => {
     const seg = segments[i];
     path += '/' + seg;
     if (SKIP_SEGMENTS.has(seg) || IS_NUMERIC(seg)) continue;
-    // If the next segment is a numeric ID (e.g. /exam/results/40), include it in
-    // this crumb's href so the link resolves to a real route instead of /exam/results.
+    // For segments like "results" (which have /:id detail pages), include the
+    // numeric ID in the crumb href so it resolves to the real page.
+    // For list-only segments (questions, users, custom-sets…) the resource is at
+    // /:id/edit — there is no /:id detail route — so keep the href at the list level.
     const nextSeg = segments[i + 1];
-    const href = nextSeg && IS_NUMERIC(nextSeg) ? path + '/' + nextSeg : path;
+    const appendNumeric = nextSeg && IS_NUMERIC(nextSeg) && !LIST_ONLY_SEGMENTS.has(seg);
+    const href = appendNumeric ? path + '/' + nextSeg : path;
     crumbs.push({ label: labelMap[seg] ?? seg, href });
   }
 

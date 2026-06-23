@@ -62,6 +62,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         { to: '/admin/passages',   label: t('nav.passages'),   icon: <DocumentTextIcon className={si} /> },
         { to: '/admin/categories', label: t('nav.categories'), icon: <TagIcon className={si} /> },
         { to: '/admin/flashcards', label: t('nav.flashcards'), icon: <LayersIcon className={si} /> },
+        { to: '/admin/custom-sets', label: t('nav.customSets'), icon: <ClipboardCheckIcon className={si} /> },
       ],
     },
     {
