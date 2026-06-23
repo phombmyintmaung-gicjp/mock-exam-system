@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+html {
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
 @keyframes scale-in {
   from { transform: scale(0); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }

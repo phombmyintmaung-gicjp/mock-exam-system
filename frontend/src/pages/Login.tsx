@@ -45,7 +45,9 @@ const Login = () => {
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number; data?: { error?: string } } })?.response?.status;
       const code = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      if (status === 403 && code === 'pending') {
+      if (status === 429) {
+        setError(t('auth.tooManyAttempts'));
+      } else if (status === 403 && code === 'pending') {
         setError(t('auth.accountPending'));
       } else if (status === 403 && code === 'rejected') {
         setError(t('auth.accountRejected'));

@@ -72,10 +72,12 @@ export const submitExam = async (
   sessionId: number,
   answers: Record<number, number>,
   questionIds: number[],
+  timings?: Record<number, number>,
 ): Promise<{ id: number }> => {
   const formatted = questionIds.map((qid) => ({
     question_id: qid,
     choice_id: answers[qid] ?? null,
+    time_taken_seconds: timings?.[qid] ?? null,
   }));
   const res = await api.post(`/exams/sessions/${sessionId}/submit`, { answers: formatted });
   return { id: (res.data.data as { id: number }).id };

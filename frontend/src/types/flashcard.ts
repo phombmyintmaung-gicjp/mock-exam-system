@@ -10,4 +10,5 @@ export interface Flashcard {
   meaning: string;
   example_sentence: string | null;
   example_translation: string | null;
+  frequency_band?: number | null;
 }

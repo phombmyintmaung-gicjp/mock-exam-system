@@ -53,6 +53,7 @@
     "accountPending": "アカウントは管理者の承認待ちです。",
     "accountRejected": "アカウント登録が拒否されました。管理者にお問い合わせください。",
     "accountInactive": "アカウントが無効化されています。管理者にお問い合わせください。",
+    "tooManyAttempts": "ログイン試行回数が多すぎます。しばらくしてから再試行してください。",
     "registerPendingTitle": "登録を受け付けました",
     "registerPendingBody": "管理者がアカウントを審査します。承認後にログインできます。",
     "registerPendingBack": "ログインに戻る",
@@ -190,7 +191,16 @@
       "title": "回答レビュー",
       "subtitle": "解説付きで全問題を確認する",
       "noData": "レビューデータがありません",
-      "explanation": "解説"
+      "explanation": "解説",
+      "timeTaken": "回答時間"
+    },
+    "frequencyBand": {
+      "label": "頻出度",
+      "1": "最頻出",
+      "2": "高頻出",
+      "3": "中頻出",
+      "4": "低頻出",
+      "5": "稀"
     }
   },
   "admin": {
@@ -558,7 +568,16 @@
       "freeStudyLink": "アカウントなしでフラッシュカード学習 →"
     },
     "footer": {
-      "copyright": "© 2026 Mock Exam System. All rights reserved."
+      "tagline": "GIC宮崎社員のための、本格的な資格試験対策プラットフォーム。",
+      "itExams": "IT資格試験",
+      "jlptPractice": "JLPT練習",
+      "quickAccess": "クイックアクセス",
+      "login": "ログイン",
+      "freeFlashcards": "無料フラッシュカード",
+      "examMode": "試験モード",
+      "studyMode": "学習モード",
+      "madeFor": "GIC宮崎社員向けに制作",
+      "copyright": "© 2026 グローバルイノベーションコンサルティング株式会社. All rights reserved."
     }
   },
   "profile": {
@@ -603,6 +622,35 @@
     "title": "ページが見つかりません",
     "subtitle": "お探しのページは存在しないか、移動された可能性があります。",
     "backButton": "ホームへ戻る"
+  },
+  "pageTitle": {
+    "login": "ログイン",
+    "register": "登録",
+    "study": "学習",
+    "flashcardSession": "フラッシュカード学習",
+    "adminDashboard": "ダッシュボード",
+    "adminQuestionsImport": "問題インポート",
+    "adminQuestionsNew": "問題作成",
+    "adminQuestionsEdit": "問題編集",
+    "adminQuestions": "問題管理",
+    "adminExams": "試験設定",
+    "adminUsersNew": "ユーザー作成",
+    "adminUsersEdit": "ユーザー編集",
+    "adminUsers": "ユーザー管理",
+    "adminReports": "レポート",
+    "adminPassages": "長文管理",
+    "adminCategories": "カテゴリ管理",
+    "adminFlashcardsImport": "フラッシュカードインポート",
+    "adminFlashcards": "フラッシュカード管理",
+    "examReview": "解答確認",
+    "examResults": "試験結果",
+    "examSession": "試験中",
+    "examSelect": "試験選択",
+    "studySession": "学習中",
+    "readingSession": "読解試験",
+    "profileHistory": "受験履歴",
+    "profileWeakAreas": "弱点分析",
+    "profile": "プロフィール"
   },
   "examSecurity": {
     "notice": {

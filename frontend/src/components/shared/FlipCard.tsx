@@ -1,14 +1,26 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import type { Flashcard } from '@/types/flashcard';
 import { Furigana } from '@/components/shared/Furigana';
+import { KanjiStrokeOrder } from '@/components/shared/KanjiStrokeOrder';
+
+const BAND_COLORS: Record<number, string> = {
+  1: 'bg-emerald-500',
+  2: 'bg-sky-500',
+  3: 'bg-amber-500',
+  4: 'bg-orange-500',
+  5: 'bg-rose-500',
+};
 
 interface FlipCardProps {
   card: Flashcard;
 }
 
 export function FlipCard({ card }: FlipCardProps) {
+  const { t } = useTranslation();
   const [flipped, setFlipped] = useState(false);
+  const isKanjiSingle = card.type === 'kanji' && card.front.length === 1;
 
   return (
     <div
@@ -28,13 +40,51 @@ export function FlipCard({ card }: FlipCardProps) {
           className="absolute inset-0 flex flex-col items-center justify-center rounded-3xl border border-amber-200/60 bg-gradient-to-br from-white to-amber-50 p-6 shadow-xl dark:border-amber-400/20 dark:from-slate-800 dark:to-slate-700"
           style={{ backfaceVisibility: 'hidden' }}
         >
+          {/* Frequency band badge */}
+          {card.frequency_band !== null && card.frequency_band !== undefined && (
+            <div className="absolute top-4 right-4 flex items-center gap-1.5">
+              <span className="text-xs text-slate-400 dark:text-white/30">
+                {t(`result.frequencyBand.${card.frequency_band}`)}
+              </span>
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <span
+                    key={i}
+                    className={clsx(
+                      'h-1.5 w-1.5 rounded-full transition-colors',
+                      i <= card.frequency_band!
+                        ? BAND_COLORS[card.frequency_band!] ?? 'bg-amber-400'
+                        : 'bg-slate-200 dark:bg-white/15',
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-amber-500 dark:text-amber-400">
             {card.type}
           </p>
           <p className="text-center text-5xl font-bold text-slate-900 dark:text-white">
             {card.front}
           </p>
-          <p className="mt-6 text-xs text-slate-400 dark:text-white/30">タップして答えを見る</p>
+
+          {/* Kanji stroke order for single-character kanji cards */}
+          {isKanjiSingle && (
+            <div
+              className="mt-3"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <KanjiStrokeOrder character={card.front} size={68} />
+            </div>
+          )}
+
+          {!isKanjiSingle && (
+            <p className="mt-6 text-xs text-slate-400 dark:text-white/30">タップして答えを見る</p>
+          )}
+          {isKanjiSingle && (
+            <p className="mt-1 text-xs text-slate-400 dark:text-white/30">タップして答えを見る</p>
+          )}
         </div>
 
         {/* Back */}

@@ -244,8 +244,13 @@ class FlashcardSeeder extends Seeder
             ['type'=>'grammar','level'=>'N1','front'=>'～を皮切りに','reading'=>null,'meaning'=>'starting with ~, beginning with ~ (as a trigger)','example_sentence'=>'{東京|とうきょう}を{皮切|かわき}りに{全国|ぜんこく}ツアーを{行|おこな}います。','example_translation'=>'We will conduct a nationwide tour starting with Tokyo.'],
         ];
 
+        // Frequency band: 1 = most common in daily Japanese (N5), 5 = advanced/rare (N1).
+        $bandByLevel = ['N5' => 1, 'N4' => 2, 'N3' => 3, 'N2' => 4, 'N1' => 5];
+
         foreach ($cards as $card) {
-            Flashcard::create($card);
+            Flashcard::create(array_merge($card, [
+                'frequency_band' => $bandByLevel[$card['level']] ?? null,
+            ]));
         }
 
         $this->command->info('Flashcard seeder complete: ' . count($cards) . ' cards inserted.');

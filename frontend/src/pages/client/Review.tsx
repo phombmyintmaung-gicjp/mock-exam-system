@@ -1,5 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
+
+function formatSeconds(s: number): string {
+  if (s < 60) return `${s}s`;
+  return `${Math.floor(s / 60)}m ${s % 60}s`;
+}
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Shimmer, ReviewItemSkeleton } from '@/components/ui/Shimmer';
@@ -76,7 +81,14 @@ const Review = () => {
                       )}
                     </span>
                     <div>
-                      <span className="text-xs font-semibold uppercase text-gray-400">Q{idx + 1}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-semibold uppercase text-gray-400">Q{idx + 1}</span>
+                        {item.timeTakenSeconds !== null && item.timeTakenSeconds !== undefined && (
+                          <span className="text-xs text-slate-400">
+                            {t('result.review.timeTaken')}: {formatSeconds(item.timeTakenSeconds)}
+                          </span>
+                        )}
+                      </div>
                       <p className="mt-0.5 text-sm font-medium text-gray-900">{item.questionText}</p>
                     </div>
                   </div>

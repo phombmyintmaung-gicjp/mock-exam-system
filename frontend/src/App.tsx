@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useThemeStore } from '@/store/themeStore';
 import { useAuthStore } from '@/store/authStore';
 import { fetchMe } from '@/services/authService';
@@ -36,6 +37,47 @@ import Profile from '@/pages/client/Profile';
 import WeakAreas from '@/pages/client/WeakAreas';
 import ReadingSession from '@/pages/client/ReadingSession';
 
+const SITE = 'Mock Exam System';
+const TITLE_MAP: Array<[RegExp, string]> = [
+  [/^\/login$/,                       'pageTitle.login'],
+  [/^\/register$/,                    'pageTitle.register'],
+  [/^\/admin\/dashboard$/,            'pageTitle.adminDashboard'],
+  [/^\/admin\/questions\/import$/,    'pageTitle.adminQuestionsImport'],
+  [/^\/admin\/questions\/new$/,       'pageTitle.adminQuestionsNew'],
+  [/^\/admin\/questions\/\d+\/edit$/, 'pageTitle.adminQuestionsEdit'],
+  [/^\/admin\/questions$/,            'pageTitle.adminQuestions'],
+  [/^\/admin\/exams$/,                'pageTitle.adminExams'],
+  [/^\/admin\/users\/new$/,           'pageTitle.adminUsersNew'],
+  [/^\/admin\/users\/\d+\/edit$/,     'pageTitle.adminUsersEdit'],
+  [/^\/admin\/users$/,                'pageTitle.adminUsers'],
+  [/^\/admin\/reports$/,              'pageTitle.adminReports'],
+  [/^\/admin\/passages$/,             'pageTitle.adminPassages'],
+  [/^\/admin\/categories$/,           'pageTitle.adminCategories'],
+  [/^\/admin\/flashcards\/import$/,   'pageTitle.adminFlashcardsImport'],
+  [/^\/admin\/flashcards$/,           'pageTitle.adminFlashcards'],
+  [/^\/exam\/results\/\d+\/review$/,  'pageTitle.examReview'],
+  [/^\/exam\/results\//,              'pageTitle.examResults'],
+  [/^\/exam\/session\//,              'pageTitle.examSession'],
+  [/^\/exam\/select$/,                'pageTitle.examSelect'],
+  [/^\/study\/session\//,             'pageTitle.studySession'],
+  [/^\/reading\/session\//,           'pageTitle.readingSession'],
+  [/^\/study\/[^/]+$/,                'pageTitle.flashcardSession'],
+  [/^\/study$/,                       'pageTitle.study'],
+  [/^\/profile\/history$/,            'pageTitle.profileHistory'],
+  [/^\/profile\/weak-areas$/,         'pageTitle.profileWeakAreas'],
+  [/^\/profile$/,                     'pageTitle.profile'],
+];
+
+function TitleManager() {
+  const { t, i18n } = useTranslation();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const match = TITLE_MAP.find(([re]) => re.test(pathname));
+    document.title = match ? `${t(match[1])} | ${SITE}` : SITE;
+  }, [pathname, t, i18n.language]);
+  return null;
+}
+
 const App = () => {
   const theme = useThemeStore((s) => s.theme);
   const token = useAuthStore((s) => s.token);
@@ -63,6 +105,7 @@ const App = () => {
 
   return (
     <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
+      <TitleManager />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

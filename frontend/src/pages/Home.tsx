@@ -2,6 +2,7 @@ import { Navigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
+import { ScrollReveal } from '@/components/shared/ScrollReveal';
 import { useThemeStore } from '@/store/themeStore';
 import { clsx } from 'clsx';
 import {
@@ -151,11 +152,11 @@ const Home = () => {
               { value: '100+', labelKey: 'home.stats.questions' },
               { value: '∞', labelKey: 'home.stats.attempts' },
             ] as const
-          ).map(({ value, labelKey }) => (
-            <div key={labelKey} className="text-center">
+          ).map(({ value, labelKey }, i) => (
+            <ScrollReveal key={labelKey} delay={i * 100} className="text-center">
               <div className="text-gradient-brand text-4xl font-extrabold tabular-nums">{value}</div>
               <div className="mt-1.5 text-sm font-medium text-slate-400 dark:text-white/45">{t(labelKey)}</div>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -163,10 +164,10 @@ const Home = () => {
       {/* ── Features ──────────────────────────────────────────── */}
       <section className="px-4 py-20">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
+          <ScrollReveal className="mb-12 text-center">
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('home.features.title')}</h2>
             <p className="mt-3 text-slate-400 dark:text-white/45">{t('home.features.subtitle')}</p>
-          </div>
+          </ScrollReveal>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
@@ -198,17 +199,19 @@ const Home = () => {
                 descKey: 'home.features.jlpt.desc',
                 icon: <DocumentTextIcon className="h-5 w-5 text-white" />,
               },
-            ].map((feat) => (
-              <div key={feat.titleKey} className="glass-card overflow-hidden rounded-2xl transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
-                <div className={`h-0.5 bg-gradient-to-r ${feat.gradient}`} />
-                <div className="p-5">
-                  <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-md ${feat.gradient} ${feat.shadow}`}>
-                    {feat.icon}
+            ].map((feat, i) => (
+              <ScrollReveal key={feat.titleKey} delay={i * 100}>
+                <div className="glass-card overflow-hidden rounded-2xl transition-all duration-200 hover:-translate-y-1 hover:shadow-lg h-full">
+                  <div className={`h-0.5 bg-gradient-to-r ${feat.gradient}`} />
+                  <div className="p-5">
+                    <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-md ${feat.gradient} ${feat.shadow}`}>
+                      {feat.icon}
+                    </div>
+                    <h3 className="font-semibold text-slate-900 dark:text-white">{t(feat.titleKey as Parameters<typeof t>[0])}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-white/50">{t(feat.descKey as Parameters<typeof t>[0])}</p>
                   </div>
-                  <h3 className="font-semibold text-slate-900 dark:text-white">{t(feat.titleKey as Parameters<typeof t>[0])}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-white/50">{t(feat.descKey as Parameters<typeof t>[0])}</p>
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -217,29 +220,33 @@ const Home = () => {
       {/* ── IT Exam Categories ────────────────────────────────── */}
       <section id="categories" className="px-4 py-16">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-3 flex justify-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-500 dark:border-white/15 dark:bg-white/8 dark:text-white/50">
-              <TableCellsIcon className="h-3.5 w-3.5" />
-              IT
-            </span>
-          </div>
-          <div className="mb-10 text-center">
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('home.categories.title')}</h2>
-            <p className="mt-3 text-slate-400 dark:text-white/45">{t('home.categories.subtitle')}</p>
-          </div>
+          <ScrollReveal>
+            <div className="mb-3 flex justify-center">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-500 dark:border-white/15 dark:bg-white/8 dark:text-white/50">
+                <TableCellsIcon className="h-3.5 w-3.5" />
+                IT
+              </span>
+            </div>
+            <div className="mb-10 text-center">
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('home.categories.title')}</h2>
+              <p className="mt-3 text-slate-400 dark:text-white/45">{t('home.categories.subtitle')}</p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {IT_CATEGORIES.map((cat) => (
-              <div key={cat.id} className="glass-card overflow-hidden rounded-2xl transition-all duration-200 hover:-translate-y-1">
-                <div className={`h-0.5 bg-gradient-to-r ${cat.gradient}`} />
-                <div className="p-5">
-                  <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-md ${cat.gradient} ${cat.shadow}`}>
-                    {cat.icon}
+            {IT_CATEGORIES.map((cat, i) => (
+              <ScrollReveal key={cat.id} delay={i * 100}>
+                <div className="glass-card overflow-hidden rounded-2xl transition-all duration-200 hover:-translate-y-1 h-full">
+                  <div className={`h-0.5 bg-gradient-to-r ${cat.gradient}`} />
+                  <div className="p-5">
+                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-md ${cat.gradient} ${cat.shadow}`}>
+                      {cat.icon}
+                    </div>
+                    <h3 className="font-bold text-slate-900 dark:text-white">{t(cat.labelKey)}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-slate-400 dark:text-white/45">{t(cat.descKey)}</p>
                   </div>
-                  <h3 className="font-bold text-slate-900 dark:text-white">{t(cat.labelKey)}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-400 dark:text-white/45">{t(cat.descKey)}</p>
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -248,7 +255,8 @@ const Home = () => {
       {/* ── JLPT Section ─────────────────────────────────────── */}
       <section className="px-4 py-16">
         <div className="mx-auto max-w-5xl">
-          <div className="glass-card overflow-hidden rounded-3xl">
+          <ScrollReveal>
+            <div className="glass-card overflow-hidden rounded-3xl">
             <div className="h-1 bg-gradient-to-r from-rose-500 via-orange-400 via-yellow-400 via-emerald-500 to-blue-500" />
             <div className="px-6 py-10 sm:px-10">
 
@@ -300,68 +308,67 @@ const Home = () => {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ── Free Study ────────────────────────────────────────── */}
       <section className="px-4 py-16">
         <div className="mx-auto max-w-5xl">
-          <div className="glass-card overflow-hidden rounded-3xl">
-            <div className="h-0.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400" />
-            <div className="px-6 py-10 sm:px-10">
-              <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12">
-
-                <div className="lg:flex-1">
-                  <span className="inline-flex rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-bold text-amber-600 dark:text-amber-300 ring-1 ring-amber-500/20">
-                    {t('home.freeStudy.badge')}
-                  </span>
-                  <h2 className="mt-3 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
-                    {t('home.freeStudy.title')}
-                  </h2>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-white/50">
-                    {t('home.freeStudy.subtitle')}
-                  </p>
-                  <Link
-                    to="/study"
-                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-amber-500/20 transition-all hover:opacity-90"
-                  >
-                    <BookOpenIcon className="h-4 w-4" />
-                    {t('home.freeStudy.cta')}
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3 lg:grid-cols-1 lg:w-60">
-                  {[
-                    { char: '漢', titleKey: 'study.kanji.title' as const, descKey: 'study.kanji.description' as const, gradient: 'from-rose-500 to-rose-600' },
-                    { char: '語', titleKey: 'study.vocab.title' as const, descKey: 'study.vocab.description' as const, gradient: 'from-amber-500 to-orange-500' },
-                    { char: '文', titleKey: 'study.grammar.title' as const, descKey: 'study.grammar.description' as const, gradient: 'from-emerald-500 to-teal-500' },
-                  ].map((item) => (
-                    <div key={item.titleKey} className="flex items-center gap-3 rounded-xl bg-black/3 p-3 ring-1 ring-slate-200/60 dark:bg-white/5 dark:ring-white/10">
-                      <div className={clsx('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-sm font-bold text-white', item.gradient)}>
-                        {item.char}
+          <ScrollReveal>
+            <div className="glass-card overflow-hidden rounded-3xl">
+              <div className="h-0.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400" />
+              <div className="px-6 py-10 sm:px-10">
+                <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12">
+                  <div className="lg:flex-1">
+                    <span className="inline-flex rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-bold text-amber-600 dark:text-amber-300 ring-1 ring-amber-500/20">
+                      {t('home.freeStudy.badge')}
+                    </span>
+                    <h2 className="mt-3 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+                      {t('home.freeStudy.title')}
+                    </h2>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-500 dark:text-white/50">
+                      {t('home.freeStudy.subtitle')}
+                    </p>
+                    <Link
+                      to="/study"
+                      className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-amber-500/20 transition-all hover:opacity-90"
+                    >
+                      <BookOpenIcon className="h-4 w-4" />
+                      {t('home.freeStudy.cta')}
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 lg:grid-cols-1 lg:w-60">
+                    {[
+                      { char: '漢', titleKey: 'study.kanji.title' as const, descKey: 'study.kanji.description' as const, gradient: 'from-rose-500 to-rose-600' },
+                      { char: '語', titleKey: 'study.vocab.title' as const, descKey: 'study.vocab.description' as const, gradient: 'from-amber-500 to-orange-500' },
+                      { char: '文', titleKey: 'study.grammar.title' as const, descKey: 'study.grammar.description' as const, gradient: 'from-emerald-500 to-teal-500' },
+                    ].map((item) => (
+                      <div key={item.titleKey} className="flex items-center gap-3 rounded-xl bg-black/3 p-3 ring-1 ring-slate-200/60 dark:bg-white/5 dark:ring-white/10">
+                        <div className={clsx('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-sm font-bold text-white', item.gradient)}>
+                          {item.char}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white/90">{t(item.titleKey)}</p>
+                          <p className="truncate text-xs text-slate-400 dark:text-white/40">{t(item.descKey)}</p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-white/90">{t(item.titleKey)}</p>
-                        <p className="truncate text-xs text-slate-400 dark:text-white/40">{t(item.descKey)}</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ── How It Works ──────────────────────────────────────── */}
       <section className="px-4 py-16">
         <div className="mx-auto max-w-4xl">
-          <div className="mb-12 text-center">
+          <ScrollReveal className="mb-12 text-center">
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('home.howItWorks.title')}</h2>
-          </div>
-
+          </ScrollReveal>
           <div className="relative grid gap-10 sm:grid-cols-3">
             <div className="absolute left-[16.66%] right-[16.66%] top-6 hidden h-px bg-gradient-to-r from-amber-300/40 via-orange-300/40 to-amber-300/40 dark:from-white/15 dark:via-white/10 dark:to-white/15 sm:block" aria-hidden="true" />
             {(
@@ -370,14 +377,14 @@ const Home = () => {
                 { step: '2', titleKey: 'home.howItWorks.step2.title', descKey: 'home.howItWorks.step2.desc', gradient: 'from-orange-500 to-amber-400', shadow: 'shadow-orange-500/30' },
                 { step: '3', titleKey: 'home.howItWorks.step3.title', descKey: 'home.howItWorks.step3.desc', gradient: 'from-amber-400 to-orange-400', shadow: 'shadow-amber-400/30' },
               ] as const
-            ).map(({ step, titleKey, descKey, gradient, shadow }) => (
-              <div key={step} className="relative text-center">
+            ).map(({ step, titleKey, descKey, gradient, shadow }, i) => (
+              <ScrollReveal key={step} delay={i * 150} className="relative text-center">
                 <div className={clsx('relative z-10 mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br text-lg font-bold text-white shadow-lg', gradient, shadow)}>
                   {step}
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t(titleKey)}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-400 dark:text-white/45">{t(descKey)}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -386,51 +393,178 @@ const Home = () => {
       {/* ── Bottom CTA ────────────────────────────────────────── */}
       <section className="px-4 py-16">
         <div className="mx-auto max-w-2xl">
-          <div className="glass-card glow-amber overflow-hidden rounded-3xl text-center">
-            <div className="h-0.5 bg-gradient-to-r from-amber-500 to-orange-500" />
-            <div className="px-8 py-12">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-xl shadow-amber-500/30">
-                <span className="text-2xl font-bold text-white">試</span>
-              </div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">{t('home.cta.title')}</h2>
-              <p className="mt-3 text-slate-500 dark:text-white/50">{t('home.cta.subtitle')}</p>
-              <div className="mt-8 flex flex-col items-center gap-3">
-                <Link
-                  to="/login"
-                  className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:opacity-90"
-                >
-                  {t('home.cta.button')}
-                </Link>
-                <p className="text-sm text-slate-400 dark:text-white/35">
-                  {t('home.cta.noAccount')}{' '}
-                  <Link to="/register" className="font-semibold text-amber-600 underline underline-offset-2 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
-                    {t('home.cta.signUp')}
+          <ScrollReveal>
+            <div className="glass-card glow-amber overflow-hidden rounded-3xl text-center">
+              <div className="h-0.5 bg-gradient-to-r from-amber-500 to-orange-500" />
+              <div className="px-8 py-12">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-xl shadow-amber-500/30">
+                  <span className="text-2xl font-bold text-white">試</span>
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">{t('home.cta.title')}</h2>
+                <p className="mt-3 text-slate-500 dark:text-white/50">{t('home.cta.subtitle')}</p>
+                <div className="mt-8 flex flex-col items-center gap-3">
+                  <Link
+                    to="/login"
+                    className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:opacity-90"
+                  >
+                    {t('home.cta.button')}
                   </Link>
-                </p>
-              </div>
-              <div className="mt-6 border-t border-slate-100 dark:border-white/8 pt-6">
-                <p className="text-sm text-slate-400 dark:text-white/35">
-                  {t('home.cta.freeStudy')}{' '}
-                  <Link to="/study" className="font-semibold text-amber-600 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
-                    {t('home.cta.freeStudyLink')}
-                  </Link>
-                </p>
+                  <p className="text-sm text-slate-400 dark:text-white/35">
+                    {t('home.cta.noAccount')}{' '}
+                    <Link to="/register" className="font-semibold text-amber-600 underline underline-offset-2 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
+                      {t('home.cta.signUp')}
+                    </Link>
+                  </p>
+                </div>
+                <div className="mt-6 border-t border-slate-100 dark:border-white/8 pt-6">
+                  <p className="text-sm text-slate-400 dark:text-white/35">
+                    {t('home.cta.freeStudy')}{' '}
+                    <Link to="/study" className="font-semibold text-amber-600 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
+                      {t('home.cta.freeStudyLink')}
+                    </Link>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* ── Footer ────────────────────────────────────────────── */}
-      <footer className="border-t border-slate-100 dark:border-white/8 px-4 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 sm:flex-row">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-orange-500">
-              <span className="text-xs font-bold text-white">試</span>
-            </div>
-            <span className="text-gradient-brand text-sm font-bold">{t('app.title')}</span>
+      <footer className="relative border-t border-slate-200/60 dark:border-white/8 bg-slate-50 dark:bg-white/[0.02] px-4 pt-14 pb-8 overflow-hidden">
+        {/* subtle background glow */}
+        <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-48 w-[600px] rounded-full bg-amber-400/5 blur-3xl" />
+
+        <div className="mx-auto max-w-6xl">
+          {/* ── Top grid ── */}
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 mb-12">
+
+            {/* Brand column */}
+            <ScrollReveal delay={0} className="lg:col-span-1 flex flex-col gap-4">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/30">
+                  <span className="text-sm font-bold text-white">試</span>
+                </div>
+                <span className="text-gradient-brand text-base font-bold tracking-tight">{t('app.title')}</span>
+              </div>
+              <p className="text-xs leading-relaxed text-slate-400 dark:text-white/35 max-w-[220px]">
+                {t('home.footer.tagline')}
+              </p>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="inline-flex items-center rounded-full bg-amber-500/10 dark:bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/20">
+                  GIC
+                </span>
+                <span className="text-[10px] text-slate-400 dark:text-white/30">{t('home.footer.madeFor')}</span>
+              </div>
+            </ScrollReveal>
+
+            {/* IT Certs */}
+            <ScrollReveal delay={100} className="flex flex-col gap-3">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-white/30">
+                {t('home.footer.itExams')}
+              </h3>
+              <ul className="flex flex-col gap-2">
+                {(['AWS', 'Network', 'Security', 'Linux'] as const).map((cat) => (
+                  <li key={cat}>
+                    <Link
+                      to="/login"
+                      className="group flex items-center gap-2 text-sm text-slate-500 dark:text-white/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                    >
+                      <span className="h-px w-3 bg-current opacity-40 group-hover:w-4 group-hover:opacity-100 transition-all" />
+                      {cat}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </ScrollReveal>
+
+            {/* JLPT */}
+            <ScrollReveal delay={200} className="flex flex-col gap-3">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-white/30">
+                {t('home.footer.jlptPractice')}
+              </h3>
+              <ul className="flex flex-col gap-2">
+                {(['N1', 'N2', 'N3', 'N4', 'N5'] as const).map((lvl) => (
+                  <li key={lvl}>
+                    <Link
+                      to="/login"
+                      className="group flex items-center gap-2 text-sm text-slate-500 dark:text-white/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                    >
+                      <span className="h-px w-3 bg-current opacity-40 group-hover:w-4 group-hover:opacity-100 transition-all" />
+                      JLPT {lvl}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </ScrollReveal>
+
+            {/* Quick access */}
+            <ScrollReveal delay={300} className="flex flex-col gap-3">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-white/30">
+                {t('home.footer.quickAccess')}
+              </h3>
+              <ul className="flex flex-col gap-2">
+                <li>
+                  <Link
+                    to="/login"
+                    className="group flex items-center gap-2 text-sm text-slate-500 dark:text-white/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                  >
+                    <span className="h-px w-3 bg-current opacity-40 group-hover:w-4 group-hover:opacity-100 transition-all" />
+                    {t('home.footer.login')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/study"
+                    className="group flex items-center gap-2 text-sm text-slate-500 dark:text-white/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                  >
+                    <span className="h-px w-3 bg-current opacity-40 group-hover:w-4 group-hover:opacity-100 transition-all" />
+                    {t('home.footer.freeFlashcards')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/login"
+                    className="group flex items-center gap-2 text-sm text-slate-500 dark:text-white/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                  >
+                    <span className="h-px w-3 bg-current opacity-40 group-hover:w-4 group-hover:opacity-100 transition-all" />
+                    {t('home.footer.examMode')}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/login"
+                    className="group flex items-center gap-2 text-sm text-slate-500 dark:text-white/40 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                  >
+                    <span className="h-px w-3 bg-current opacity-40 group-hover:w-4 group-hover:opacity-100 transition-all" />
+                    {t('home.footer.studyMode')}
+                  </Link>
+                </li>
+              </ul>
+            </ScrollReveal>
           </div>
-          <p className="text-xs text-slate-300 dark:text-white/30">{t('home.footer.copyright')}</p>
+
+          {/* ── Divider ── */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200 dark:border-white/8" />
+            </div>
+            <div className="relative flex justify-center">
+              <div className="h-1 w-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 opacity-60" />
+            </div>
+          </div>
+
+          {/* ── Bottom bar ── */}
+          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+            <p className="text-[11px] text-slate-400 dark:text-white/25 text-center sm:text-left">
+              {t('home.footer.copyright')}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500" />
+              <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 opacity-60" />
+              <span className="h-1.5 w-1.5 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 opacity-30" />
+            </div>
+          </div>
         </div>
       </footer>
     </div>

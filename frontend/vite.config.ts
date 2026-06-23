@@ -17,8 +17,7 @@ export default defineConfig({
       usePolling: true,
     },
     hmr: {
-      host: 'localhost', // switch to WiFi IP (e.g. 192.168.200.62) for LAN testing
-      port: 5173,
+      clientPort: parseInt(process.env.HMR_CLIENT_PORT ?? '5173'),
     },
     proxy: {
       '/api': process.env.BACKEND_URL ?? 'http://localhost:8000',

@@ -38,8 +38,8 @@ Route::prefix('v1')->group(function () {
     // Public auth routes
     // -------------------------------------------------------------------------
     Route::prefix('auth')->group(function () {
-        Route::post('login', [AuthController::class, 'login'])->name('auth.login');
-        Route::post('register', [AuthController::class, 'register'])->name('auth.register');
+        Route::post('login', [AuthController::class, 'login'])->name('auth.login')->middleware('throttle:login');
+        Route::post('register', [AuthController::class, 'register'])->name('auth.register')->middleware('throttle:login');
     });
 
     // -------------------------------------------------------------------------

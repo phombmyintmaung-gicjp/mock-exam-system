@@ -83,6 +83,7 @@ function mapResult(d: Record<string, unknown>): ExamResult {
         selectedChoiceId: ar.selected_choice_id as number | null,
         correctChoiceId: (correctChoice?.id as number) ?? 0,
         isCorrect: ar.is_correct as boolean,
+        timeTakenSeconds: (ar.time_taken_seconds as number | null) ?? null,
       };
     }),
   };

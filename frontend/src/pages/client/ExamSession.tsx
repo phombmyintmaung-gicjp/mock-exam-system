@@ -43,6 +43,8 @@ const ExamSession = () => {
   const [unansweredCount, setUnansweredCount] = useState(0);
   const [securityAcknowledged, setSecurityAcknowledged] = useState(false);
   const isFinishing = useRef(false);
+  const questionStartRef = useRef<number>(Date.now());
+  const perQuestionTimes = useRef<Record<number, number>>({});
 
   useEffect(() => {
     activateGuard();
@@ -78,12 +80,18 @@ const ExamSession = () => {
 
   const handleConfirmExit = async () => {
     if (!session?.sessionId || isSubmitting) return;
+    // Snapshot current question's elapsed time before exiting
+    const curQ = session.questions[session.currentIndex];
+    if (curQ) {
+      const elapsed = Math.round((Date.now() - questionStartRef.current) / 1000);
+      perQuestionTimes.current[curQ.id] = (perQuestionTimes.current[curQ.id] ?? 0) + elapsed;
+    }
     setShowExitModal(false);
     setIsSubmitting(true);
     const questionIds = session.questions.map((q) => q.id);
     try {
       isFinishing.current = true;
-      const result = await submitExam(session.sessionId, session.answers, questionIds);
+      const result = await submitExam(session.sessionId, session.answers, questionIds, perQuestionTimes.current);
       resetSession();
       deactivateGuard();
       setPendingPath(null);
@@ -108,12 +116,18 @@ const ExamSession = () => {
 
   const handleSubmitConfirmed = useCallback(async () => {
     if (!session?.sessionId || isSubmitting) return;
+    // Snapshot current question's elapsed time before submitting
+    const curQ = session.questions[session.currentIndex];
+    if (curQ) {
+      const elapsed = Math.round((Date.now() - questionStartRef.current) / 1000);
+      perQuestionTimes.current[curQ.id] = (perQuestionTimes.current[curQ.id] ?? 0) + elapsed;
+    }
     setShowSubmitModal(false);
     setIsSubmitting(true);
     const questionIds = session.questions.map((q) => q.id);
     try {
       isFinishing.current = true;
-      const result = await submitExam(session.sessionId, session.answers, questionIds);
+      const result = await submitExam(session.sessionId, session.answers, questionIds, perQuestionTimes.current);
       resetSession();
       navigate(`/exam/results/${result.id}`);
     } catch {
@@ -197,10 +211,24 @@ const ExamSession = () => {
           )}
 
           <div className="mt-6 flex justify-between gap-3">
-            <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={prevQuestion}
+            <Button label={t('exam.prev')} variant="secondary" disabled={isFirst} onClick={() => {
+              if (currentQ) {
+                const elapsed = Math.round((Date.now() - questionStartRef.current) / 1000);
+                perQuestionTimes.current[currentQ.id] = (perQuestionTimes.current[currentQ.id] ?? 0) + elapsed;
+                questionStartRef.current = Date.now();
+              }
+              prevQuestion();
+            }}
               leftIcon={<ChevronLeftIcon className="h-4 w-4 transition-transform duration-150 group-hover:-translate-x-0.5" />}
             />
-            <Button label={t('exam.next')} disabled={isLast} onClick={nextQuestion}
+            <Button label={t('exam.next')} disabled={isLast} onClick={() => {
+              if (currentQ) {
+                const elapsed = Math.round((Date.now() - questionStartRef.current) / 1000);
+                perQuestionTimes.current[currentQ.id] = (perQuestionTimes.current[currentQ.id] ?? 0) + elapsed;
+                questionStartRef.current = Date.now();
+              }
+              nextQuestion();
+            }}
               rightIcon={<ChevronRightIcon className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" />}
             />
           </div>

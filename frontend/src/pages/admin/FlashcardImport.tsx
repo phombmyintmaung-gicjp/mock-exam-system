@@ -133,7 +133,7 @@ const FlashcardImport = () => {
             <svg className="mb-3 h-10 w-10 text-amber-400/80" viewBox="0 0 48 48" fill="none">
               <rect x="4" y="10" width="40" height="28" rx="4" fill="currentColor" opacity="0.15" />
               <rect x="4" y="10" width="40" height="28" rx="4" stroke="currentColor" strokeWidth="2" opacity="0.6" />
-              <rect x="8" y="6" width="40" height="28" rx="4" fill="currentColor" opacity="0.08" stroke="currentColor" strokeWidth="1.5" opacity="0.3" />
+              <rect x="8" y="6" width="40" height="28" rx="4" fill="currentColor" opacity="0.08" stroke="currentColor" strokeWidth="1.5" />
               <text x="24" y="30" textAnchor="middle" fontSize="16" fontWeight="bold" fill="currentColor" opacity="0.7">あ</text>
             </svg>
 

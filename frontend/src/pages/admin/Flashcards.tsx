@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { TableRowSkeleton } from '@/components/ui/Shimmer';
 import { Furigana } from '@/components/shared/Furigana';
+import { KanjiStrokeOrder } from '@/components/shared/KanjiStrokeOrder';
 import { getAdminFlashcards, createFlashcard, updateFlashcard, deleteFlashcard } from '@/services/flashcardService';
 import type { Flashcard, FlashcardType, FlashcardLevel } from '@/types/flashcard';
 
@@ -357,6 +358,11 @@ const Flashcards = () => {
                   <p className="text-center text-3xl font-bold text-slate-900 dark:text-white">
                     {form.front || '—'}
                   </p>
+                  {form.type === 'kanji' && form.front.length === 1 && (
+                    <div className="mt-3 flex justify-center">
+                      <KanjiStrokeOrder character={form.front} size={80} />
+                    </div>
+                  )}
                   <div className="mt-2 flex justify-center gap-1.5">
                     <span className={clsx('rounded-full px-2 py-0.5 text-[10px] font-medium capitalize', typeColor[form.type])}>
                       {t(`study.${form.type}.title`)}

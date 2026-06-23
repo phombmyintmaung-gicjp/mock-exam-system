@@ -14,5 +14,6 @@ class Flashcard extends Model
         'meaning',
         'example_sentence',
         'example_translation',
+        'frequency_band',
     ];
 }

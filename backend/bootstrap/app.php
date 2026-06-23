@@ -50,5 +50,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 422);
             }
         });
+
+        // Return JSON 429 when rate limit is exceeded on API routes.
+        $exceptions->render(function (\Illuminate\Http\Exceptions\ThrottleRequestsException $e, \Illuminate\Http\Request $request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(
+                    ['error' => 'Too many attempts. Please wait a minute before trying again.'],
+                    429,
+                );
+            }
+        });
     })
     ->create();

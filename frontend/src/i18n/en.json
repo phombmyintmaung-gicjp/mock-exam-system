@@ -53,6 +53,7 @@
     "accountPending": "Your account is awaiting admin approval.",
     "accountRejected": "Your account registration has been rejected. Please contact an administrator.",
     "accountInactive": "Your account has been deactivated. Please contact an administrator.",
+    "tooManyAttempts": "Too many login attempts. Please wait a minute and try again.",
     "registerPendingTitle": "Registration Submitted",
     "registerPendingBody": "An administrator will review your account. You will be able to log in once approved.",
     "registerPendingBack": "Back to Login",
@@ -190,7 +191,16 @@
       "title": "Answer Review",
       "subtitle": "Review all questions with explanations",
       "noData": "No review data available.",
-      "explanation": "Explanation"
+      "explanation": "Explanation",
+      "timeTaken": "Time"
+    },
+    "frequencyBand": {
+      "label": "Frequency",
+      "1": "Core",
+      "2": "Common",
+      "3": "Moderate",
+      "4": "Uncommon",
+      "5": "Rare"
     }
   },
   "admin": {
@@ -558,7 +568,16 @@
       "freeStudyLink": "Study flashcards without an account →"
     },
     "footer": {
-      "copyright": "© 2026 Mock Exam System. All rights reserved."
+      "tagline": "A serious exam prep platform built for GIC Japan employees.",
+      "itExams": "IT Certifications",
+      "jlptPractice": "JLPT Practice",
+      "quickAccess": "Quick Access",
+      "login": "Sign In",
+      "freeFlashcards": "Free Flashcards",
+      "examMode": "Exam Mode",
+      "studyMode": "Study Mode",
+      "madeFor": "Made for GIC Japan employees",
+      "copyright": "© 2026 Global Innovation Consulting Co., Ltd. All rights reserved."
     }
   },
   "profile": {
@@ -603,6 +622,35 @@
     "title": "Page Not Found",
     "subtitle": "The page you're looking for doesn't exist or has been moved.",
     "backButton": "Go Back Home"
+  },
+  "pageTitle": {
+    "login": "Login",
+    "register": "Register",
+    "study": "Study",
+    "flashcardSession": "Flashcard Study",
+    "adminDashboard": "Dashboard",
+    "adminQuestionsImport": "Import Questions",
+    "adminQuestionsNew": "New Question",
+    "adminQuestionsEdit": "Edit Question",
+    "adminQuestions": "Questions",
+    "adminExams": "Exam Settings",
+    "adminUsersNew": "New User",
+    "adminUsersEdit": "Edit User",
+    "adminUsers": "Users",
+    "adminReports": "Reports",
+    "adminPassages": "Passages",
+    "adminCategories": "Categories",
+    "adminFlashcardsImport": "Import Flashcards",
+    "adminFlashcards": "Flashcards",
+    "examReview": "Review Answers",
+    "examResults": "Exam Results",
+    "examSession": "Exam in Progress",
+    "examSelect": "Select Exam",
+    "studySession": "Study Session",
+    "readingSession": "Reading Exam",
+    "profileHistory": "Exam History",
+    "profileWeakAreas": "Weak Areas",
+    "profile": "Profile"
   },
   "examSecurity": {
     "notice": {

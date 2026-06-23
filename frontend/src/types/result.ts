@@ -8,6 +8,7 @@ export interface AnswerRecord {
   selectedChoiceId: number | null;
   correctChoiceId: number;
   isCorrect: boolean;
+  timeTakenSeconds: number | null;
 }
 
 export interface ExamResult {
