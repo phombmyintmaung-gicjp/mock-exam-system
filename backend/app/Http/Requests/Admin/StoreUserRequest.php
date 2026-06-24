@@ -21,7 +21,7 @@ class StoreUserRequest extends FormRequest
             'name'                  => ['required', 'string', 'max:150'],
             'role'                  => ['required', 'in:admin,employee'],
             'target_certification'  => ['nullable', 'string', 'max:200'],
-            'password'              => ['required', 'string', 'min:8', 'confirmed'],
+            'password'              => ['required', 'string', 'min:8'],
             'is_active'             => ['sometimes', 'boolean'],
         ];
     }

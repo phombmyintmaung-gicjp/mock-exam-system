@@ -11,6 +11,20 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 
 ---
 
+## Deployment
+
+The application is served under the subpath `/miyazaki-shiken-lab` on the production domain:
+
+```
+https://www.sampledomain.com/miyazaki-shiken-lab/
+```
+
+- React Router uses `basename="/miyazaki-shiken-lab"` — all `<Link>`, `useNavigate`, and `<Navigate>` calls are automatically prefixed
+- Vite build sets `base: '/miyazaki-shiken-lab/'` — all asset URLs are correctly prefixed in the production bundle
+- Nginx must proxy `/miyazaki-shiken-lab/` to the frontend and serve `index.html` for all sub-routes (SPA fallback)
+
+---
+
 ## Users
 
 | Role | Description |
@@ -37,6 +51,7 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 - Role-based access control (Admin / Employee)
 - Session persistence with token refresh
 - Public flashcard study at `/study` — no account needed
+- **Post-login redirect** — unauthenticated users visiting a protected URL are redirected to login and returned to the originally requested page after authentication (admins are only redirected back to `/admin/*` URLs; employee URLs are ignored for admin logins)
 
 ---
 
@@ -77,6 +92,16 @@ A **free Flashcard Study** section (`/study`) is publicly accessible — no logi
 - **Furigana notation** in example sentences: wrap kanji with `{漢字|よみ}` — rendered as ruby text on the study card
 - **Live preview** panel in the create/edit form — shows both card faces with furigana rendered in real time
 - **Bulk import** from Excel (.xlsx / .xls) with column reference, furigana guide, and downloadable template
+
+**Custom Question Sets**
+- Create named exam sets from any subset of existing questions
+- Set a custom time limit and passing score per set
+- Each set gets a unique **slug** (e.g. `AWS00001`) that generates a shareable link: `/exam/custom/<slug>`
+- Copy the shareable link directly from the list or editor
+- View all employee submissions per set at `/admin/custom-sets/:id/results`
+  - Filter by employee name / email (text search) and pass/fail status (chip buttons)
+  - Click **View Details** on any row to see a full per-question answer breakdown: choices colour-coded green (correct) / red (selected wrong), explanation shown, unanswered questions flagged
+- Employee answer data is **never exposed** to employees — only accessible through the admin detail endpoint (defense-in-depth: backend strips answer records from the employee-facing response)
 
 ---
 
@@ -121,6 +146,7 @@ Official time limits used:
 - Flag / bookmark uncertain questions to revisit before submitting
 - Explicit exit button with confirmation modal (guards against accidental exit)
 - Auto-submit when time expires
+- **Anti-cheating enforcement** — window blur, tab switching, and focus loss are detected; a violation warning is shown for each event; the exam is auto-submitted after 3 violations
 
 **Study Mode**
 - Untimed practice session
@@ -130,6 +156,12 @@ Official time limits used:
   - Unchosen options dimmed
 - Explanation displayed below choices after answering
 - After completing all questions, navigates to the **Results page** (score displayed)
+
+**Custom Exams** (`/exam/custom/<slug>`)
+- Employees access custom exams via a shareable link distributed by admins
+- Landing page shows exam name, description, question count, time limit, and passing score before starting
+- Same anti-cheat policy as regular Exam Mode (blur / tab detection with auto-submit at 3 violations)
+- Result page shows score percentage, pass/fail badge, and passing score reminder — **no answer review** (correct answers and explanations are never shown to employees)
 
 **Results & Review**
 - Score calculation with pass / fail status
@@ -190,6 +222,7 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
      │                         │  results     (scores)    │
      │                         │  analytics   (stats)     │
      │                         │  pdf         (mPDF)      │
+     │                         │  custom sets (shareable) │
      └─────────────────────────┘
 ```
 
@@ -214,6 +247,11 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
 | `answer_records` | Per-question answer with pre-computed `is_correct` |
 | `exam_settings` | Per-category question count, time limit, passing score |
 | `flashcards` | Kanji / vocabulary / grammar cards with reading, meaning, example |
+| `custom_sets` | Admin-created named exam sets with slug, time limit, passing score |
+| `custom_set_questions` | Pivot — which questions belong to a custom set |
+| `custom_exam_sessions` | One record per employee attempt on a custom set |
+| `custom_exam_results` | Score and pass/fail for each custom exam submission |
+| `custom_answer_records` | Per-question answer for custom exam submissions |
 
 ---
 
@@ -223,33 +261,43 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
 mock-exam-system/
 ├── frontend/                   # React (TypeScript) + Tailwind CSS
 │   ├── src/
-│   │   ├── components/         # ui/, layout/, shared/ (incl. Furigana, FlipCard)
+│   │   ├── components/         # ui/, layout/, shared/
+│   │   │   └── shared/         #   Furigana, FlipCard, QuestionCard,
+│   │   │                       #   ExamSecurityNotice, ExamViolationModal
 │   │   ├── pages/
 │   │   │   ├── admin/          # Dashboard, Questions, Passages,
 │   │   │   │                   #   Flashcards, FlashcardImport, Users, Settings
+│   │   │   │                   #   CustomSetList, CustomSetEditor,
+│   │   │   │                   #   CustomSetResults, CustomSetResultDetail
 │   │   │   ├── client/         # ExamSelect, ExamSession, StudySession,
 │   │   │   │                   #   ReadingSession, Results, Review, History,
-│   │   │   │                   #   Profile, WeakAreas
+│   │   │   │                   #   Profile, WeakAreas,
+│   │   │   │                   #   CustomExamLanding, CustomExamSession,
+│   │   │   │                   #   CustomExamResult
 │   │   │   ├── study/          # StudyHome, FlashcardSession (public — no login)
 │   │   │   └── NotFound.tsx    # 404 page (bilingual, auth-aware back button)
-│   │   ├── hooks/              # Custom React hooks
+│   │   ├── hooks/              # Custom React hooks (useExamSecurity, …)
 │   │   ├── services/           # API call functions (examService, authService,
-│   │   │                       #   flashcardService, publicApi, …)
+│   │   │                       #   flashcardService, customSetService, …)
 │   │   ├── store/              # Zustand: authStore, examSessionStore
-│   │   ├── types/              # TypeScript interfaces (exam, user, result, flashcard, …)
+│   │   ├── types/              # TypeScript interfaces (exam, user, result,
+│   │   │                       #   flashcard, customSet, …)
 │   │   └── i18n/               # ja.json, en.json (language persisted in localStorage)
 │   ├── Dockerfile
 │   └── package.json
 │
 ├── backend/                    # Laravel 11 (PHP 8.2)
 │   ├── app/
-│   │   ├── Models/             # User, Question, Passage, ExamSession, Flashcard, …
+│   │   ├── Models/             # User, Question, Passage, ExamSession,
+│   │   │                       #   Flashcard, CustomSet, CustomExamSession,
+│   │   │                       #   CustomExamResult, …
 │   │   ├── Http/
-│   │   │   ├── Controllers/Api/V1/  # Thin controllers
-│   │   │   ├── Requests/            # FormRequest validation
-│   │   │   └── Middleware/          # AdminOnly
+│   │   │   ├── Controllers/Api/V1/       # Thin controllers
+│   │   │   │   └── Admin/               # Admin-only controllers (incl. CustomSetController)
+│   │   │   ├── Requests/                # FormRequest validation
+│   │   │   └── Middleware/              # AdminOnly
 │   │   └── Services/           # ExamService, ResultService, AnalyticsService,
-│   │                           #   PassageService, FlashcardService
+│   │                           #   PassageService, FlashcardService, CustomSetService
 │   ├── database/
 │   │   ├── migrations/         # Schema migrations
 │   │   └── seeders/            # DepartmentSeeder, UserSeeder,

@@ -23,7 +23,7 @@ class UpdateUserRequest extends FormRequest
             'name'                  => ['sometimes', 'string', 'max:150'],
             'role'                  => ['sometimes', 'in:admin,employee'],
             'target_certification'  => ['nullable', 'string', 'max:200'],
-            'password'              => ['sometimes', 'string', 'min:8', 'confirmed'],
+            'password'              => ['sometimes', 'string', 'min:8'],
             'is_active'             => ['sometimes', 'boolean'],
         ];
     }
