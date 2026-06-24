@@ -58,7 +58,7 @@ https://www.sampledomain.com/miyazaki-shiken-lab/
 ### Admin Site
 
 **Dashboard**
-- Pass/fail rate by category and department
+- Pass/fail rate by category
 - Total questions per category
 - Per-user drill-down: who passed, who failed, who hasn't attempted yet
 - Recent exam activity feed
@@ -83,7 +83,7 @@ https://www.sampledomain.com/miyazaki-shiken-lab/
 
 **User Management**
 - Create and update employee accounts
-- Assign department and target certification
+- Assign target certification per user
 
 **Flashcard Management**
 - Create / update / delete flashcards (kanji, vocabulary, grammar)
@@ -172,10 +172,10 @@ Official time limits used:
   - Japanese characters rendered correctly via IPAex Gothic font
 
 **User Profile**
-- Personal information (name, email, department)
+- Personal information (name, email)
 - Target exam / certification goal
 - Exam history and score trends
-- Weak area analysis
+- Weak area analysis with attempt count, best score, and latest score per category
 
 **Free Flashcard Study** (`/study` — no login required)
 - Kanji readings, JLPT vocabulary, and grammar patterns
@@ -189,9 +189,9 @@ Official time limits used:
 ### Analytics & Insights
 
 - Score history and trend over time
-- Pass/fail statistics by category and department
-- Performance analysis by category (identifies weak areas)
-- Weak area practice suggestions based on past wrong answers
+- Pass/fail statistics by category
+- Performance analysis by category (identifies weak areas) — with attempt count, best score %, and latest score % per category
+- **Per-question difficulty tracking** — admin Reports page flags questions with < 30% correct rate (minimum 5 attempts), ordered hardest-first with color-coded correct rate
 - Admin-level reporting exportable as CSV
 
 ---
@@ -238,7 +238,6 @@ React Frontend  ──REST API──▶  Laravel 11 Backend  ──▶  MySQL
 | Table | Purpose |
 |-------|---------|
 | `users` | Employee and admin accounts |
-| `departments` | Organisational units |
 | `questions` | Exam questions with `question_type` for JLPT sub-types |
 | `choices` | Answer choices (exactly one `is_correct` per question) |
 | `passages` | JLPT reading passages (level, title, content) |
@@ -300,10 +299,10 @@ mock-exam-system/
 │   │                           #   PassageService, FlashcardService, CustomSetService
 │   ├── database/
 │   │   ├── migrations/         # Schema migrations
-│   │   └── seeders/            # DepartmentSeeder, UserSeeder,
-│   │                           #   ExamSettingSeeder, QuestionSeeder,
-│   │                           #   PassageSeeder, JLPTQuestionSeeder,
-│   │                           #   FlashcardSeeder, ExamHistorySeeder
+│   │   └── seeders/            # UserSeeder, ExamSettingSeeder,
+│   │                           #   QuestionSeeder, PassageSeeder,
+│   │                           #   JLPTQuestionSeeder, FlashcardSeeder,
+│   │                           #   ExamHistorySeeder
 │   ├── resources/views/pdf/    # Blade PDF templates (result.blade.php)
 │   ├── Dockerfile
 │   └── routes/api.php

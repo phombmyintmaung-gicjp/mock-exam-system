@@ -18,14 +18,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) 
         <button
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className="rounded-md border border-slate-300 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-md border border-slate-300 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-white/70 transition-all duration-150 hover:bg-slate-50 dark:hover:bg-white/10 hover:-translate-y-px hover:shadow-sm active:translate-y-0 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100"
         >
           {t('exam.prev')}
         </button>
         <button
           disabled={currentPage >= totalPages}
           onClick={() => onPageChange(currentPage + 1)}
-          className="rounded-md border border-slate-300 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-md border border-slate-300 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-white/70 transition-all duration-150 hover:bg-slate-50 dark:hover:bg-white/10 hover:-translate-y-px hover:shadow-sm active:translate-y-0 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100"
         >
           {t('exam.next')}
         </button>

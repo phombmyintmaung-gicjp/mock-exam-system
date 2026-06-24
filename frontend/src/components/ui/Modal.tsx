@@ -24,9 +24,9 @@ const Modal = ({ isOpen, title, children, onClose, wide = false }: ModalProps) =
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h2>
           <button
             onClick={onClose}
-            className="ml-4 rounded-lg p-1.5 text-slate-400 dark:text-white/40 transition-colors hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white/80"
+            className="ml-4 rounded-lg p-1.5 text-slate-400 dark:text-white/40 transition-colors hover:bg-black/5 dark:hover:bg-white/10 hover:text-slate-700 dark:hover:text-white/80 group"
           >
-            <XIcon className="h-5 w-5" />
+            <XIcon className="h-5 w-5 transition-transform duration-200 group-hover:rotate-90" />
           </button>
         </div>
         <div className="text-sm text-slate-700 dark:text-white/80">{children}</div>

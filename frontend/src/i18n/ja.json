@@ -410,11 +410,17 @@
     },
     "reports": {
       "title": "レポート",
-      "subtitle": "部門別の分析とCSVエクスポート",
+      "subtitle": "分析とCSVエクスポート",
       "exportButton": "CSVをエクスポート",
       "passByCategory": "カテゴリ別合格率",
-      "passByDepartment": "部門別合格率",
-      "examCount": "{{count}}件"
+      "examCount": "{{count}}件",
+      "difficultQuestions": "難問一覧",
+      "difficultQuestionsSubtitle": "正答率30%未満の問題（最低5回以上の回答が必要）",
+      "noDifficultQuestions": "難問はありません — 素晴らしい！",
+      "columnQuestion": "問題",
+      "columnCategory": "カテゴリ",
+      "columnAttempts": "回答数",
+      "columnCorrectRate": "正答率"
     },
     "users": {
       "title": "ユーザー管理",
@@ -423,7 +429,6 @@
       "searchPlaceholder": "ユーザーを検索...",
       "columnName": "名前",
       "columnEmail": "メールアドレス",
-      "columnDepartment": "部門",
       "columnRole": "役割",
       "columnActions": "操作",
       "noData": "ユーザーがいません",
@@ -454,9 +459,6 @@
       "namePlaceholder": "氏名を入力してください",
       "email": "メールアドレス",
       "emailPlaceholder": "user@gicjp.com",
-      "department": "部門",
-      "departmentPlaceholder": "部門を選択してください",
-      "noDepartment": "部門なし",
       "role": "役割",
       "password": "パスワード",
       "passwordPlaceholder": "パスワードを入力してください",
@@ -682,7 +684,7 @@
       "noAccount": "アカウントをお持ちでない方は",
       "signUp": "こちらから登録",
       "freeStudy": "まず練習だけしてみたい方は",
-      "freeStudyLink": "アカウントなしでフラッシュカード学習 →"
+      "freeStudyLink": "アカウントなしでフラッシュカード学習"
     },
     "footer": {
       "tagline": "GIC宮崎社員のための、本格的な資格試験対策プラットフォーム。",

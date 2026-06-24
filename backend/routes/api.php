@@ -92,6 +92,9 @@ Route::prefix('v1')->group(function () {
         // -------------------------------------------------------------------------
         Route::middleware('admin')->prefix('admin')->group(function () {
 
+            // Admin analytics
+            Route::get('analytics/difficult-questions', [AnalyticsController::class, 'difficultQuestions'])->name('admin.analytics.difficult-questions');
+
             // Question management
             Route::get('questions', [QuestionAdminController::class, 'index'])->name('admin.questions.index');
             Route::post('questions', [QuestionAdminController::class, 'store'])->name('admin.questions.store');

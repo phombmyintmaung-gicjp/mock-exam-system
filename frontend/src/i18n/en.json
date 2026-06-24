@@ -410,11 +410,17 @@
     },
     "reports": {
       "title": "Reports",
-      "subtitle": "Analytics and CSV exports by department",
+      "subtitle": "Analytics and CSV exports",
       "exportButton": "Export CSV",
       "passByCategory": "Pass Rate by Category",
-      "passByDepartment": "Pass Rate by Department",
-      "examCount": "{{count}} exams"
+      "examCount": "{{count}} exams",
+      "difficultQuestions": "Difficult Questions",
+      "difficultQuestionsSubtitle": "Questions with < 30% correct rate (minimum 5 attempts)",
+      "noDifficultQuestions": "No difficult questions found — well done!",
+      "columnQuestion": "Question",
+      "columnCategory": "Category",
+      "columnAttempts": "Attempts",
+      "columnCorrectRate": "Correct Rate"
     },
     "users": {
       "title": "User Management",
@@ -423,7 +429,6 @@
       "searchPlaceholder": "Search users...",
       "columnName": "Name",
       "columnEmail": "Email",
-      "columnDepartment": "Department",
       "columnRole": "Role",
       "columnActions": "Actions",
       "noData": "No users yet.",
@@ -454,9 +459,6 @@
       "namePlaceholder": "Enter full name",
       "email": "Email",
       "emailPlaceholder": "user@gicjp.com",
-      "department": "Department",
-      "departmentPlaceholder": "Select department",
-      "noDepartment": "No department",
       "role": "Role",
       "password": "Password",
       "passwordPlaceholder": "Enter password",
@@ -682,7 +684,7 @@
       "noAccount": "Don't have an account yet?",
       "signUp": "Register here",
       "freeStudy": "Just want to practice?",
-      "freeStudyLink": "Study flashcards without an account →"
+      "freeStudyLink": "Study flashcards without an account"
     },
     "footer": {
       "tagline": "A serious exam prep platform built for GIC Japan employees.",

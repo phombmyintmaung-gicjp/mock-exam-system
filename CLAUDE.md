@@ -102,7 +102,7 @@ Detailed conventions are in `.claude/rules/`:
 | `backend/app/Http/Controllers/Api/V1/` | Thin API controllers |
 | `backend/app/Http/Controllers/Api/V1/Admin/CustomSetController.php` | Admin CRUD + result detail for custom sets |
 | `backend/database/migrations/` | Database schema migrations |
-| `backend/database/seeders/` | Sample data (departments, users, questions, passages, JLPT questions, flashcards, exam history) |
+| `backend/database/seeders/` | Sample data (users, questions, passages, JLPT questions, flashcards, exam history) |
 | `backend/resources/views/pdf/result.blade.php` | Blade template for PDF export (mPDF) |
 | `backend/config/` | Laravel configuration files |
 
@@ -196,7 +196,7 @@ The only difference between the two pages: `CustomExamSession.onClose` (cancel b
 ## Seeder Order
 
 ```
-DepartmentSeeder → UserSeeder → ExamSettingSeeder → QuestionSeeder
+UserSeeder → ExamSettingSeeder → QuestionSeeder
 → PassageSeeder → JLPTQuestionSeeder → FlashcardSeeder → ExamHistorySeeder
 ```
 
@@ -255,6 +255,19 @@ Example sentences on flashcards support inline furigana using `{漢字|よみ}` 
 - Use Unicode special characters (`✗`, `✓`, etc.) in Blade PDF templates without verifying the font covers those code points
 - Return `answer_records` from `CustomExamController::getResult()` — employee-facing results must never expose correct answers
 - Hardcode `/miyazaki-shiken-lab` in React Router `<Link>`, `useNavigate`, or `<Navigate>` — the `basename` on `BrowserRouter` handles this automatically
+
+## Per-Question Difficulty Tracking
+
+Questions are flagged as "difficult" when their correct-answer rate across all users falls below **30%** (minimum 5 recorded answers required).
+
+- **Service**: `AnalyticsService::getDifficultQuestions(float $threshold = 0.30, int $minAttempts = 5): array`
+  - Aggregates `answer_records` grouped by `question_id`; filters with `HAVING` clauses — no separate table needed
+  - Returns: `questionId`, `questionText`, `category`, `questionType`, `attemptCount`, `correctRate`
+  - Ordered by `correctRate ASC` (hardest first)
+- **Route**: `GET /api/v1/admin/analytics/difficult-questions` — admin middleware group only (cross-user aggregate data)
+- **Frontend type**: `DifficultyStats` in `frontend/src/types/analytics.ts`
+- **Frontend service**: `getDifficultQuestions()` in `analyticsService.ts`
+- **UI**: `Reports.tsx` — scrollable table below the category pass rate chart; correct rate color-coded rose `< 15%` / orange `15–30%`
 
 ## Flashcard Import Endpoint
 

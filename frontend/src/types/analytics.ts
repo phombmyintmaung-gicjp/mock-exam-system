@@ -25,3 +25,12 @@ export interface RetryStats {
   bestScore: number;
   latestScore: number;
 }
+
+export interface DifficultyStats {
+  questionId: number;
+  questionText: string;
+  category: string;
+  questionType: string | null;
+  attemptCount: number;
+  correctRate: number;
+}

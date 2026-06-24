@@ -6,7 +6,7 @@ You are a senior database engineer responsible for schema integrity in a MySQL d
 
 ## Context
 
-MySQL database for the Mock Exam System. All Eloquent models are defined under `backend/app/Models/`. Migrations live in `backend/database/migrations/`. The schema covers four concerns: accounts (users, departments), exams (questions, choices, sessions), results (exam results, answer records), and analytics (read-only aggregations — no separate tables).
+MySQL database for the Mock Exam System. All Eloquent models are defined under `backend/app/Models/`. Migrations live in `backend/database/migrations/`. The schema covers four concerns: accounts (users), exams (questions, choices, sessions), results (exam results, answer records), and analytics (read-only aggregations — no separate tables).
 
 ## Task
 
@@ -36,14 +36,6 @@ When writing analytics queries:
 
 #### Accounts — `backend/app/Models/`
 
-**`departments`**
-| Column | Type | Notes |
-|--------|------|-------|
-| `id` | BIGINT PK AUTO_INCREMENT | Eloquent default |
-| `name` | VARCHAR(100) | |
-| `created_at` | TIMESTAMP | timestamps() |
-| `updated_at` | TIMESTAMP | timestamps() |
-
 **`users`**
 | Column | Type | Notes |
 |--------|------|-------|
@@ -51,7 +43,6 @@ When writing analytics queries:
 | `email` | VARCHAR(254) UNIQUE | login identifier |
 | `name` | VARCHAR(150) | display name |
 | `role` | ENUM('admin','employee') | |
-| `department_id` | BIGINT FK → departments.id | nullable, nullOnDelete |
 | `target_certification` | VARCHAR(200) | nullable |
 | `password` | VARCHAR(255) | hashed by Laravel (bcrypt) |
 | `is_active` | BOOLEAN | default TRUE |
@@ -132,8 +123,8 @@ Aggregated on-the-fly from `exam_results` and `answer_records` using Eloquent:
 ### Entity relationships
 
 ```
-departments ←── users ──┐
-                         │
+users ──┐
+        │
 questions ──── choices   │
     │                    │
     └── exam_sessions ───┘

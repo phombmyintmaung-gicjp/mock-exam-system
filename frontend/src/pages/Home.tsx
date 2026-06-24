@@ -8,7 +8,7 @@ import { clsx } from 'clsx';
 import {
   SunIcon, MoonIcon, CloudIcon, GlobeIcon, ShieldCheckIcon, TerminalIcon,
   ClockIcon, LightbulbIcon, BarChartIcon, DocumentTextIcon, TableCellsIcon,
-  BookOpenIcon,
+  BookOpenIcon, ArrowRightIcon,
 } from '@/components/ui/Icons';
 
 const IT_CATEGORIES = [
@@ -419,8 +419,9 @@ const Home = () => {
                 <div className="mt-6 border-t border-slate-100 dark:border-white/8 pt-6">
                   <p className="text-sm text-slate-400 dark:text-white/35">
                     {t('home.cta.freeStudy')}{' '}
-                    <Link to="/study" className="font-semibold text-amber-600 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
+                    <Link to="/study" className="group inline-flex items-center gap-1 font-semibold text-amber-600 hover:text-amber-500 dark:text-amber-300 dark:hover:text-amber-200">
                       {t('home.cta.freeStudyLink')}
+                      <ArrowRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
                     </Link>
                   </p>
                 </div>

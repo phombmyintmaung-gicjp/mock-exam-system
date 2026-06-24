@@ -101,4 +101,11 @@ class AnalyticsController extends Controller
 
         return response()->json(['data' => $stats]);
     }
+
+    public function difficultQuestions(): JsonResponse
+    {
+        $questions = $this->analyticsService->getDifficultQuestions();
+
+        return response()->json(['data' => $questions]);
+    }
 }

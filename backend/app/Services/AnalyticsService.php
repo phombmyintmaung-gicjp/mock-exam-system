@@ -110,6 +110,41 @@ class AnalyticsService
     }
 
     /**
+     * Return questions whose correct-answer rate (across all users) falls below $threshold.
+     * Only questions with at least $minAttempts recorded answers are included.
+     *
+     * @return list<array{questionId: int, questionText: string, category: string, questionType: string|null, attemptCount: int, correctRate: float}>
+     */
+    public function getDifficultQuestions(float $threshold = 0.30, int $minAttempts = 5): array
+    {
+        return DB::table('answer_records')
+            ->join('questions', 'questions.id', '=', 'answer_records.question_id')
+            ->whereNull('questions.deleted_at')
+            ->select([
+                'questions.id as question_id',
+                'questions.text as question_text',
+                'questions.category',
+                'questions.question_type',
+                DB::raw('COUNT(*) as attempt_count'),
+                DB::raw('ROUND(SUM(answer_records.is_correct) / COUNT(*) * 100, 1) as correct_rate'),
+            ])
+            ->groupBy('questions.id', 'questions.text', 'questions.category', 'questions.question_type')
+            ->havingRaw('COUNT(*) >= ?', [$minAttempts])
+            ->havingRaw('SUM(answer_records.is_correct) / COUNT(*) < ?', [$threshold])
+            ->orderBy('correct_rate', 'asc')
+            ->get()
+            ->map(fn ($row) => [
+                'questionId'   => (int) $row->question_id,
+                'questionText' => $row->question_text,
+                'category'     => $row->category,
+                'questionType' => $row->question_type,
+                'attemptCount' => (int) $row->attempt_count,
+                'correctRate'  => (float) $row->correct_rate,
+            ])
+            ->all();
+    }
+
+    /**
      * Return the user's score history ordered by completion time.
      * Score is expressed as a percentage (score / total_questions * 100).
      *
