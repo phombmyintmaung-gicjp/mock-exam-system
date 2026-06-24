@@ -31,10 +31,12 @@ export const startExamSession = async (
   mode: ExamMode,
   questionTypes?: string[],
   questionCount?: number,
+  linkedSessionId?: number,
 ): Promise<ExamSession> => {
   const body: Record<string, unknown> = { category, mode };
   if (questionTypes && questionTypes.length > 0) body.question_types = questionTypes;
   if (questionCount !== undefined) body.question_count = questionCount;
+  if (linkedSessionId !== undefined) body.linked_session_id = linkedSessionId;
   const res = await api.post('/exams/sessions', body);
   const { session, questions } = res.data.data as {
     session: Record<string, unknown>;
@@ -43,6 +45,7 @@ export const startExamSession = async (
 
   return {
     sessionId: session.id as number,
+    linkedSessionId: session.linked_session_id as number | undefined,
     timeLimitSeconds: session.time_limit_seconds as number,
     mode: session.mode as ExamMode,
     questions: questions.map((q) => {
@@ -65,6 +68,38 @@ export const startExamSession = async (
         })),
       };
     }),
+  };
+};
+
+export interface CombinedResult {
+  totalScore: number;
+  totalQuestions: number;
+  percentage: number;
+  status: 'pass' | 'fail';
+  passingScore: number;
+  part1ResultId: number | null;
+  part2ResultId: number | null;
+  part1Score: number | null;
+  part1Total: number | null;
+  part2Score: number | null;
+  part2Total: number | null;
+}
+
+export const getCombinedResult = async (resultId: number): Promise<CombinedResult> => {
+  const res = await api.get(`/results/${resultId}/combined`);
+  const d = res.data.data as Record<string, unknown>;
+  return {
+    totalScore:     d.total_score as number,
+    totalQuestions: d.total_questions as number,
+    percentage:     d.percentage as number,
+    status:         d.status as 'pass' | 'fail',
+    passingScore:   d.passing_score as number,
+    part1ResultId:  d.part1_result_id as number | null,
+    part2ResultId:  d.part2_result_id as number | null,
+    part1Score:     d.part1_score as number | null,
+    part1Total:     d.part1_total as number | null,
+    part2Score:     d.part2_score as number | null,
+    part2Total:     d.part2_total as number | null,
   };
 };
 

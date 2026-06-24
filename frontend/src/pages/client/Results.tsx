@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { PageShell } from '@/components/layout/PageShell';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import useResults from '@/hooks/useResults';
 import { exportResultPdf } from '@/services/resultService';
+import { getCombinedResult, type CombinedResult } from '@/services/examService';
 import { useAuthStore } from '@/store/authStore';
 
 function formatTime(seconds: number): string {
@@ -24,8 +26,18 @@ const Results = () => {
 
   const studyTotalSeconds: number | undefined = (location.state as { studyTotalSeconds?: number } | null)?.studyTotalSeconds;
   const studyQuestionCount: number | undefined = (location.state as { questionCount?: number } | null)?.questionCount;
+  const linkedSessionId: number | undefined = (location.state as { linkedSessionId?: number } | null)?.linkedSessionId;
 
   const { result, isLoading, error } = useResults(resultId);
+
+  const [combined, setCombined] = useState<CombinedResult | null>(null);
+  useEffect(() => {
+    if (!result) return;
+    // Only attempt combined fetch when this result is part of a two-part JLPT exam.
+    if (result.linkedSessionId || linkedSessionId) {
+      getCombinedResult(resultId).then(setCombined).catch(() => {});
+    }
+  }, [result, resultId, linkedSessionId]);
 
   if (isLoading) {
     return (
@@ -67,6 +79,36 @@ const Results = () => {
           <p className="mt-1 text-sm text-gray-500 dark:text-white/50">{t('result.outOfCorrect', { total: result.totalQuestions })}</p>
           <p className="mt-2 text-xl font-semibold text-gray-700 dark:text-white/80">{t('result.scoreLabel')} {percentage}%</p>
           <p className="mt-1 text-sm text-gray-400 dark:text-white/40">{t('result.passingScore')} {result.passingScore}%</p>
+
+          {combined && (
+            <div className="mt-6 rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-4 text-left dark:border-indigo-500/30 dark:bg-indigo-500/10">
+              <p className="mb-3 text-sm font-bold text-indigo-700 dark:text-indigo-300">{t('result.combinedTitle')}</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center">
+                  <p className="text-xs text-indigo-500 dark:text-indigo-400">{t('result.combinedPart1')}</p>
+                  <p className="mt-0.5 text-lg font-bold text-indigo-800 dark:text-indigo-200">
+                    {combined.part1Score ?? '—'}<span className="text-sm font-normal">/{combined.part1Total ?? '—'}</span>
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-indigo-500 dark:text-indigo-400">{t('result.combinedPart2')}</p>
+                  <p className="mt-0.5 text-lg font-bold text-indigo-800 dark:text-indigo-200">
+                    {combined.part2Score ?? '—'}<span className="text-sm font-normal">/{combined.part2Total ?? '—'}</span>
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-indigo-500 dark:text-indigo-400">{t('result.combinedTotal')}</p>
+                  <p className="mt-0.5 text-lg font-bold text-indigo-800 dark:text-indigo-200">
+                    {combined.totalScore}<span className="text-sm font-normal">/{combined.totalQuestions}</span>
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <Badge label={t(combined.status === 'pass' ? 'result.pass' : 'result.fail')} variant={combined.status} />
+                <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">{combined.percentage}%</span>
+              </div>
+            </div>
+          )}
 
           {studyTotalSeconds !== undefined && studyQuestionCount !== undefined && (
             <div className="mt-6 grid grid-cols-2 gap-3 text-left">

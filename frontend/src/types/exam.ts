@@ -38,6 +38,7 @@ export interface AdminQuestion {
 
 export interface ExamSession {
   sessionId: number;
+  linkedSessionId?: number;
   questions: Question[];
   timeLimitSeconds: number;
   mode: ExamMode;

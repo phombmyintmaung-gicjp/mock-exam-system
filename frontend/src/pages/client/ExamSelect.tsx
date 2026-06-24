@@ -8,6 +8,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { countQuestionsByTypes, countByQuestionType, startExamSession } from '@/services/examService';
 import { useExamSessionStore } from '@/store/examSessionStore';
+import { useAuthStore } from '@/store/authStore';
 import type { ExamMode, JLPTLevel, JLPTTestType } from '@/types/exam';
 import {
   JLPT_LEVELS,
@@ -116,12 +117,28 @@ type JLPTPracticeMode = 'full' | 'section' | 'drill';
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+// Detect which category a target_certification string maps to
+const IT_IDS = ['AWS', 'Network', 'Security', 'Linux'] as const;
+const JLPT_LEVEL_RE = /\bN([1-5])\b/i;
+
+function detectCertTarget(cert: string): { kind: 'it'; id: string } | { kind: 'jlpt'; level: string } | null {
+  for (const id of IT_IDS) {
+    if (cert.toUpperCase().includes(id.toUpperCase())) return { kind: 'it', id };
+  }
+  const match = cert.match(JLPT_LEVEL_RE);
+  if (match) return { kind: 'jlpt', level: `N${match[1]}` };
+  return null;
+}
+
 const ExamSelect = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isJLPT = searchParams.get('type') === 'jlpt';
   const setSession = useExamSessionStore((s) => s.setSession);
+  const user = useAuthStore((s) => s.user);
+
+  const certTarget = user?.targetCertification ? detectCertTarget(user.targetCertification) : null;
 
   const [selectedLevel, setSelectedLevel]         = useState<JLPTLevel>('N5');
   const [practiceMode, setPracticeMode]           = useState<JLPTPracticeMode>('section');
@@ -271,6 +288,37 @@ const ExamSelect = () => {
 
   return (
     <PageShell>
+      {/* Target certification suggestion banner */}
+      {certTarget && (
+        <div className="mb-5 flex flex-col gap-2 rounded-xl border border-amber-400/30 bg-amber-500/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-600 dark:text-amber-400">
+              {t('exam.certBanner.goal')}
+            </p>
+            <p className="mt-0.5 text-sm text-slate-700 dark:text-white/75">
+              {certTarget.kind === 'jlpt'
+                ? t('exam.certBanner.jlpt', { level: certTarget.level })
+                : t('exam.certBanner.it', { cert: certTarget.id })}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              const target = certTarget;
+              if (!target) return;
+              if (target.kind === 'jlpt') {
+                navigate('/exam/select?type=jlpt');
+                setSelectedLevel(target.level as JLPTLevel);
+              } else {
+                navigate('/exam/select');
+              }
+            }}
+            className="shrink-0 rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 transition-colors"
+          >
+            {t('exam.certBanner.start')}
+          </button>
+        </div>
+      )}
+
       {isJLPT ? (
         <>
           <div className="mb-6">

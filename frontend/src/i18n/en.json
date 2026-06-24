@@ -170,6 +170,12 @@
       "network": "Network",
       "security": "Security",
       "linux": "Linux"
+    },
+    "certBanner": {
+      "goal": "Your Goal",
+      "it": "Practice for {{cert}}",
+      "jlpt": "Practice for JLPT {{level}}",
+      "start": "Start practicing"
     }
   },
   "result": {
@@ -189,6 +195,10 @@
     "retake": "Take Another Exam",
     "backToExamList": "Back to Exam List",
     "viewHistory": "View History",
+    "combinedTitle": "Combined Score (Both Parts)",
+    "combinedPart1": "Part 1 (Vocab)",
+    "combinedPart2": "Part 2 (Grammar & Reading)",
+    "combinedTotal": "Total",
     "review": {
       "title": "Answer Review",
       "subtitle": "Review all questions with explanations",
@@ -555,6 +565,19 @@
     "shuffle": "Shuffle",
     "noCards": "No cards found for this filter",
     "allDone": "You've reviewed all cards!",
+    "modeBrowse": "Browse",
+    "modeReview": "Review",
+    "srs": {
+      "again": "Again",
+      "hard": "Hard",
+      "good": "Good",
+      "easy": "Easy",
+      "noDue": "No cards due for review today",
+      "reviewed": "reviewed",
+      "allReviewed": "All reviews done for today!",
+      "comeBackLater": "Come back tomorrow for your next session",
+      "reviewAgain": "Review Again"
+    },
     "kanji": {
       "title": "Kanji",
       "description": "Learn kanji readings and meanings"
@@ -709,7 +732,10 @@
       "subtitle": "Categories where you need more practice",
       "accuracy": "{{value}}% accuracy",
       "wrong": "wrong",
-      "total": "total"
+      "total": "total",
+      "attempts": "{{count}} attempt(s)",
+      "bestScore": "Best",
+      "latestScore": "Latest"
     }
   },
   "notFound": {

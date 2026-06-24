@@ -15,18 +15,26 @@ const BAND_COLORS: Record<number, string> = {
 
 interface FlipCardProps {
   card: Flashcard;
+  onFlip?: () => void;
 }
 
-export function FlipCard({ card }: FlipCardProps) {
+export function FlipCard({ card, onFlip }: FlipCardProps) {
   const { t } = useTranslation();
   const [flipped, setFlipped] = useState(false);
   const isKanjiSingle = card.type === 'kanji' && card.front.length === 1;
+
+  const handleFlip = () => {
+    setFlipped((f) => {
+      if (!f) onFlip?.();
+      return !f;
+    });
+  };
 
   return (
     <div
       className="relative h-72 w-full max-w-sm cursor-pointer select-none sm:h-80"
       style={{ perspective: '1200px' }}
-      onClick={() => setFlipped((f) => !f)}
+      onClick={handleFlip}
     >
       <div
         className="relative h-full w-full transition-transform duration-500"

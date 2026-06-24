@@ -1,5 +1,5 @@
 import api from './api';
-import type { CategoryStat, WeakArea, ScoreTrend } from '@/types/analytics';
+import type { CategoryStat, WeakArea, ScoreTrend, RetryStats } from '@/types/analytics';
 
 export const getCategoryStats = async (): Promise<CategoryStat[]> => {
   const res = await api.get('/analytics/category-stats');
@@ -21,6 +21,16 @@ export const getWeakAreas = async (): Promise<WeakArea[]> => {
     wrongCount: (d.total as number) - (d.correct as number),
     totalAttempted: d.total as number,
     accuracy: d.accuracy as number,
+  }));
+};
+
+export const getRetryStats = async (): Promise<RetryStats[]> => {
+  const res = await api.get('/analytics/retry-stats');
+  return (res.data.data ?? []).map((d: Record<string, unknown>) => ({
+    category:     d.category as string,
+    attemptCount: d.attempt_count as number,
+    bestScore:    d.best_score as number,
+    latestScore:  d.latest_score as number,
   }));
 };
 

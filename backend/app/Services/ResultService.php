@@ -6,6 +6,7 @@ use App\Models\AnswerRecord;
 use App\Models\Choice;
 use App\Models\ExamResult;
 use App\Models\ExamSession;
+use App\Models\Question;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -30,11 +31,22 @@ class ResultService
     {
         return DB::transaction(function () use ($session, $answers, $passingScore): ExamResult {
 
-            // 1. Pre-load all correct choice IDs for the relevant questions to avoid N+1.
+            // 1. Pre-load all correct choice IDs and question/choice text for snapshot.
             $questionIds      = array_column($answers, 'question_id');
             $correctChoiceMap = Choice::whereIn('question_id', $questionIds)
                 ->where('is_correct', true)
                 ->pluck('id', 'question_id'); // [question_id => correct_choice_id]
+
+            // Snapshot: question text keyed by question_id
+            $questionTextMap = Question::whereIn('id', $questionIds)
+                ->pluck('text', 'id');
+
+            // Snapshot: all choice texts keyed by choice_id
+            $allChoiceIds = array_filter(array_column($answers, 'choice_id'));
+            $correctChoiceIds = $correctChoiceMap->values()->all();
+            $allRelevantChoiceIds = array_unique(array_merge($allChoiceIds, $correctChoiceIds));
+            $choiceTextMap = Choice::whereIn('id', $allRelevantChoiceIds)
+                ->pluck('text', 'id');
 
             // 2. Score the answers.
             $score = 0;
@@ -47,18 +59,22 @@ class ResultService
                 $timeTaken        = isset($answer['time_taken_seconds']) ? (int) $answer['time_taken_seconds'] : null;
 
                 // Pre-compute correctness at submission time (never recalculate on read).
+                $correctChoiceId = isset($correctChoiceMap[$questionId]) ? (int) $correctChoiceMap[$questionId] : null;
                 $isCorrect = $selectedChoiceId !== null
-                    && (int) ($correctChoiceMap[$questionId] ?? -1) === $selectedChoiceId;
+                    && $correctChoiceId === $selectedChoiceId;
 
                 if ($isCorrect) {
                     $score++;
                 }
 
                 $answerRows[] = [
-                    'question_id'        => $questionId,
-                    'selected_choice_id' => $selectedChoiceId,
-                    'is_correct'         => $isCorrect,
-                    'time_taken_seconds' => $timeTaken,
+                    'question_id'                   => $questionId,
+                    'selected_choice_id'            => $selectedChoiceId,
+                    'is_correct'                    => $isCorrect,
+                    'time_taken_seconds'            => $timeTaken,
+                    'question_text_snapshot'        => $questionTextMap[$questionId] ?? null,
+                    'selected_choice_text_snapshot' => $selectedChoiceId ? ($choiceTextMap[$selectedChoiceId] ?? null) : null,
+                    'correct_choice_text_snapshot'  => $correctChoiceId ? ($choiceTextMap[$correctChoiceId] ?? null) : null,
                 ];
             }
 

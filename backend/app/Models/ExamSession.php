@@ -26,6 +26,7 @@ class ExamSession extends Model
         'question_type_filter',
         'completed_at',
         'is_submitted',
+        'linked_session_id',
     ];
 
     /**
@@ -51,6 +52,12 @@ class ExamSession extends Model
     public function examResult(): HasOne
     {
         return $this->hasOne(ExamResult::class, 'session_id');
+    }
+
+    /** The other paper of a two-part JLPT full exam (N3/N4/N5). */
+    public function linkedSession(): BelongsTo
+    {
+        return $this->belongsTo(ExamSession::class, 'linked_session_id');
     }
 
     public function answerRecords(): HasManyThrough

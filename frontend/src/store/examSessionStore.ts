@@ -3,6 +3,7 @@ import type { ExamMode, Question } from '@/types/exam';
 
 interface ExamSession {
   sessionId: number | null;
+  linkedSessionId?: number;
   mode: ExamMode;
   questions: Question[];
   currentIndex: number;

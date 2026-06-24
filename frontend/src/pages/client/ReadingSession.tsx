@@ -202,9 +202,9 @@ const ReadingSession = () => {
           {/* Passage panel — only rendered when a passage is attached */}
           {passage && (
             <div className="lg:w-1/2">
-              <div className="sticky top-20 glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
+              <div className="lg:sticky lg:top-20 glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
                 <h2 className="mb-3 text-base font-semibold text-slate-800 dark:text-white/90">{passage.title}</h2>
-                <div className="max-h-[60vh] overflow-y-auto text-sm leading-7 text-slate-600 dark:text-white/70 whitespace-pre-wrap scrollbar-thin">
+                <div className="max-h-[40vh] lg:max-h-[60vh] overflow-y-auto text-sm leading-7 text-slate-600 dark:text-white/70 whitespace-pre-wrap scrollbar-thin">
                   {passage.content}
                 </div>
               </div>

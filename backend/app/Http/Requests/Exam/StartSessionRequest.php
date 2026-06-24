@@ -23,6 +23,7 @@ class StartSessionRequest extends FormRequest
             'question_count'      => ['sometimes', 'integer', 'min:1', 'max:500'],
             'question_types'      => ['sometimes', 'array'],
             'question_types.*'    => ['string', 'max:50'],
+            'linked_session_id'   => ['sometimes', 'nullable', 'integer', 'exists:exam_sessions,id'],
         ];
     }
 }

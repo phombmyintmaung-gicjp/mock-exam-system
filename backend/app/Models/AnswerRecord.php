@@ -26,6 +26,9 @@ class AnswerRecord extends Model
         'selected_choice_id',
         'is_correct',
         'time_taken_seconds',
+        'question_text_snapshot',
+        'selected_choice_text_snapshot',
+        'correct_choice_text_snapshot',
     ];
 
     /**

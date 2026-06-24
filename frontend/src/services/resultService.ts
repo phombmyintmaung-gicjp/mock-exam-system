@@ -64,6 +64,7 @@ function mapResult(d: Record<string, unknown>): ExamResult {
   return {
     id: d.id as number,
     sessionId: d.session_id as number,
+    linkedSessionId: (session?.linked_session_id as number | null) ?? undefined,
     userId: d.user_id as number,
     category: (session?.category as string) ?? '',
     score: d.score as number,
@@ -75,11 +76,34 @@ function mapResult(d: Record<string, unknown>): ExamResult {
       const q = ar.question as Record<string, unknown> | null;
       const choices = (q?.choices ?? []) as Record<string, unknown>[];
       const correctChoice = choices.find((c) => c.is_correct);
+
+      // Prefer snapshots taken at submit time; fall back to live question data.
+      // If the question was later edited or soft-deleted, the snapshot preserves
+      // the text the user actually saw during the exam.
+      const questionText = (ar.question_text_snapshot as string | null)
+        ?? (q?.text as string)
+        ?? '';
+      const explanation = (q?.explanation as string) ?? '';
+
+      // Reconstruct choices: use live data when available, otherwise build
+      // minimal placeholders from the selected/correct snapshots.
+      let mappedChoices: { id: number; text: string }[];
+      if (choices.length > 0) {
+        mappedChoices = choices.map((c) => ({ id: c.id as number, text: c.text as string }));
+      } else {
+        // Question was deleted — show only what we snapshotted
+        mappedChoices = [];
+        const selectedId = ar.selected_choice_id as number | null;
+        const correctId = correctChoice?.id as number | undefined;
+        if (selectedId) mappedChoices.push({ id: selectedId, text: (ar.selected_choice_text_snapshot as string) ?? String(selectedId) });
+        if (correctId && correctId !== selectedId) mappedChoices.push({ id: correctId, text: (ar.correct_choice_text_snapshot as string) ?? String(correctId) });
+      }
+
       return {
         questionId: ar.question_id as number,
-        questionText: (q?.text as string) ?? '',
-        explanation: (q?.explanation as string) ?? '',
-        choices: choices.map((c) => ({ id: c.id as number, text: c.text as string })),
+        questionText,
+        explanation,
+        choices: mappedChoices,
         selectedChoiceId: ar.selected_choice_id as number | null,
         correctChoiceId: (correctChoice?.id as number) ?? 0,
         isCorrect: ar.is_correct as boolean,

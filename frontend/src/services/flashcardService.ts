@@ -56,3 +56,46 @@ export async function importFlashcards(file: File): Promise<FlashcardImportResul
   });
   return res.data.data;
 }
+
+// ── SRS (Spaced Repetition) ───────────────────────────────────────────────
+
+export interface ReviewState {
+  intervalDays: number;
+  easeFactor: number;
+  repetitions: number;
+  nextReviewAt: string | null;
+  lastReviewedAt: string | null;
+}
+
+export interface FlashcardWithReview extends Flashcard {
+  reviewState: ReviewState | null;
+}
+
+/** 0=Again, 1=Hard, 2=Good, 3=Easy */
+export type SrsRating = 0 | 1 | 2 | 3;
+
+export async function getDueFlashcards(
+  type?: FlashcardType,
+  level?: FlashcardLevel,
+): Promise<FlashcardWithReview[]> {
+  const params: Record<string, string> = {};
+  if (type)  params.type  = type;
+  if (level) params.level = level;
+  const res = await api.get('/study/flashcards/due', { params });
+  return (res.data.data as Record<string, unknown>[]).map((d) => ({
+    ...(d as unknown as Flashcard),
+    reviewState: d.review_state
+      ? {
+          intervalDays:   (d.review_state as Record<string, unknown>).interval_days as number,
+          easeFactor:     (d.review_state as Record<string, unknown>).ease_factor as number,
+          repetitions:    (d.review_state as Record<string, unknown>).repetitions as number,
+          nextReviewAt:   (d.review_state as Record<string, unknown>).next_review_at as string | null,
+          lastReviewedAt: (d.review_state as Record<string, unknown>).last_reviewed_at as string | null,
+        }
+      : null,
+  }));
+}
+
+export async function submitSrsReview(flashcardId: number, rating: SrsRating): Promise<void> {
+  await api.post(`/study/flashcards/${flashcardId}/review`, { rating });
+}

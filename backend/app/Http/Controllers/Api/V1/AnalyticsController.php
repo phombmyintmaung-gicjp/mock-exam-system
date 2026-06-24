@@ -91,4 +91,14 @@ class AnalyticsController extends Controller
 
         return response()->json(['data' => $trend]);
     }
+
+    public function retryStats(): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $stats = $this->analyticsService->getRetryStats($user);
+
+        return response()->json(['data' => $stats]);
+    }
 }

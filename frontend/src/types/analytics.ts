@@ -18,3 +18,10 @@ export interface ScoreTrend {
   score: number;
   category: string;
 }
+
+export interface RetryStats {
+  category: string;
+  attemptCount: number;
+  bestScore: number;
+  latestScore: number;
+}

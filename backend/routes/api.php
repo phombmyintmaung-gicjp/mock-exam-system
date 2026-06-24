@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\Admin\FlashcardAdminController;
 use App\Http\Controllers\Api\V1\Admin\CustomSetController;
 use App\Http\Controllers\Api\V1\CustomExamController;
 use App\Http\Controllers\Api\V1\FlashcardController;
+use App\Http\Controllers\Api\V1\FlashcardReviewController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
@@ -34,6 +35,12 @@ Route::prefix('v1')->group(function () {
     // Public study routes (no auth required)
     // -------------------------------------------------------------------------
     Route::get('study/flashcards', [FlashcardController::class, 'index'])->name('study.flashcards.index');
+
+    // SRS review routes (auth required — placed here to register before the wildcard {id} in the auth block)
+    Route::middleware('auth:api')->group(function () {
+        Route::get('study/flashcards/due', [FlashcardReviewController::class, 'due'])->name('study.flashcards.due');
+        Route::post('study/flashcards/{id}/review', [FlashcardReviewController::class, 'store'])->name('study.flashcards.review');
+    });
 
     // -------------------------------------------------------------------------
     // Public auth routes
@@ -69,6 +76,7 @@ Route::prefix('v1')->group(function () {
         // Results
         Route::get('results', [ResultController::class, 'index'])->name('results.index');
         Route::get('results/{id}', [ResultController::class, 'show'])->name('results.show');
+        Route::get('results/{id}/combined', [ResultController::class, 'combined'])->name('results.combined');
         Route::get('results/{id}/export', [ResultController::class, 'export'])->name('results.export');
 
         // Analytics
@@ -76,6 +84,7 @@ Route::prefix('v1')->group(function () {
             Route::get('category-stats', [AnalyticsController::class, 'categoryStats'])->name('analytics.category-stats');
             Route::get('weak-areas', [AnalyticsController::class, 'weakAreas'])->name('analytics.weak-areas');
             Route::get('score-trend', [AnalyticsController::class, 'scoreTrend'])->name('analytics.score-trend');
+            Route::get('retry-stats', [AnalyticsController::class, 'retryStats'])->name('analytics.retry-stats');
         });
 
         // -------------------------------------------------------------------------

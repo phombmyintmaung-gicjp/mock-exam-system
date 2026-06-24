@@ -14,6 +14,7 @@ export interface AnswerRecord {
 export interface ExamResult {
   id: number;
   sessionId: number;
+  linkedSessionId?: number;
   userId: number;
   category: string;
   score: number;

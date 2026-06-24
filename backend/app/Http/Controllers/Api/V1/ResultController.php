@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\ExamResult;
+use App\Models\ExamSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Mpdf\Mpdf;
@@ -75,6 +76,62 @@ class ResultController extends Controller
             ->findOrFail($id);
 
         return response()->json(['data' => $result]);
+    }
+
+    /**
+     * Combined result for a two-part JLPT full exam (N3/N4/N5).
+     * Given either result ID (paper 1 or paper 2), returns an aggregate of both.
+     */
+    public function combined(int $id): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $result = ExamResult::where('user_id', $user->id)
+            ->with('session')
+            ->findOrFail($id);
+
+        $session = $result->session;
+
+        // Determine the partner session: this result's session may be part 1 or part 2.
+        $linkedSession = null;
+        if ($session->linked_session_id) {
+            // This is part 2 — linked_session_id points to part 1
+            $linkedSession = ExamSession::find($session->linked_session_id);
+        } else {
+            // This may be part 1 — find a session where linked_session_id = this session
+            $linkedSession = ExamSession::where('linked_session_id', $session->id)
+                ->where('user_id', $user->id)
+                ->latest()
+                ->first();
+        }
+
+        $linkedResult = $linkedSession
+            ? ExamResult::where('session_id', $linkedSession->id)
+                ->where('user_id', $user->id)
+                ->first()
+            : null;
+
+        $totalScore     = $result->score + ($linkedResult?->score ?? 0);
+        $totalQuestions = $result->total_questions + ($linkedResult?->total_questions ?? 0);
+        $percentage     = $totalQuestions > 0 ? (int) round(($totalScore / $totalQuestions) * 100) : 0;
+        $passingScore   = $result->passing_score;
+
+        return response()->json([
+            'data' => [
+                'total_score'      => $totalScore,
+                'total_questions'  => $totalQuestions,
+                'percentage'       => $percentage,
+                'status'           => $percentage >= $passingScore ? 'pass' : 'fail',
+                'passing_score'    => $passingScore,
+                'part1_result_id'  => $session->linked_session_id ? $linkedResult?->id : $result->id,
+                'part2_result_id'  => $session->linked_session_id ? $result->id : $linkedResult?->id,
+                'part1_score'      => $session->linked_session_id ? ($linkedResult?->score ?? null) : $result->score,
+                'part1_total'      => $session->linked_session_id ? ($linkedResult?->total_questions ?? null) : $result->total_questions,
+                'part2_score'      => $session->linked_session_id ? $result->score : ($linkedResult?->score ?? null),
+                'part2_total'      => $session->linked_session_id ? $result->total_questions : ($linkedResult?->total_questions ?? null),
+            ],
+        ]);
     }
 
     /**

@@ -122,6 +122,16 @@ class ExamSessionController extends Controller
             return response()->json(['error' => 'This session has already been submitted.'], 422);
         }
 
+        // Server-side time limit enforcement — 120 s grace for network latency / UI processing.
+        // Study sessions (time_limit_seconds = 0) are never expired.
+        $timeLimitSeconds = (int) $session->time_limit_seconds;
+        if ($timeLimitSeconds > 0) {
+            $elapsed = now()->diffInSeconds($session->created_at);
+            if ($elapsed > $timeLimitSeconds + 120) {
+                return response()->json(['error' => 'Time limit exceeded. The session has expired.'], 422);
+            }
+        }
+
         $categorySetting = ExamSetting::where('category', $session->category)->first();
         $passingScore    = $categorySetting?->passing_score ?? config('exam.passing_score', 70);
 

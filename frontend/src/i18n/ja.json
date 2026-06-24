@@ -170,6 +170,12 @@
       "network": "ネットワーク",
       "security": "セキュリティ",
       "linux": "Linux"
+    },
+    "certBanner": {
+      "goal": "目標資格",
+      "it": "{{cert}} の練習を始めましょう",
+      "jlpt": "JLPT {{level}} の練習を始めましょう",
+      "start": "今すぐ練習"
     }
   },
   "result": {
@@ -189,6 +195,10 @@
     "retake": "もう一度受験する",
     "backToExamList": "試験一覧に戻る",
     "viewHistory": "受験履歴を見る",
+    "combinedTitle": "総合スコア（2部合計）",
+    "combinedPart1": "第1部（文字語彙）",
+    "combinedPart2": "第2部（文法読解）",
+    "combinedTotal": "合計",
     "review": {
       "title": "回答レビュー",
       "subtitle": "解説付きで全問題を確認する",
@@ -555,6 +565,19 @@
     "shuffle": "シャッフル",
     "noCards": "該当するカードがありません",
     "allDone": "全カードを確認しました！",
+    "modeBrowse": "ブラウズ",
+    "modeReview": "復習",
+    "srs": {
+      "again": "もう一度",
+      "hard": "難しい",
+      "good": "良い",
+      "easy": "簡単",
+      "noDue": "今日の復習カードはありません",
+      "reviewed": "枚復習済み",
+      "allReviewed": "今日の復習完了！",
+      "comeBackLater": "また明日復習しましょう",
+      "reviewAgain": "もう一度復習する"
+    },
     "kanji": {
       "title": "漢字",
       "description": "漢字の読み方と意味を学ぶ"
@@ -709,7 +732,10 @@
       "subtitle": "練習が必要なカテゴリ",
       "accuracy": "{{value}}% 正解率",
       "wrong": "不正解",
-      "total": "合計"
+      "total": "合計",
+      "attempts": "{{count}} 回受験",
+      "bestScore": "最高スコア",
+      "latestScore": "最近のスコア"
     }
   },
   "notFound": {

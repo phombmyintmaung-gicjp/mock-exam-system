@@ -18,6 +18,7 @@ class ExamService
             'time_limit_seconds'   => $data['time_limit_seconds'] ?? config('exam.default_time_limit', 3600),
             'question_type_filter' => !empty($data['question_types']) ? $data['question_types'] : null,
             'is_submitted'         => false,
+            'linked_session_id'    => $data['linked_session_id'] ?? null,
         ]);
     }
 
