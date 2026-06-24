@@ -131,6 +131,7 @@
     "exitStudy": "終了",
     "exitStudyConfirmTitle": "学習を終了しますか？",
     "exitStudyConfirmBody": "進捗は保存されません。本当に終了しますか？",
+    "mondai2Instruction": "①〜④を並べかえて、★の位置に入るものを選びなさい。",
     "jlpt": {
       "title": "JLPT 練習",
       "subtitle": "レベルとセクションを選んで練習しましょう",

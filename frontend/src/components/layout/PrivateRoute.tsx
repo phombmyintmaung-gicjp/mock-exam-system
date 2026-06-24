@@ -17,10 +17,10 @@ export function PrivateRoute({ requiredRole }: PrivateRouteProps) {
 
   if (requiredRole && user.role !== requiredRole) {
     // Admins may also access employee routes (they are also employees)
-    if (requiredRole === 'employee' && user.role === 'admin') {
+    if (requiredRole === 2 && user.role === 1) {
       return <Outlet />;
     }
-    return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/exam/select'} replace />;
+    return <Navigate to={user.role === 1 ? '/admin/dashboard' : '/exam/select'} replace />;
   }
 
   return <Outlet />;

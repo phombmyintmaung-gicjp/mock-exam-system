@@ -18,6 +18,7 @@ import useTimer from '@/hooks/useTimer';
 import useElapsedTimer from '@/hooks/useElapsedTimer';
 import { submitExam } from '@/services/examService';
 import type { Passage } from '@/types/exam';
+import { SentenceArrangement } from '@/components/shared/SentenceArrangement';
 import { EXAM_SECURITY_THRESHOLD } from '@/constants';
 
 const SECURITY_THRESHOLD = EXAM_SECURITY_THRESHOLD;
@@ -214,7 +215,13 @@ const ReadingSession = () => {
           <div className={passage ? 'lg:w-1/2' : 'w-full'}>
             {currentQ && (
               <div className="glass-card rounded-2xl p-5 shadow-xl shadow-black/8 dark:shadow-black/20">
-                <p className="mb-4 text-base font-medium text-slate-800 dark:text-white/90">{currentQ.text}</p>
+                {currentQ.questionType === '問題2' && currentQ.category.includes('文法読解') ? (
+                  <div className="mb-4">
+                    <SentenceArrangement text={currentQ.text} />
+                  </div>
+                ) : (
+                  <p className="mb-4 text-base font-medium text-slate-800 dark:text-white/90">{currentQ.text}</p>
+                )}
 
                 <div className="space-y-2">
                   {currentQ.choices.map((choice) => {

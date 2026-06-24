@@ -119,7 +119,6 @@ const UserManagement = () => {
     }
   };
 
-  // Reset to page 1 when search changes
   const handleSearchChange = (value: string) => {
     setSearch(value);
     setPage(1);
@@ -135,9 +134,9 @@ const UserManagement = () => {
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PER_PAGE));
 
-  const roleLabel: Record<string, string> = {
-    admin: t('nav.admin'),
-    employee: t('nav.employee'),
+  const roleLabel: Record<number, string> = {
+    1: t('nav.admin'),
+    2: t('nav.employee'),
   };
 
   const formatDate = (dateStr?: string) => {
@@ -149,8 +148,8 @@ const UserManagement = () => {
     <PageShell>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('admin.users.title')}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t('admin.users.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('admin.users.title')}</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-white/50">{t('admin.users.subtitle')}</p>
         </div>
         <Button label={t('admin.users.newButton')} onClick={() => navigate('/admin/users/new')} />
       </div>
@@ -158,7 +157,7 @@ const UserManagement = () => {
       {/* Pending Approvals Section */}
       {(pendingLoading || pendingUsers.length > 0) && (
         <div className="mb-6">
-          <h2 className="mb-3 text-base font-semibold text-gray-800 flex items-center gap-2">
+          <h2 className="mb-3 text-base font-semibold text-gray-800 dark:text-white/90 flex items-center gap-2">
             <span className="inline-flex h-2 w-2 rounded-full bg-amber-400" />
             {t('admin.users.pendingApprovals')}
             {!pendingLoading && pendingUsers.length > 0 && (
@@ -167,7 +166,7 @@ const UserManagement = () => {
               </span>
             )}
           </h2>
-          <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-sm">
+          <div className="overflow-hidden rounded-xl border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 shadow-sm">
             {pendingLoading ? (
               <div className="p-4">
                 {Array.from({ length: 2 }).map((_, i) => (
@@ -179,14 +178,14 @@ const UserManagement = () => {
                 ))}
               </div>
             ) : (
-              <div className="divide-y divide-amber-100">
+              <div className="divide-y divide-amber-100 dark:divide-amber-500/20">
                 {pendingUsers.map((user) => (
                   <div key={user.id} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-4">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-white/50">{user.email}</p>
                     </div>
-                    <p className="text-xs text-gray-400 shrink-0">{formatDate(user.created_at)}</p>
+                    <p className="text-xs text-gray-400 dark:text-white/40 shrink-0">{formatDate(user.created_at)}</p>
                     <div className="flex gap-2 shrink-0">
                       <button
                         className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-600 disabled:opacity-50"
@@ -212,7 +211,7 @@ const UserManagement = () => {
       )}
 
       {fetchError && (
-        <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-4 rounded-lg bg-red-50 dark:bg-rose-500/15 px-4 py-3 text-sm text-red-700 dark:text-rose-300">
           {fetchError}
         </div>
       )}
@@ -223,20 +222,20 @@ const UserManagement = () => {
           value={search}
           onChange={(e) => handleSearchChange(e.target.value)}
           placeholder={t('admin.users.searchPlaceholder')}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:max-w-sm"
+          className="w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder-white/40 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:max-w-sm"
         />
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px] text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnName')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnEmail')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnRole')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnStatus')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('admin.users.columnActions')}</th>
+              <tr className="border-b border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnName')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnEmail')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnRole')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnStatus')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnActions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -245,22 +244,22 @@ const UserManagement = () => {
                 : filtered.length === 0
                 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">{t('common.noData')}</td>
+                      <td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400 dark:text-white/30">{t('common.noData')}</td>
                     </tr>
                   )
                 : filtered.map((user) => (
-                    <tr key={user.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                      <td className="px-6 py-4 font-medium text-gray-900">{user.name}</td>
-                      <td className="px-6 py-4 text-gray-600">{user.email}</td>
+                    <tr key={user.id} className="border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5">
+                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{user.name}</td>
+                      <td className="px-6 py-4 text-gray-600 dark:text-white/60">{user.email}</td>
                       <td className="px-6 py-4">
                         <span
                           className={
-                            user.role === 'admin'
+                            user.role === 1
                               ? 'inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700'
-                              : 'inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600'
+                              : 'inline-flex rounded-full bg-gray-100 dark:bg-white/10 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:text-white/60'
                           }
                         >
-                          {roleLabel[user.role] ?? user.role}
+                          {roleLabel[user.role] ?? String(user.role)}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -275,7 +274,7 @@ const UserManagement = () => {
                             className={
                               user.is_active
                                 ? 'inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-200 disabled:opacity-50'
-                                : 'inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 disabled:opacity-50'
+                                : 'inline-flex rounded-full bg-gray-100 dark:bg-white/10 px-2.5 py-0.5 text-xs font-medium text-gray-500 dark:text-white/50 transition-colors hover:bg-gray-200 dark:hover:bg-white/20 disabled:opacity-50'
                             }
                           >
                             {togglingId === user.id
@@ -320,13 +319,13 @@ const UserManagement = () => {
         onClose={() => { if (!togglingId) setToggleTarget(null); }}
       >
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-white/70">
             {toggleTarget?.is_active ? t('admin.users.deactivateBody') : t('admin.users.activateBody')}
           </p>
           {toggleTarget && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-              <p className="text-sm font-semibold text-gray-900">{toggleTarget.name}</p>
-              <p className="text-xs text-gray-500">{toggleTarget.email}</p>
+            <div className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-4 py-3">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">{toggleTarget.name}</p>
+              <p className="text-xs text-gray-500 dark:text-white/50">{toggleTarget.email}</p>
             </div>
           )}
           <div className="flex justify-end gap-3">
@@ -352,11 +351,11 @@ const UserManagement = () => {
         onClose={() => { if (!isDeleting) { setDeleteTarget(null); setDeleteError(null); } }}
       >
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">{t('admin.users.deleteConfirmBody')}</p>
+          <p className="text-sm text-gray-600 dark:text-white/70">{t('admin.users.deleteConfirmBody')}</p>
           {deleteTarget && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-              <p className="text-sm font-semibold text-gray-900">{deleteTarget.name}</p>
-              <p className="text-xs text-gray-500">{deleteTarget.email}</p>
+            <div className="rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-4 py-3">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">{deleteTarget.name}</p>
+              <p className="text-xs text-gray-500 dark:text-white/50">{deleteTarget.email}</p>
             </div>
           )}
           {deleteError && (

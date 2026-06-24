@@ -24,7 +24,7 @@ const Register = () => {
   const [registered, setRegistered] = useState(false);
 
   if (token && user) {
-    return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/exam/select'} replace />;
+    return <Navigate to={user.role === 1 ? '/admin/dashboard' : '/exam/select'} replace />;
   }
 
   const validate = (): boolean => {

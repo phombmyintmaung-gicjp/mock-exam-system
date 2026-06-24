@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -21,7 +20,6 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'name',
         'role',
-        'department_id',
         'target_certification',
         'password',
         'is_active',
@@ -75,11 +73,6 @@ class User extends Authenticatable implements JWTSubject
     // Relationships
     // -------------------------------------------------------------------------
 
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class);
-    }
-
     public function examSessions(): HasMany
     {
         return $this->hasMany(ExamSession::class);
@@ -96,7 +89,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === 1;
     }
 
     public function __toString(): string

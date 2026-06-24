@@ -3,22 +3,18 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $its1Id = DB::table('departments')->where('name', 'ITS第1事業部')->value('id');
-
         $users = [
             [
                 'name'                  => 'Moe Pyae Sone Wai',
                 'email'                 => 'moepyaesonewai@gicjp.com',
                 'password'              => Hash::make('moepyaesonewaigicjp'),
-                'role'                  => 'employee',
-                'department_id'         => $its1Id,
+                'role'                  => 2,
                 'target_certification'  => null,
                 'is_active'             => true,
             ],
@@ -26,8 +22,7 @@ class UserSeeder extends Seeder
                 'name'                  => 'Admin User',
                 'email'                 => 'admin@gicjp.com',
                 'password'              => Hash::make('admin1234'),
-                'role'                  => 'admin',
-                'department_id'         => null,
+                'role'                  => 1,
                 'target_certification'  => null,
                 'is_active'             => true,
             ],

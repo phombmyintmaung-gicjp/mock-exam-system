@@ -15,7 +15,7 @@ class ProfileController extends Controller
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
-        return response()->json(['data' => $user->load('department')]);
+        return response()->json(['data' => $user]);
     }
 
     public function update(Request $request): JsonResponse
@@ -30,7 +30,7 @@ class ProfileController extends Controller
 
         $user->update($validated);
 
-        return response()->json(['data' => $user->fresh()->load('department')]);
+        return response()->json(['data' => $user->fresh()]);
     }
 
     public function changePassword(ChangePasswordRequest $request): JsonResponse

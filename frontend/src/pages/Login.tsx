@@ -28,8 +28,8 @@ const Login = () => {
   }, []);
 
   if (token && user) {
-    const defaultPath = user.role === 'admin' ? '/admin/dashboard' : '/exam/select';
-    const destination = from && (user.role !== 'admin' || from.startsWith('/admin/')) ? from : defaultPath;
+    const defaultPath = user.role === 1 ? '/admin/dashboard' : '/exam/select';
+    const destination = from && (user.role !== 1 || from.startsWith('/admin/')) ? from : defaultPath;
     return <Navigate to={destination} replace />;
   }
 
@@ -45,8 +45,8 @@ const Login = () => {
         localStorage.removeItem('rememberedEmail');
       }
       setAuth(newUser, newToken);
-      const defaultPath = newUser.role === 'admin' ? '/admin/dashboard' : '/exam/select';
-      const destination = from && (newUser.role !== 'admin' || from.startsWith('/admin/')) ? from : defaultPath;
+      const defaultPath = newUser.role === 1 ? '/admin/dashboard' : '/exam/select';
+      const destination = from && (newUser.role !== 1 || from.startsWith('/admin/')) ? from : defaultPath;
       navigate(destination, { replace: true });
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number; data?: { error?: string } } })?.response?.status;

@@ -8,7 +8,7 @@ const NotFound = () => {
   const { token, user } = useAuthStore();
 
   const homePath = token
-    ? user?.role === 'admin' ? '/admin/dashboard' : '/exam/select'
+    ? user?.role === 1 ? '/admin/dashboard' : '/exam/select'
     : '/';
 
   return (

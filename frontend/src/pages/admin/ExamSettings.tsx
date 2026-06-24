@@ -86,8 +86,8 @@ const ExamSettings = () => {
   return (
     <PageShell>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('admin.examSettings.title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('admin.examSettings.subtitle')}</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('admin.examSettings.title')}</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-white/50">{t('admin.examSettings.subtitle')}</p>
       </div>
 
       {/* Search + Filter */}
@@ -97,7 +97,7 @@ const ExamSettings = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('admin.examSettings.searchPlaceholder')}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:max-w-xs"
+          className="w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder-white/40 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 sm:max-w-xs"
         />
         <div className="flex gap-2">
           {FILTERS.map(({ key, label }) => (
@@ -107,7 +107,7 @@ const ExamSettings = () => {
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 filter === key
                   ? 'bg-amber-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'bg-gray-100 dark:bg-white/8 text-gray-600 dark:text-white/60 hover:bg-gray-200 dark:hover:bg-white/12'
               }`}
             >
               {label}
@@ -121,22 +121,26 @@ const ExamSettings = () => {
           <Spinner size="lg" />
         </div>
       ) : visibleCards.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('common.noData')}</p>
+        <p className="text-sm text-gray-500 dark:text-white/50">{t('common.noData')}</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2">
           {visibleCards.map((card, index) => (
-            <div key={card.category} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">{card.category}</h2>
+            <div key={card.category} className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">{card.category}</h2>
 
               {card.message && (
-                <p className={`mb-4 rounded-lg px-4 py-2.5 text-sm ${card.message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                <p className={`mb-4 rounded-lg px-4 py-2.5 text-sm ${
+                  card.message.type === 'success'
+                    ? 'bg-green-50 dark:bg-emerald-500/15 text-green-700 dark:text-emerald-300'
+                    : 'bg-red-50 dark:bg-rose-500/15 text-red-600 dark:text-rose-300'
+                }`}>
                   {card.message.text}
                 </p>
               )}
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/80">
                     {t('admin.examSettings.timeLimit')}
                   </label>
                   <input
@@ -145,11 +149,11 @@ const ExamSettings = () => {
                     max={300}
                     value={card.timeLimitMinutes}
                     onChange={(e) => updateCard(index, { timeLimitMinutes: Number(e.target.value), message: null })}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/80">
                     {t('admin.examSettings.questionCount')}
                   </label>
                   <input
@@ -158,11 +162,11 @@ const ExamSettings = () => {
                     max={200}
                     value={card.questionCount}
                     onChange={(e) => updateCard(index, { questionCount: Number(e.target.value), message: null })}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/80">
                     {t('admin.examSettings.passingScore')}
                   </label>
                   <input
@@ -171,7 +175,7 @@ const ExamSettings = () => {
                     max={100}
                     value={card.passingScore}
                     onChange={(e) => updateCard(index, { passingScore: Number(e.target.value), message: null })}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                   />
                 </div>
                 <div className="flex justify-end pt-1">

@@ -80,7 +80,7 @@ class AuthService
                 'name'            => $data['name'],
                 'email'           => $data['email'],
                 'password'        => $data['password'],
-                'role'            => 'employee',
+                'role'            => 2,
                 'is_active'       => false,
                 'approval_status' => 'pending',
             ]);

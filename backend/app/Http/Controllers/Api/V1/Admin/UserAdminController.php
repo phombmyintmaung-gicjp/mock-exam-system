@@ -18,8 +18,7 @@ class UserAdminController extends Controller
      *     summary="List all users",
      *     operationId="adminListUsers",
      *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(name="role", in="query", required=false, @OA\Schema(type="string", enum={"admin","employee"})),
-     *     @OA\Parameter(name="department_id", in="query", required=false, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="role", in="query", required=false, @OA\Schema(type="integer", enum={1,2})),
      *     @OA\Parameter(name="is_active", in="query", required=false, @OA\Schema(type="boolean")),
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
      *     @OA\Response(response=200, description="Paginated users",
@@ -35,14 +34,10 @@ class UserAdminController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = User::with('department');
+        $query = User::query();
 
         if ($request->filled('role')) {
             $query->where('role', $request->input('role'));
-        }
-
-        if ($request->filled('department_id')) {
-            $query->where('department_id', $request->integer('department_id'));
         }
 
         if ($request->filled('is_active')) {
@@ -77,8 +72,7 @@ class UserAdminController extends Controller
      *             @OA\Property(property="name", type="string"),
      *             @OA\Property(property="email", type="string", format="email"),
      *             @OA\Property(property="password", type="string", format="password"),
-     *             @OA\Property(property="role", type="string", enum={"admin","employee"}),
-     *             @OA\Property(property="department_id", type="integer", nullable=true),
+     *             @OA\Property(property="role", type="integer", enum={1,2}),
      *             @OA\Property(property="target_certification", type="string", nullable=true)
      *         )
      *     ),
@@ -92,7 +86,7 @@ class UserAdminController extends Controller
     {
         $user = User::create($request->validated());
 
-        return response()->json(['data' => $user->load('department')], 201);
+        return response()->json(['data' => $user], 201);
     }
 
     /**
@@ -111,7 +105,7 @@ class UserAdminController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $user = User::with('department')->findOrFail($id);
+        $user = User::findOrFail($id);
 
         return response()->json(['data' => $user]);
     }
@@ -128,8 +122,7 @@ class UserAdminController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="name", type="string"),
      *             @OA\Property(property="email", type="string", format="email"),
-     *             @OA\Property(property="role", type="string", enum={"admin","employee"}),
-     *             @OA\Property(property="department_id", type="integer", nullable=true),
+     *             @OA\Property(property="role", type="integer", enum={1,2}),
      *             @OA\Property(property="is_active", type="boolean"),
      *             @OA\Property(property="target_certification", type="string", nullable=true)
      *         )
@@ -145,7 +138,7 @@ class UserAdminController extends Controller
         $user = User::findOrFail($id);
         $user->update($request->validated());
 
-        return response()->json(['data' => $user->load('department')]);
+        return response()->json(['data' => $user]);
     }
 
     public function destroy(int $id): JsonResponse
@@ -167,13 +160,13 @@ class UserAdminController extends Controller
     {
         $user = User::findOrFail($id);
         $user->update(['approval_status' => 'approved', 'is_active' => true]);
-        return response()->json(['data' => $user->load('department')]);
+        return response()->json(['data' => $user]);
     }
 
     public function reject(int $id): JsonResponse
     {
         $user = User::findOrFail($id);
         $user->update(['approval_status' => 'rejected', 'is_active' => false]);
-        return response()->json(['data' => $user->load('department')]);
+        return response()->json(['data' => $user]);
     }
 }

@@ -13,7 +13,7 @@ class CustomSetSeeder extends Seeder
     public function run(): void
     {
         // Use the first admin user as creator
-        $admin = User::where('role', 'admin')->first();
+        $admin = User::where('role', 1)->first();
         if (! $admin) {
             $this->command->warn('No admin user found — skipping CustomSetSeeder.');
             return;

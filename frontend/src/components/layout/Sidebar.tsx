@@ -98,7 +98,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { to: '/profile',            label: t('nav.profile'),   icon: <UserIcon className={si} />, end: true },
   ];
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 1;
 
   const renderNavItem = (link: NavLinkItem, accent?: 'amber' | 'rose') => {
     const href = link.to + (link.search ?? '');

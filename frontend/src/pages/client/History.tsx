@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { PageShell } from '@/components/layout/PageShell';
 import { Badge } from '@/components/ui/Badge';
 import { Pagination } from '@/components/ui/Pagination';
@@ -11,6 +12,7 @@ const PER_PAGE = 15;
 
 const History = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [page, setPage] = useState(1);
@@ -42,20 +44,20 @@ const History = () => {
   return (
     <PageShell>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('profile.history.title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('profile.history.subtitle')}</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('profile.history.title')}</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-white/50">{t('profile.history.subtitle')}</p>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[560px] text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnDate')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnCategory')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnMode')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnScore')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">{t('profile.history.columnResult')}</th>
+              <tr className="border-b border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('profile.history.columnDate')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('profile.history.columnCategory')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('profile.history.columnMode')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('profile.history.columnScore')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('profile.history.columnResult')}</th>
               </tr>
             </thead>
             <tbody>
@@ -64,7 +66,7 @@ const History = () => {
                 : history.length === 0
                 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">
+                      <td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400 dark:text-white/30">
                         {t('common.noData')}
                       </td>
                     </tr>
@@ -74,8 +76,8 @@ const History = () => {
                       ? Math.round((row.score / row.totalQuestions) * 100)
                       : 0;
                     return (
-                      <tr key={row.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
-                        <td className="px-6 py-4 text-gray-500">
+                      <tr key={row.id} onClick={() => navigate(`/exam/results/${row.id}`)} className="cursor-pointer border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5">
+                        <td className="px-6 py-4 text-gray-500 dark:text-white/50">
                           {row.completedAt ? new Date(row.completedAt).toLocaleString('ja-JP', {
                             year: 'numeric',
                             month: '2-digit',
@@ -84,9 +86,9 @@ const History = () => {
                             minute: '2-digit',
                           }) : '—'}
                         </td>
-                        <td className="px-6 py-4 text-gray-700">{row.category || '—'}</td>
-                        <td className="px-6 py-4 text-gray-600">{modeLabel(row.mode)}</td>
-                        <td className="px-6 py-4 font-medium text-gray-900">{pct}%</td>
+                        <td className="px-6 py-4 text-gray-700 dark:text-white/80">{row.category || '—'}</td>
+                        <td className="px-6 py-4 text-gray-600 dark:text-white/70">{modeLabel(row.mode)}</td>
+                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{pct}%</td>
                         <td className="px-6 py-4">
                           <Badge
                             label={t(row.status === 'pass' ? 'result.pass' : 'result.fail')}

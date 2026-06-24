@@ -109,10 +109,16 @@ const Review = () => {
                         >
                           {choice.text}
                           {isCorrectChoice && (
-                            <span className="ml-2 text-xs text-green-600">← {t('result.correct')}</span>
+                            <span className="ml-2 inline-flex items-center gap-1 text-xs text-green-600">
+                              <CheckIcon className="h-3 w-3" strokeWidth={3} />
+                              {t('result.correct')}
+                            </span>
                           )}
                           {isWrongSelected && (
-                            <span className="ml-2 text-xs text-red-500">← {t('result.incorrect')}</span>
+                            <span className="ml-2 inline-flex items-center gap-1 text-xs text-red-500">
+                              <XIcon className="h-3 w-3" strokeWidth={3} />
+                              {t('result.incorrect')}
+                            </span>
                           )}
                         </div>
                       );

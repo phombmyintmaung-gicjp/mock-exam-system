@@ -60,7 +60,7 @@ const Home = () => {
   const { theme, toggleTheme } = useThemeStore();
 
   if (token && user) {
-    return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/exam/select'} replace />;
+    return <Navigate to={user.role === 1 ? '/admin/dashboard' : '/exam/select'} replace />;
   }
 
   return (

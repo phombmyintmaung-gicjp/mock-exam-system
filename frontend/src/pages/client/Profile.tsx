@@ -6,10 +6,10 @@ import { useAuthStore } from '@/store/authStore';
 import { updateProfile, changePassword } from '@/services/userService';
 
 const inputClass = (hasError: boolean) =>
-  `mt-1 block w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none focus:ring-1 ${
+  `mt-1 block w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none focus:ring-1 dark:bg-white/5 dark:text-white ${
     hasError
-      ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
-      : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500'
+      ? 'border-red-400 dark:border-red-500/60 focus:border-red-500 focus:ring-red-500'
+      : 'border-gray-300 dark:border-white/15 focus:border-amber-500 focus:ring-amber-500'
   }`;
 
 const Profile = () => {
@@ -86,33 +86,33 @@ const Profile = () => {
   return (
     <PageShell>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('profile.title')}</h1>
-        <p className="mt-1 text-sm text-gray-500">{t('profile.subtitle')}</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('profile.title')}</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-white/50">{t('profile.subtitle')}</p>
       </div>
 
       <div className="max-w-xl space-y-6">
 
         {/* ── Profile information card ─────────────────────────── */}
-        <form onSubmit={handleProfileSubmit} className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+        <form onSubmit={handleProfileSubmit} className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-8 shadow-sm">
           <div className="mb-6 flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-2xl font-bold text-white">
               {initial}
             </div>
             <div>
-              <p className="text-lg font-semibold text-gray-900">{user?.name}</p>
-              <p className="text-sm text-gray-500">{user?.email}</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">{user?.name}</p>
+              <p className="text-sm text-gray-500 dark:text-white/50">{user?.email}</p>
             </div>
           </div>
 
           {profileMsg && (
-            <p className={`mb-4 rounded-lg px-4 py-3 text-sm ${profileMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+            <p className={`mb-4 rounded-lg px-4 py-3 text-sm ${profileMsg.type === 'success' ? 'bg-green-50 dark:bg-emerald-500/15 text-green-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-rose-500/15 text-red-600 dark:text-rose-300'}`}>
               {profileMsg.text}
             </p>
           )}
 
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('profile.nameLabel')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white/80">{t('profile.nameLabel')}</label>
               <input
                 type="text"
                 value={name}
@@ -121,7 +121,7 @@ const Profile = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('profile.certificationLabel')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white/80">{t('profile.certificationLabel')}</label>
               <input
                 type="text"
                 value={certification}
@@ -141,21 +141,21 @@ const Profile = () => {
         </form>
 
         {/* ── Change password card ─────────────────────────────── */}
-        <form onSubmit={handlePasswordSubmit} className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+        <form onSubmit={handlePasswordSubmit} className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-8 shadow-sm">
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">{t('profile.changePassword.title')}</h2>
-            <p className="mt-0.5 text-sm text-gray-500">{t('profile.changePassword.subtitle')}</p>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('profile.changePassword.title')}</h2>
+            <p className="mt-0.5 text-sm text-gray-500 dark:text-white/50">{t('profile.changePassword.subtitle')}</p>
           </div>
 
           {pwMsg && (
-            <p className={`mb-4 rounded-lg px-4 py-3 text-sm ${pwMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+            <p className={`mb-4 rounded-lg px-4 py-3 text-sm ${pwMsg.type === 'success' ? 'bg-green-50 dark:bg-emerald-500/15 text-green-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-rose-500/15 text-red-600 dark:text-rose-300'}`}>
               {pwMsg.text}
             </p>
           )}
 
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-white/80">
                 {t('profile.changePassword.currentPassword')}
               </label>
               <input
@@ -169,7 +169,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-white/80">
                 {t('profile.changePassword.newPassword')}
               </label>
               <input
@@ -184,7 +184,7 @@ const Profile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-white/80">
                 {t('profile.changePassword.confirmNewPassword')}
               </label>
               <input

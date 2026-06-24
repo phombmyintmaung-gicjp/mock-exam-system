@@ -38,7 +38,7 @@ const StudyHome = () => {
   const { t } = useTranslation();
   const token = useAuthStore((s) => s.token);
   const user  = useAuthStore((s) => s.user);
-  const backTo = token ? (user?.role === 'admin' ? '/admin/dashboard' : '/exam/select') : '/login';
+  const backTo = token ? (user?.role === 1 ? '/admin/dashboard' : '/exam/select') : '/login';
   const backLabel = token ? t('study.backToDashboard') : t('study.backToLogin');
 
   return (

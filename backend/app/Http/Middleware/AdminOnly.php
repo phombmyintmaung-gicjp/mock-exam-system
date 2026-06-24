@@ -18,7 +18,7 @@ class AdminOnly
     {
         $user = auth()->user();
 
-        if ($user === null || $user->role !== 'admin') {
+        if ($user === null || ! $user->isAdmin()) {
             return response()->json(
                 ['error' => 'Forbidden. Admin access required.'],
                 403

@@ -22,7 +22,7 @@ const Breadcrumb = () => {
 
   if (SESSION_PATHS.some((p) => location.pathname.startsWith(p))) return null;
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 1;
   const homeHref = isAdmin ? '/admin/dashboard' : '/exam/select';
 
   const labelMap: Record<string, string> = {

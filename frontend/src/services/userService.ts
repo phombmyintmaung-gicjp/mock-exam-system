@@ -1,5 +1,5 @@
 import api from './api';
-import type { User, Department } from '@/types/user';
+import type { User } from '@/types/user';
 import type { PaginatedResponse } from '@/types/api';
 
 export const getProfile = async (): Promise<User> => {
@@ -45,11 +45,6 @@ export const createAdminUser = async (payload: unknown): Promise<User> => {
 
 export const updateAdminUser = async (id: number, payload: unknown): Promise<User> => {
   const res = await api.put(`/admin/users/${id}`, payload);
-  return res.data.data;
-};
-
-export const getDepartments = async (): Promise<Department[]> => {
-  const res = await api.get('/admin/departments');
   return res.data.data;
 };
 

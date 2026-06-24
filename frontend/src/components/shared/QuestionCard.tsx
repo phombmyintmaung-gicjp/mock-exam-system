@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { clsx } from 'clsx';
 import type { Question } from '@/types/exam';
 import { CheckIcon, XIcon } from '@/components/ui/Icons';
+import { SentenceArrangement } from '@/components/shared/SentenceArrangement';
 
 interface QuestionCardProps {
   question: Question;
@@ -13,11 +14,20 @@ interface QuestionCardProps {
 const CHOICE_LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
 const QuestionCard = ({ question, selectedChoiceId, onSelect, revealed = false }: QuestionCardProps) => {
+  const isMondai2Arrangement =
+    question.questionType === '問題2' && question.category.includes('文法読解');
+
   return (
     <div className="glass-card rounded-2xl p-6 shadow-xl shadow-black/8 dark:shadow-black/20">
-      <p className="mb-6 text-base font-medium leading-relaxed text-slate-800 dark:text-white/90">
-        {question.text}
-      </p>
+      {isMondai2Arrangement ? (
+        <div className="mb-6">
+          <SentenceArrangement text={question.text} />
+        </div>
+      ) : (
+        <p className="mb-6 text-base font-medium leading-relaxed text-slate-800 dark:text-white/90">
+          {question.text}
+        </p>
+      )}
       <ul className="space-y-3">
         {question.choices.map((choice, idx) => {
           const isSelected = selectedChoiceId === choice.id;

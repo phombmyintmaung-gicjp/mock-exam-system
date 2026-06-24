@@ -130,7 +130,7 @@ const App = () => {
         <Route path="/study/:type" element={<FlashcardSession />} />
 
         {/* Admin routes — require admin role */}
-        <Route element={<PrivateRoute requiredRole="admin" />}>
+        <Route element={<PrivateRoute requiredRole={1} />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/questions" element={<Questions />} />
           <Route path="/admin/questions/new" element={<QuestionForm />} />
@@ -153,7 +153,7 @@ const App = () => {
         </Route>
 
         {/* Client routes — require employee role */}
-        <Route element={<PrivateRoute requiredRole="employee" />}>
+        <Route element={<PrivateRoute requiredRole={2} />}>
           <Route path="/exam/select" element={<ExamSelect />} />
           <Route path="/exam/session/:category" element={<ExamSession />} />
           <Route path="/study/session/:category" element={<StudySession />} />

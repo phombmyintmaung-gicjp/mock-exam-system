@@ -51,7 +51,6 @@ const QuestionForm = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      // Load categories — graceful failure so the form still renders
       let cats: Category[] = [];
       try {
         cats = await getCategories();
@@ -66,17 +65,14 @@ const QuestionForm = () => {
           setText(q.text);
           setExplanation(q.explanation ?? '');
 
-          // 1. Try category_id from the raw backend response first
           const rawCategoryId = (q as unknown as { category_id?: number | null }).category_id;
           if (rawCategoryId) {
             setCategoryId(rawCategoryId);
           } else {
-            // 2. Fall back to name match
             const matched = cats.find((c) => c.name === q.category);
             if (matched) {
               setCategoryId(matched.id);
             } else if (q.category) {
-              // 3. No match — pre-open new-category input with the existing name
               setShowNewCategory(true);
               setNewCategoryName(q.category);
             }
@@ -200,10 +196,10 @@ const QuestionForm = () => {
     <PageShell>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('admin.questionForm.title')}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t('admin.questionForm.subtitle')}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('admin.questionForm.title')}</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-white/50">{t('admin.questionForm.subtitle')}</p>
         </div>
-        <div className="flex overflow-hidden rounded-lg border border-gray-200 self-start">
+        <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-white/10 self-start">
           <button
             type="button"
             onClick={() => setActiveTab('edit')}
@@ -211,7 +207,7 @@ const QuestionForm = () => {
               'px-4 py-2 text-sm font-medium transition-colors',
               activeTab === 'edit'
                 ? 'bg-amber-500 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-50',
+                : 'bg-white dark:bg-white/5 text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/10',
             )}
           >
             {t('admin.questionForm.editTab')}
@@ -223,7 +219,7 @@ const QuestionForm = () => {
               'px-4 py-2 text-sm font-medium transition-colors',
               activeTab === 'preview'
                 ? 'bg-amber-500 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-50',
+                : 'bg-white dark:bg-white/5 text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/10',
             )}
           >
             {t('admin.questionForm.previewTab')}
@@ -232,25 +228,25 @@ const QuestionForm = () => {
       </div>
 
       {activeTab === 'edit' ? (
-        <form onSubmit={handleSubmit} className="w-full max-w-2xl rounded-xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
-          {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>}
+        <form onSubmit={handleSubmit} className="w-full max-w-2xl rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm md:p-8">
+          {error && <p className="mb-4 rounded-lg bg-red-50 dark:bg-rose-500/15 px-4 py-3 text-sm text-red-600 dark:text-rose-300">{error}</p>}
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.questionText')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white/80">{t('admin.questionForm.questionText')}</label>
               <textarea
                 rows={4}
                 required
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder-white/30 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 placeholder={t('admin.questionForm.questionTextPlaceholder')}
               />
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.category')}</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-white/80">{t('admin.questionForm.category')}</label>
                 <select
                   required
                   value={categoryId}
@@ -265,7 +261,7 @@ const QuestionForm = () => {
                       setCategoryId(newId);
                     }
                   }}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 >
                   <option value="">{t('admin.questionForm.categoryPlaceholder')}</option>
                   {categories.map((c) => (
@@ -282,7 +278,7 @@ const QuestionForm = () => {
                       onChange={(e) => setNewCategoryName(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
                       placeholder={t('admin.questionForm.newCategoryPlaceholder')}
-                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="flex-1 rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
                     <button
                       type="button"
@@ -295,7 +291,7 @@ const QuestionForm = () => {
                     <button
                       type="button"
                       onClick={() => { setShowNewCategory(false); setNewCategoryName(''); }}
-                      className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+                      className="rounded-lg border border-gray-300 dark:border-white/15 px-3 py-2 text-sm text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/5"
                     >
                       {t('admin.questionForm.newCategoryCancel')}
                     </button>
@@ -304,11 +300,11 @@ const QuestionForm = () => {
               </div>
               {isJlpt && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.questionType')}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-white/80">{t('admin.questionForm.questionType')}</label>
                   <select
                     value={questionType}
                     onChange={(e) => setQuestionType(e.target.value)}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none"
                   >
                     <option value="">{t('admin.questionForm.questionTypePlaceholder')}</option>
                     {mondaiOptions.map((m) => (
@@ -320,20 +316,20 @@ const QuestionForm = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">{t('admin.questionForm.explanation')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white/80">{t('admin.questionForm.explanation')}</label>
               <textarea
                 rows={3}
                 required
                 value={explanation}
                 onChange={(e) => setExplanation(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder-white/30 px-3 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 placeholder={t('admin.questionForm.explanationPlaceholder')}
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">{t('admin.questionForm.choices')}</label>
-              <p className="mb-3 text-xs text-gray-500">{t('admin.questionForm.choicesHint')}</p>
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-white/80">{t('admin.questionForm.choices')}</label>
+              <p className="mb-3 text-xs text-gray-500 dark:text-white/50">{t('admin.questionForm.choicesHint')}</p>
               <div className="space-y-3">
                 {choices.map((choice, idx) => (
                   <div key={idx} className="flex items-center gap-3">
@@ -351,7 +347,7 @@ const QuestionForm = () => {
                       value={choice.text}
                       onChange={(e) => updateChoice(idx, e.target.value)}
                       placeholder={t('admin.questionForm.choicePlaceholder', { number: idx + 1 })}
-                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                      className="flex-1 rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     />
                     {choice.is_correct && (
                       <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
@@ -371,7 +367,7 @@ const QuestionForm = () => {
         </form>
       ) : (
         <div className="w-full max-w-2xl space-y-3">
-          <p className="text-xs text-gray-400">{t('admin.questionForm.previewHint')}</p>
+          <p className="text-xs text-gray-400 dark:text-white/40">{t('admin.questionForm.previewHint')}</p>
           <QuestionCard
             question={previewQuestion}
             selectedChoiceId={previewSelected}
