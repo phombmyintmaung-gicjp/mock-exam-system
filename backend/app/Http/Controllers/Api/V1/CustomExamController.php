@@ -88,10 +88,13 @@ class CustomExamController extends Controller
     public function getResult(int $id): JsonResponse
     {
         $user   = auth()->user();
-        $result = CustomExamResult::with(['set', 'answerRecords.question.choices'])
+        $result = CustomExamResult::with('set')
             ->where('user_id', $user->id)
             ->findOrFail($id);
 
+        // Answer details are intentionally omitted from the employee-facing result
+        // to prevent answer leakage between participants. Admins access the full
+        // breakdown via GET /admin/custom-sets/{setId}/results/{resultId}.
         return response()->json(['data' => [
             'id'              => $result->id,
             'set_id'          => $result->set_id,
@@ -101,18 +104,6 @@ class CustomExamController extends Controller
             'passing_score'   => $result->passing_score,
             'status'          => $result->status,
             'completed_at'    => $result->completed_at,
-            'answer_records'  => $result->answerRecords->map(fn ($ar) => [
-                'question_id'        => $ar->question_id,
-                'question_text'      => $ar->question->text,
-                'explanation'        => $ar->question->explanation,
-                'is_correct'         => $ar->is_correct,
-                'selected_choice_id' => $ar->selected_choice_id,
-                'choices'            => $ar->question->choices->map(fn ($c) => [
-                    'id'         => $c->id,
-                    'text'       => $c->text,
-                    'is_correct' => $c->is_correct,
-                ])->values(),
-            ])->values(),
         ]]);
     }
 }

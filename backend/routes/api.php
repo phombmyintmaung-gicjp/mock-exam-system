@@ -142,6 +142,7 @@ Route::prefix('v1')->group(function () {
             Route::post('custom-sets/{id}/questions/create', [CustomSetController::class, 'createQuestion'])->name('admin.custom-sets.questions.create');
             Route::put('custom-sets/{id}/reorder', [CustomSetController::class, 'reorder'])->name('admin.custom-sets.reorder');
             Route::get('custom-sets/{id}/results', [CustomSetController::class, 'results'])->name('admin.custom-sets.results');
+            Route::get('custom-sets/{setId}/results/{resultId}', [CustomSetController::class, 'showResult'])->name('admin.custom-sets.results.show');
         });
 
         // Custom exam sessions (employee-facing, auth required, not admin-only)

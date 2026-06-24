@@ -1,6 +1,7 @@
 import api from './api';
 import type {
   AdminCustomExamResult,
+  AdminCustomExamResultDetail,
   CustomExamLandingInfo,
   CustomExamResult,
   CustomSetDetail,
@@ -85,6 +86,33 @@ export async function getSetResults(setId: number): Promise<AdminCustomExamResul
       completedAt: r.completed_at as string,
     }),
   );
+}
+
+export async function getSetResultDetail(setId: number, resultId: number): Promise<AdminCustomExamResultDetail> {
+  const res = await api.get(`/admin/custom-sets/${setId}/results/${resultId}`);
+  const d = res.data.data;
+  return {
+    id: d.id,
+    setId: d.set_id,
+    user: d.user as AdminCustomExamResult['user'],
+    score: d.score,
+    totalQuestions: d.total_questions,
+    passingScore: d.passing_score,
+    status: d.status as 'pass' | 'fail',
+    completedAt: d.completed_at,
+    answerRecords: (d.answer_records as Record<string, unknown>[]).map((ar) => ({
+      questionId: ar.question_id as number,
+      questionText: ar.question_text as string,
+      explanation: ar.explanation as string | null,
+      isCorrect: ar.is_correct as boolean,
+      selectedChoiceId: ar.selected_choice_id as number | null,
+      choices: (ar.choices as Record<string, unknown>[]).map((c) => ({
+        id: c.id as number,
+        text: c.text as string,
+        isCorrect: c.is_correct as boolean,
+      })),
+    })),
+  };
 }
 
 // ─── Employee ─────────────────────────────────────────────────────────────────

@@ -197,12 +197,12 @@
     },
     "explanation": "解説",
     "frequencyBand": {
-      "label": "頻出度",
       "1": "最頻出",
       "2": "高頻出",
       "3": "中頻出",
       "4": "低頻出",
-      "5": "稀"
+      "5": "稀",
+      "label": "頻出度"
     }
   },
   "admin": {
@@ -294,7 +294,19 @@
         "minChoicesError": "選択肢は2つ以上必要です",
         "noCorrectError": "正解の選択肢を1つ選択してください",
         "save": "問題を保存"
-      }
+      },
+      "backToResults": "結果一覧に戻る",
+      "resultDetail": "回答詳細",
+      "employee": "受験者",
+      "answerBreakdown": "回答内訳",
+      "correctAnswer": "正解",
+      "selectedCorrect": "選択（正解）",
+      "selectedWrong": "選択（不正解）",
+      "unanswered": "未回答",
+      "viewDetail": "詳細を見る",
+      "filterPlaceholder": "名前またはメールで検索…",
+      "filterAll": "すべて",
+      "noFilteredResults": "条件に一致する結果がありません。"
     },
     "questionForm": {
       "title": "新しい問題",
@@ -626,9 +638,18 @@
     },
     "howItWorks": {
       "title": "使い方",
-      "step1": { "title": "ログイン", "desc": "GIC宮崎の会社アカウントでログインします。" },
-      "step2": { "title": "試験を選ぶ", "desc": "ITカテゴリまたはJLPTのレベル・セクションを選択します。" },
-      "step3": { "title": "練習して上達", "desc": "時間制限ありの試験か自分のペースで学習し、分析で進捗を確認しましょう。" }
+      "step1": {
+        "title": "ログイン",
+        "desc": "GIC宮崎の会社アカウントでログインします。"
+      },
+      "step2": {
+        "title": "試験を選ぶ",
+        "desc": "ITカテゴリまたはJLPTのレベル・セクションを選択します。"
+      },
+      "step3": {
+        "title": "練習して上達",
+        "desc": "時間制限ありの試験か自分のペースで学習し、分析で進捗を確認しましょう。"
+      }
     },
     "cta": {
       "title": "さっそく始めよう",

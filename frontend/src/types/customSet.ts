@@ -70,3 +70,8 @@ export interface AdminCustomExamResult {
   status: 'pass' | 'fail';
   completedAt: string;
 }
+
+export interface AdminCustomExamResultDetail extends AdminCustomExamResult {
+  setId: number;
+  answerRecords: CustomAnswerRecord[];
+}

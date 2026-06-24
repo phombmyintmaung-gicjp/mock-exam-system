@@ -6,14 +6,18 @@ import { PageShell } from '@/components/layout/PageShell';
 import { Timer } from '@/components/shared/Timer';
 import { ProgressBar } from '@/components/shared/ProgressBar';
 import { QuestionCard } from '@/components/shared/QuestionCard';
+import { ExamSecurityNotice } from '@/components/shared/ExamSecurityNotice';
+import { ExamViolationModal } from '@/components/shared/ExamViolationModal';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { FlagIcon, XIcon, ChevronLeftIcon, ChevronRightIcon, TriangleAlertIcon } from '@/components/ui/Icons';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
+import { useExamSecurity } from '@/hooks/useExamSecurity';
 import useTimer from '@/hooks/useTimer';
 import { submitCustomExamSession } from '@/services/customSetService';
+import { EXAM_SECURITY_THRESHOLD } from '@/constants';
 
 const CustomExamSession = () => {
   const { t } = useTranslation();
@@ -37,6 +41,7 @@ const CustomExamSession = () => {
   const [showExitModal, setShowExitModal] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [unansweredCount, setUnansweredCount] = useState(0);
+  const [securityAcknowledged, setSecurityAcknowledged] = useState(false);
   const isFinishing = useRef(false);
 
   useEffect(() => {
@@ -105,6 +110,17 @@ const CustomExamSession = () => {
   };
 
   useTimer(session?.secondsRemaining ?? 0, () => { doSubmit(); });
+
+  const {
+    violationCount,
+    showWarning: showSecurityWarning,
+    lastViolationType,
+    dismissWarning: dismissSecurityWarning,
+  } = useExamSecurity({
+    enabled: securityAcknowledged && !!session,
+    threshold: EXAM_SECURITY_THRESHOLD,
+    onAutoSubmit: doSubmit,
+  });
 
   if (!session) {
     return (
@@ -234,6 +250,26 @@ const CustomExamSession = () => {
           </>
         )}
       </Modal>
+
+      {session && !securityAcknowledged && (
+        <ExamSecurityNotice
+          onAcknowledge={() => setSecurityAcknowledged(true)}
+          onClose={() => {
+            isFinishing.current = true;
+            deactivateGuard();
+            resetSession();
+            navigate(slug ? `/exam/custom/${slug}` : '/exam/select');
+          }}
+        />
+      )}
+
+      <ExamViolationModal
+        isOpen={showSecurityWarning}
+        violationType={lastViolationType}
+        violationCount={violationCount}
+        threshold={EXAM_SECURITY_THRESHOLD}
+        onDismiss={dismissSecurityWarning}
+      />
     </>
   );
 };

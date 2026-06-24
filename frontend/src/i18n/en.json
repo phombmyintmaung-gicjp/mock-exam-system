@@ -197,12 +197,12 @@
     },
     "explanation": "Explanation",
     "frequencyBand": {
-      "label": "Frequency",
       "1": "Core",
       "2": "Common",
       "3": "Moderate",
       "4": "Uncommon",
-      "5": "Rare"
+      "5": "Rare",
+      "label": "Frequency"
     }
   },
   "admin": {
@@ -294,7 +294,19 @@
         "minChoicesError": "At least 2 answer choices are required",
         "noCorrectError": "Select one correct answer",
         "save": "Save Question"
-      }
+      },
+      "backToResults": "Back to Results",
+      "resultDetail": "Answer Detail",
+      "employee": "Employee",
+      "answerBreakdown": "Answer Breakdown",
+      "correctAnswer": "Correct answer",
+      "selectedCorrect": "Selected (correct)",
+      "selectedWrong": "Selected (wrong)",
+      "unanswered": "Not answered",
+      "viewDetail": "View Details",
+      "filterPlaceholder": "Search by name or email…",
+      "filterAll": "All",
+      "noFilteredResults": "No results match the current filter."
     },
     "questionForm": {
       "title": "New Question",
@@ -626,9 +638,18 @@
     },
     "howItWorks": {
       "title": "How It Works",
-      "step1": { "title": "Sign In", "desc": "Log in with your GIC Japan company account credentials." },
-      "step2": { "title": "Choose Your Exam", "desc": "Pick an IT certification category or a JLPT level and section." },
-      "step3": { "title": "Practice & Improve", "desc": "Take timed exams or study at your pace, then review analytics to track progress." }
+      "step1": {
+        "title": "Sign In",
+        "desc": "Log in with your GIC Japan company account credentials."
+      },
+      "step2": {
+        "title": "Choose Your Exam",
+        "desc": "Pick an IT certification category or a JLPT level and section."
+      },
+      "step3": {
+        "title": "Practice & Improve",
+        "desc": "Take timed exams or study at your pace, then review analytics to track progress."
+      }
     },
     "cta": {
       "title": "Ready to get started?",

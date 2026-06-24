@@ -26,6 +26,7 @@ import FlashcardImport from '@/pages/admin/FlashcardImport';
 import CustomSetList from '@/pages/admin/CustomSetList';
 import CustomSetEditor from '@/pages/admin/CustomSetEditor';
 import CustomSetResults from '@/pages/admin/CustomSetResults';
+import CustomSetResultDetail from '@/pages/admin/CustomSetResultDetail';
 
 import StudyHome from '@/pages/study/StudyHome';
 import FlashcardSession from '@/pages/study/FlashcardSession';
@@ -148,6 +149,7 @@ const App = () => {
           <Route path="/admin/custom-sets/create" element={<CustomSetEditor />} />
           <Route path="/admin/custom-sets/:id/edit" element={<CustomSetEditor />} />
           <Route path="/admin/custom-sets/:id/results" element={<CustomSetResults />} />
+          <Route path="/admin/custom-sets/:id/results/:resultId" element={<CustomSetResultDetail />} />
         </Route>
 
         {/* Client routes — require employee role */}

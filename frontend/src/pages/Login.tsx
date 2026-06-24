@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { useNavigate, Navigate, Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { login } from '@/services/authService';
 import { useAuthStore } from '@/store/authStore';
@@ -10,6 +10,8 @@ import { ArrowLeftIcon, BookOpenIcon } from '@/components/ui/Icons';
 const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string } | null)?.from;
   const { token, user, setAuth } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +28,9 @@ const Login = () => {
   }, []);
 
   if (token && user) {
-    return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/exam/select'} replace />;
+    const defaultPath = user.role === 'admin' ? '/admin/dashboard' : '/exam/select';
+    const destination = from && (user.role !== 'admin' || from.startsWith('/admin/')) ? from : defaultPath;
+    return <Navigate to={destination} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,7 +45,9 @@ const Login = () => {
         localStorage.removeItem('rememberedEmail');
       }
       setAuth(newUser, newToken);
-      navigate(newUser.role === 'admin' ? '/admin/dashboard' : '/exam/select', { replace: true });
+      const defaultPath = newUser.role === 'admin' ? '/admin/dashboard' : '/exam/select';
+      const destination = from && (newUser.role !== 'admin' || from.startsWith('/admin/')) ? from : defaultPath;
+      navigate(destination, { replace: true });
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number; data?: { error?: string } } })?.response?.status;
       const code = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;

@@ -134,6 +134,42 @@ class CustomSetController extends Controller
         ])]);
     }
 
+    public function showResult(int $setId, int $resultId): JsonResponse
+    {
+        $result = \App\Models\CustomExamResult::with([
+            'user',
+            'answerRecords.question.choices',
+            'answerRecords.selectedChoice',
+        ])->where('set_id', $setId)->findOrFail($resultId);
+
+        return response()->json(['data' => [
+            'id'              => $result->id,
+            'set_id'          => $result->set_id,
+            'user'            => [
+                'id'    => $result->user->id,
+                'name'  => $result->user->name,
+                'email' => $result->user->email,
+            ],
+            'score'           => $result->score,
+            'total_questions' => $result->total_questions,
+            'passing_score'   => $result->passing_score,
+            'status'          => $result->status,
+            'completed_at'    => $result->completed_at,
+            'answer_records'  => $result->answerRecords->map(fn ($ar) => [
+                'question_id'        => $ar->question_id,
+                'question_text'      => $ar->question->text,
+                'explanation'        => $ar->question->explanation,
+                'is_correct'         => (bool) $ar->is_correct,
+                'selected_choice_id' => $ar->selected_choice_id,
+                'choices'            => $ar->question->choices->sortBy('order')->map(fn ($c) => [
+                    'id'         => $c->id,
+                    'text'       => $c->text,
+                    'is_correct' => (bool) $c->is_correct,
+                ])->values(),
+            ])->values(),
+        ]]);
+    }
+
     private function formatDetail(CustomQuestionSet $set): array
     {
         return [
