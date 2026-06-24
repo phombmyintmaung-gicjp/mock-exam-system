@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
 export default defineConfig({
+  base: '/miyazaki-shiken-lab/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

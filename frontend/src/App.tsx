@@ -118,7 +118,7 @@ const App = () => {
   }, [token, setUser, logout]);
 
   return (
-    <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
+    <BrowserRouter basename="/miyazaki-shiken-lab" future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <TitleManager />
       <Routes>
         <Route path="/" element={<Home />} />
