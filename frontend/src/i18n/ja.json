@@ -580,6 +580,7 @@
       "fieldFront": "表面（漢字・語彙・文法）",
       "fieldReading": "読み方（ひらがな）",
       "fieldMeaning": "意味（英語）",
+      "fieldMeaningMy": "ミャンマー語の意味（任意）",
       "fieldExample": "例文",
       "fieldExampleHint": "漢字にふりがなを付けるには {漢字|よみ} の形式で入力してください — 例：{今日|きょう}は{良|よ}い日です。",
       "fieldExampleTranslation": "例文の翻訳",

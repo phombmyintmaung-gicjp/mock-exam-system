@@ -20,6 +20,7 @@ const emptyForm = {
   front: '',
   reading: '',
   meaning: '',
+  meaning_my: '',
   example_sentence: '',
   example_translation: '',
 };
@@ -71,6 +72,7 @@ const Flashcards = () => {
       front:               c.front,
       reading:             c.reading ?? '',
       meaning:             c.meaning,
+      meaning_my:          c.meaning_my ?? '',
       example_sentence:    c.example_sentence ?? '',
       example_translation: c.example_translation ?? '',
     });
@@ -84,6 +86,7 @@ const Flashcards = () => {
     const payload = {
       ...form,
       reading:             form.reading || null,
+      meaning_my:          form.meaning_my || null,
       example_sentence:    form.example_sentence || null,
       example_translation: form.example_translation || null,
     };
@@ -294,14 +297,25 @@ const Flashcards = () => {
               </div>
             </div>
 
-            <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldMeaning')}</label>
-              <input
-                value={form.meaning}
-                onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
-                placeholder="English meaning"
-              />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldMeaning')}</label>
+                <input
+                  value={form.meaning}
+                  onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  placeholder="English meaning"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-white/80">{t('admin.flashcards.fieldMeaningMy')}</label>
+                <input
+                  value={form.meaning_my}
+                  onChange={(e) => setForm((f) => ({ ...f, meaning_my: e.target.value }))}
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  placeholder="မြန်မာဘာသာ အဓိပ္ပါယ် (ရွေးချယ်နိုင်သည်)"
+                />
+              </div>
             </div>
 
             <div>
@@ -384,6 +398,9 @@ const Flashcards = () => {
                   <p className="text-center text-base font-bold text-slate-900 dark:text-white">
                     {form.meaning || '—'}
                   </p>
+                  {form.meaning_my && (
+                    <p className="text-center text-sm text-slate-500 dark:text-white/50">{form.meaning_my}</p>
+                  )}
                   {form.example_sentence && (
                     <div className="mt-3 rounded-xl bg-slate-100 px-3 py-2 dark:bg-white/8">
                       <p className="text-center text-xs leading-loose text-slate-700 dark:text-white/80">

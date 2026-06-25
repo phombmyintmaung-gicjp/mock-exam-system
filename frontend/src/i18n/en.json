@@ -580,6 +580,7 @@
       "fieldFront": "Front (Kanji / Word / Pattern)",
       "fieldReading": "Reading (Hiragana)",
       "fieldMeaning": "Meaning (English)",
+      "fieldMeaningMy": "Myanmar meaning (optional)",
       "fieldExample": "Example Sentence",
       "fieldExampleHint": "Wrap kanji with {kanji|reading} to show furigana above it — e.g. {今日|きょう}は{良|よ}い日です。",
       "fieldExampleTranslation": "Example Translation",
