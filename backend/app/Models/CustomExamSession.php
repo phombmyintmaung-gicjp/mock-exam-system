@@ -13,11 +13,14 @@ class CustomExamSession extends Model
         'user_id',
         'is_submitted',
         'completed_at',
+        'submitted_by',
+        'violation_log',
     ];
 
     protected $casts = [
-        'is_submitted' => 'boolean',
-        'completed_at' => 'datetime',
+        'is_submitted'  => 'boolean',
+        'completed_at'  => 'datetime',
+        'violation_log' => 'array',
     ];
 
     public function set(): BelongsTo

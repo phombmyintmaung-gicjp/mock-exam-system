@@ -40,7 +40,11 @@ const Breadcrumb = () => {
     history:      t('nav.history'),
     'weak-areas': t('nav.weakAreas'),
     new:          t('common.new'),
-    import:       t('admin.questionImport.title'),
+    import:       location.pathname.includes('/flashcards/')
+                    ? t('pageTitle.adminFlashcardsImport')
+                    : location.pathname.includes('/custom-sets/')
+                    ? t('pageTitle.adminCustomSetsImport')
+                    : t('admin.questionImport.title'),
     edit:         t('common.edit'),
   };
 

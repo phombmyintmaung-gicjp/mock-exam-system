@@ -27,6 +27,8 @@ class ExamSession extends Model
         'completed_at',
         'is_submitted',
         'linked_session_id',
+        'submitted_by',
+        'violation_log',
     ];
 
     /**
@@ -38,6 +40,7 @@ class ExamSession extends Model
         'is_submitted'         => 'boolean',
         'completed_at'         => 'datetime',
         'question_type_filter' => 'array',
+        'violation_log'        => 'array',
     ];
 
     // -------------------------------------------------------------------------

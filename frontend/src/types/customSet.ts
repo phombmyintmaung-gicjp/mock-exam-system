@@ -61,9 +61,8 @@ export interface CustomExamResult {
   answerRecords?: CustomAnswerRecord[];
 }
 
-export interface AdminCustomExamResult {
+export interface MyCustomExamAttempt {
   id: number;
-  user: { id: number; name: string; email: string };
   score: number;
   totalQuestions: number;
   passingScore: number;
@@ -71,7 +70,32 @@ export interface AdminCustomExamResult {
   completedAt: string;
 }
 
+export interface AdminCustomExamResult {
+  id: number;
+  user: { id: number; name: string; email: string };
+  score: number;
+  totalQuestions: number;
+  passingScore: number;
+  status: 'pass' | 'fail';
+  submittedBy?: string;
+  completedAt: string;
+}
+
+export interface CustomSetImportResult {
+  set: CustomSetDetail;
+  imported: number;
+  skipped: number;
+  errors: string[];
+}
+
+export interface ViolationEntry {
+  type: string;
+  timestamp: string;
+}
+
 export interface AdminCustomExamResultDetail extends AdminCustomExamResult {
   setId: number;
+  submittedBy?: string;
+  violationLog?: ViolationEntry[];
   answerRecords: CustomAnswerRecord[];
 }

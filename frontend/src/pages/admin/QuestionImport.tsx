@@ -234,7 +234,7 @@ const QuestionImport = () => {
                         ) : ''}
                       </td>
                       <td className="py-1.5 text-slate-600 dark:text-white/55">
-                        {t(`admin.questionImport.field_${field.replace('–', '_').replace('1', '').replace('4', '')}`)}
+                        {t(`admin.questionImport.field_${field.replace(/\d.*$/, '')}`)}
                       </td>
                     </tr>
                   ))}

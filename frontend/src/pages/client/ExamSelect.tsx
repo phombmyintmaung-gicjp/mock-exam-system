@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { countQuestionsByTypes, countByQuestionType, startExamSession } from '@/services/examService';
+import { getITCategories } from '@/services/categoryService';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import { useAuthStore } from '@/store/authStore';
 import type { ExamMode, JLPTLevel, JLPTTestType } from '@/types/exam';
@@ -97,33 +98,26 @@ const JLPT_SECTIONS: JLPTSection[] = [
 
 // MONDAI_VOCAB and MONDAI_GRAMMAR imported from @/constants
 
-// IT categories
-interface ITCategoryConfig {
-  id: string;
-  labelKey: string;
-  gradientFrom: string;
-  gradientTo: string;
-  glow: string;
-}
-
-const IT_CATEGORIES: ITCategoryConfig[] = [
-  { id: 'AWS',      labelKey: 'exam.it.aws',      gradientFrom: 'from-orange-500', gradientTo: 'to-amber-400',  glow: 'shadow-orange-500/20' },
-  { id: 'Network',  labelKey: 'exam.it.network',  gradientFrom: 'from-blue-500',   gradientTo: 'to-cyan-500',   glow: 'shadow-blue-500/20' },
-  { id: 'Security', labelKey: 'exam.it.security', gradientFrom: 'from-rose-500',   gradientTo: 'to-red-500',    glow: 'shadow-rose-500/20' },
-  { id: 'Linux',    labelKey: 'exam.it.linux',    gradientFrom: 'from-yellow-500', gradientTo: 'to-lime-500',   glow: 'shadow-yellow-500/20' },
-];
+// Gradient palette for IT category cards — cycles by index
+const IT_GRADIENT_PALETTE = [
+  { gradientFrom: 'from-orange-500', gradientTo: 'to-amber-400',   glow: 'shadow-orange-500/20' },
+  { gradientFrom: 'from-blue-500',   gradientTo: 'to-cyan-500',    glow: 'shadow-blue-500/20' },
+  { gradientFrom: 'from-rose-500',   gradientTo: 'to-red-500',     glow: 'shadow-rose-500/20' },
+  { gradientFrom: 'from-yellow-500', gradientTo: 'to-lime-500',    glow: 'shadow-yellow-500/20' },
+  { gradientFrom: 'from-violet-500', gradientTo: 'to-purple-500',  glow: 'shadow-violet-500/20' },
+  { gradientFrom: 'from-emerald-500',gradientTo: 'to-teal-500',    glow: 'shadow-emerald-500/20' },
+  { gradientFrom: 'from-pink-500',   gradientTo: 'to-fuchsia-500', glow: 'shadow-pink-500/20' },
+] as const;
 
 type JLPTPracticeMode = 'full' | 'section' | 'drill';
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-// Detect which category a target_certification string maps to
-const IT_IDS = ['AWS', 'Network', 'Security', 'Linux'] as const;
 const JLPT_LEVEL_RE = /\bN([1-5])\b/i;
 
-function detectCertTarget(cert: string): { kind: 'it'; id: string } | { kind: 'jlpt'; level: string } | null {
-  for (const id of IT_IDS) {
-    if (cert.toUpperCase().includes(id.toUpperCase())) return { kind: 'it', id };
+function detectCertTarget(cert: string, itNames: string[]): { kind: 'it'; id: string } | { kind: 'jlpt'; level: string } | null {
+  for (const name of itNames) {
+    if (cert.toUpperCase().includes(name.toUpperCase())) return { kind: 'it', id: name };
   }
   const match = cert.match(JLPT_LEVEL_RE);
   if (match) return { kind: 'jlpt', level: `N${match[1]}` };
@@ -138,7 +132,12 @@ const ExamSelect = () => {
   const setSession = useExamSessionStore((s) => s.setSession);
   const user = useAuthStore((s) => s.user);
 
-  const certTarget = user?.targetCertification ? detectCertTarget(user.targetCertification) : null;
+  const [itCategories, setItCategories]           = useState<import('@/types/category').Category[]>([]);
+  const [itLoading, setItLoading]                 = useState(true);
+
+  const certTarget = user?.targetCertification
+    ? detectCertTarget(user.targetCertification, itCategories.map((c) => c.name))
+    : null;
 
   const [selectedLevel, setSelectedLevel]         = useState<JLPTLevel>('N5');
   const [practiceMode, setPracticeMode]           = useState<JLPTPracticeMode>('section');
@@ -162,6 +161,14 @@ const ExamSelect = () => {
   const COUNT_OPTIONS = QUESTION_COUNT_OPTIONS;
   const getCount = (key: string) => selectedCounts[key] ?? 20;
   const setCount = (key: string, n: number) => setSelectedCounts((prev) => ({ ...prev, [key]: n }));
+
+  // Fetch IT categories from API
+  useEffect(() => {
+    getITCategories()
+      .then(setItCategories)
+      .catch(() => {})
+      .finally(() => setItLoading(false));
+  }, []);
 
   // Fetch section counts (for Section Practice tab)
   useEffect(() => {
@@ -390,7 +397,6 @@ const ExamSelect = () => {
               <div className="grid gap-4 sm:grid-cols-2">
                 {JLPT_SECTIONS.map((sec) => {
                   const category = sec.parentType === '文字語彙' ? jlptVocabCategory(selectedLevel) : jlptGrammarCategory(selectedLevel);
-                  const examKey  = `${category}-${sec.id}-exam`;
                   const studyKey = `${category}-${sec.id}-study`;
                   const count    = counts[sec.id];
                   const isEmpty  = count === 0;
@@ -540,36 +546,43 @@ const ExamSelect = () => {
             <p className="mb-4 rounded-xl border border-rose-400/30 bg-rose-500/15 px-4 py-3 text-sm text-rose-300">{error}</p>
           )}
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            {IT_CATEGORIES.map((cat) => {
-              const studyKey = `${cat.id}-study`;
-              return (
-                <div key={cat.id} className={clsx('glass-card rounded-2xl p-5 shadow-xl', cat.glow)}>
-                  <div className={clsx(
-                    'mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-lg font-extrabold text-white shadow-lg',
-                    cat.gradientFrom, cat.gradientTo, cat.glow,
-                  )}>
-                    {cat.id.slice(0, 2)}
+          {itLoading ? (
+            <div className="flex justify-center py-16"><Spinner size="lg" /></div>
+          ) : itCategories.length === 0 ? (
+            <p className="text-sm text-slate-400 dark:text-white/30">{t('common.noData')}</p>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {itCategories.map((cat, idx) => {
+                const palette = IT_GRADIENT_PALETTE[idx % IT_GRADIENT_PALETTE.length];
+                const studyKey = `${cat.name}-study`;
+                return (
+                  <div key={cat.id} className={clsx('glass-card rounded-2xl p-5 shadow-xl', palette.glow)}>
+                    <div className={clsx(
+                      'mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-lg font-extrabold text-white shadow-lg',
+                      palette.gradientFrom, palette.gradientTo, palette.glow,
+                    )}>
+                      {cat.name.slice(0, 2)}
+                    </div>
+                    <h2 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">{cat.name}</h2>
+                    <p className="mb-5 text-xs text-slate-500 dark:text-white/50">{t('exam.it.subtitle')}</p>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        label={starting !== null ? '…' : t('exam.examMode')}
+                        disabled={starting !== null}
+                        onClick={() => setPendingExam({ category: cat.name, isReading: false, questionTypes: [], sectionId: cat.name })}
+                      />
+                      <Button
+                        label={starting === studyKey ? '…' : t('exam.studyMode')}
+                        variant="secondary"
+                        disabled={starting !== null}
+                        onClick={() => handleStart(cat.name, 'study', false, undefined, ALL_QUESTIONS_SENTINEL)}
+                      />
+                    </div>
                   </div>
-                  <h2 className="mb-1 text-lg font-bold text-slate-900 dark:text-white">{t(cat.labelKey)}</h2>
-                  <p className="mb-5 text-xs text-slate-500 dark:text-white/50">{t('exam.it.subtitle')}</p>
-                  <div className="flex flex-col gap-2">
-                    <Button
-                      label={starting !== null ? '…' : t('exam.examMode')}
-                      disabled={starting !== null}
-                      onClick={() => setPendingExam({ category: cat.id, isReading: false, questionTypes: [], sectionId: cat.id })}
-                    />
-                    <Button
-                      label={starting === studyKey ? '…' : t('exam.studyMode')}
-                      variant="secondary"
-                      disabled={starting !== null}
-                      onClick={() => handleStart(cat.id, 'study', false, undefined, ALL_QUESTIONS_SENTINEL)}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Count picker modal for IT exam mode */}
           <Modal

@@ -47,7 +47,7 @@ class CustomSetService
         return CustomQuestionSet::create([
             'name'                => $data['name'],
             'description'         => $data['description'] ?? null,
-            'slug'                => $this->generateSlug(),
+            'slug'                => $data['slug'] ?? $this->generateSlug(),
             'created_by'          => $user->id,
             'time_limit_seconds'  => $data['time_limit_seconds'] ?? 0,
             'passing_score'       => $data['passing_score'] ?? 70,
@@ -179,9 +179,9 @@ class CustomSetService
         ]);
     }
 
-    public function submitSession(CustomExamSession $session, array $answers): CustomExamResult
+    public function submitSession(CustomExamSession $session, array $answers, string $submittedBy = 'manual', array $violationLog = []): CustomExamResult
     {
-        return DB::transaction(function () use ($session, $answers): CustomExamResult {
+        return DB::transaction(function () use ($session, $answers, $submittedBy, $violationLog): CustomExamResult {
             $set = $session->set;
 
             $questionIds      = array_column($answers, 'question_id');
@@ -231,8 +231,10 @@ class CustomSetService
             CustomAnswerRecord::insert($answerRows);
 
             $session->update([
-                'is_submitted' => true,
-                'completed_at' => Carbon::now(),
+                'is_submitted'  => true,
+                'completed_at'  => Carbon::now(),
+                'submitted_by'  => $submittedBy,
+                'violation_log' => empty($violationLog) ? null : $violationLog,
             ]);
 
             return $result;

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { ClipboardCheckIcon, ClockIcon, BoltIcon } from '@/components/ui/Icons';
-import { getCustomSetBySlug, startCustomExamSession } from '@/services/customSetService';
+import { getCustomSetBySlug, startCustomExamSession, getMyCustomExamHistory } from '@/services/customSetService';
 import { useExamSessionStore } from '@/store/examSessionStore';
-import type { CustomExamLandingInfo } from '@/types/customSet';
+import type { CustomExamLandingInfo, MyCustomExamAttempt } from '@/types/customSet';
 
 const CustomExamLanding = () => {
   const { t } = useTranslation();
@@ -16,14 +17,21 @@ const CustomExamLanding = () => {
   const setSession = useExamSessionStore((s) => s.setSession);
 
   const [info, setInfo] = useState<CustomExamLandingInfo | null>(null);
+  const [history, setHistory] = useState<MyCustomExamAttempt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (!slug) return;
-    getCustomSetBySlug(slug)
-      .then(setInfo)
+    Promise.all([
+      getCustomSetBySlug(slug),
+      getMyCustomExamHistory(slug),
+    ])
+      .then(([landingInfo, attempts]) => {
+        setInfo(landingInfo);
+        setHistory(attempts);
+      })
       .catch(() => setError(t('common.error')))
       .finally(() => setIsLoading(false));
   }, [slug, t]);
@@ -56,6 +64,9 @@ const CustomExamLanding = () => {
     return t('customExam.landing.timeLimit', { minutes: m });
   };
 
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+
   if (isLoading) {
     return (
       <PageShell>
@@ -85,6 +96,7 @@ const CustomExamLanding = () => {
   return (
     <PageShell>
       <div className="mx-auto max-w-lg">
+        {/* Main card */}
         <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-8 shadow-sm">
           {/* Icon + title */}
           <div className="mb-6 flex flex-col items-center text-center">
@@ -140,9 +152,57 @@ const CustomExamLanding = () => {
           )}
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-400 dark:text-white/30">
+        <p className="mt-4 text-center text-xs text-gray-400 dark:text-white/30">
           {formatTime(info.timeLimitSeconds)} · {t('customExam.landing.passingScore', { score: info.passingScore })}
         </p>
+
+        {/* Past attempts */}
+        {history.length > 0 && (
+          <div className="mt-8">
+            <div className="mb-3 flex items-center gap-2">
+              <ClockIcon className="h-4 w-4 text-gray-400 dark:text-white/30" />
+              <h2 className="text-sm font-semibold text-gray-600 dark:text-white/60">
+                {t('customExam.landing.pastAttempts')}
+              </h2>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5">
+              {history.map((attempt, idx) => {
+                const pct = Math.round((attempt.score / attempt.totalQuestions) * 100);
+                const isPassed = attempt.status === 'pass';
+                return (
+                  <div
+                    key={attempt.id}
+                    className={clsx(
+                      'flex items-center gap-4 px-5 py-3.5',
+                      idx !== 0 && 'border-t border-gray-100 dark:border-white/8',
+                    )}
+                  >
+                    <span className="w-5 shrink-0 text-center text-xs font-semibold text-gray-300 dark:text-white/20">
+                      {idx + 1}
+                    </span>
+                    <span
+                      className={clsx(
+                        'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold',
+                        isPassed
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
+                          : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300',
+                      )}
+                    >
+                      {isPassed ? t('result.pass') : t('result.fail')}
+                    </span>
+                    <span className="min-w-0 flex-1 text-sm font-medium text-gray-800 dark:text-white/80">
+                      {attempt.score} / {attempt.totalQuestions}
+                      <span className="ml-1.5 text-xs text-gray-400 dark:text-white/30">({pct}%)</span>
+                    </span>
+                    <span className="shrink-0 text-xs text-gray-400 dark:text-white/30">
+                      {fmt(attempt.completedAt)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </PageShell>
   );

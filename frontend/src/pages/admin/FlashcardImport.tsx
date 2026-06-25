@@ -12,12 +12,12 @@ import { CheckIcon, DownloadIcon } from '@/components/ui/Icons';
 // ── Sample template download ──────────────────────────────────────────────────
 
 const SAMPLE_ROWS = [
-  ['type', 'level', 'front', 'reading', 'meaning', 'example_sentence', 'example_translation'],
-  ['kanji',   'N5', '日',    'にち・ひ', 'day, sun',       '{今日|きょう}はいい{日|ひ}ですね。',           'Today is a nice day, isn\'t it?'],
-  ['vocab',   'N4', '便利',  'べんり',   'convenient',     'スマホはとても{便利|べんり}です。',             'Smartphones are very convenient.'],
-  ['grammar', 'N3', '～によって', '',    'depending on ~', '{人|ひと}によって{意見|いけん}が{違|ちが}います。', 'Opinions differ depending on the person.'],
-  ['kanji',   'N2', '維',    'い',       'maintain, fiber','{現状|げんじょう}を{維持|いじ}することが{難|むずか}しい。', 'It is difficult to maintain the current situation.'],
-  ['vocab',   'N1', '貢献',  'こうけん', 'contribution',   '{社会|しゃかい}に{貢献|こうけん}したいです。',   'I want to contribute to society.'],
+  ['type', 'level', 'front', 'reading', 'meaning', 'meaning_my', 'example_sentence', 'example_translation'],
+  ['kanji',   'N5', '日',    'にち・ひ', 'day, sun',       'နေ့、နေရောင်',  '{今日|きょう}はいい{日|ひ}ですね。',           'Today is a nice day, isn\'t it?'],
+  ['vocab',   'N4', '便利',  'べんり',   'convenient',     'အဆင်ပြေသော',  'スマホはとても{便利|べんり}です。',             'Smartphones are very convenient.'],
+  ['grammar', 'N3', '～によって', '',    'depending on ~', '~ပေါ်မူတည်၍', '{人|ひと}によって{意見|いけん}が{違|ちが}います。', 'Opinions differ depending on the person.'],
+  ['kanji',   'N2', '維',    'い',       'maintain, fiber', '',              '{現状|げんじょう}を{維持|いじ}することが{難|むずか}しい。', 'It is difficult to maintain the current situation.'],
+  ['vocab',   'N1', '貢献',  'こうけん', 'contribution',   '',              '{社会|しゃかい}に{貢献|こうけん}したいです。',   'I want to contribute to society.'],
 ];
 
 const downloadTemplate = () => {
@@ -29,6 +29,7 @@ const downloadTemplate = () => {
     { wch: 20 }, // front
     { wch: 16 }, // reading
     { wch: 24 }, // meaning
+    { wch: 24 }, // meaning_my
     { wch: 48 }, // example_sentence
     { wch: 48 }, // example_translation
   ];
@@ -44,6 +45,7 @@ const COLUMNS = [
   { field: 'front',                required: true  },
   { field: 'reading',              required: false },
   { field: 'meaning',              required: true  },
+  { field: 'meaning_my',           required: false },
   { field: 'example_sentence',     required: false },
   { field: 'example_translation',  required: false },
 ] as const;

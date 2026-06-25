@@ -104,6 +104,9 @@ export function FlipCard({ card, onFlip }: FlipCardProps) {
             <p className="text-lg font-medium text-amber-600 dark:text-amber-400">{card.reading}</p>
           )}
           <p className="text-center text-2xl font-bold text-slate-900 dark:text-white">{card.meaning}</p>
+          {card.meaning_my && (
+            <p className="text-center text-base text-slate-500 dark:text-white/50">{card.meaning_my}</p>
+          )}
           {card.example_sentence && (
             <div className="mt-2 w-full rounded-xl bg-slate-100 px-4 py-3 dark:bg-white/8">
               <p className="text-center text-base leading-loose text-slate-700 dark:text-white/80">

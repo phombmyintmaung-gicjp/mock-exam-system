@@ -12,6 +12,7 @@ class Flashcard extends Model
         'front',
         'reading',
         'meaning',
+        'meaning_my',
         'example_sentence',
         'example_translation',
         'frequency_band',

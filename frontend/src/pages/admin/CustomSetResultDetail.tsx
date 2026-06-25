@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Spinner } from '@/components/ui/Spinner';
-import { ChevronLeftIcon } from '@/components/ui/Icons';
+import { ChevronLeftIcon, TriangleAlertIcon } from '@/components/ui/Icons';
 import { getSetResultDetail } from '@/services/customSetService';
 import type { AdminCustomExamResultDetail, CustomAnswerRecord } from '@/types/customSet';
 
@@ -13,6 +13,16 @@ const CustomSetResultDetail = () => {
   const { id, resultId } = useParams<{ id: string; resultId: string }>();
   const [result, setResult] = useState<AdminCustomExamResultDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [revealedIds, setRevealedIds] = useState<Set<number>>(new Set());
+
+  const toggleReveal = (questionId: number) => {
+    setRevealedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(questionId)) next.delete(questionId);
+      else next.add(questionId);
+      return next;
+    });
+  };
 
   useEffect(() => {
     getSetResultDetail(Number(id), Number(resultId))
@@ -60,6 +70,30 @@ const CustomSetResultDetail = () => {
           {t('admin.customSets.resultDetail')}
         </h1>
       </div>
+
+      {result.submittedBy === 'violation' && (
+        <div className="mb-6 rounded-xl border border-orange-200 bg-orange-50 px-4 py-3 dark:border-orange-500/30 dark:bg-orange-500/10">
+          <div className="flex items-center gap-2 mb-2">
+            <TriangleAlertIcon className="h-4 w-4 shrink-0 text-orange-500 dark:text-orange-400" />
+            <p className="text-sm font-semibold text-orange-700 dark:text-orange-300">
+              {t('result.submittedByViolation')}
+            </p>
+          </div>
+          {result.violationLog && result.violationLog.length > 0 && (
+            <ol className="mt-1 space-y-0.5 pl-6 text-xs text-orange-600 dark:text-orange-400">
+              {result.violationLog.map((v, i) => (
+                <li key={i}>
+                  <span className="font-medium">{i + 1}.</span>{' '}
+                  {t(`result.violationType.${v.type}`)}{' '}
+                  <span className="opacity-60">
+                    {new Date(v.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      )}
 
       {/* Summary card */}
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -121,13 +155,26 @@ const CustomSetResultDetail = () => {
         {t('admin.customSets.answerBreakdown')}
       </h2>
 
+      {result.answerRecords.length === 0 && (
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-6 py-10 text-center">
+          <p className="text-sm text-gray-400 dark:text-white/30">
+            {t('admin.customSets.noAnswerRecords')}
+          </p>
+        </div>
+      )}
+
       <div className="space-y-4">
-        {result.answerRecords.map((ar: CustomAnswerRecord, idx: number) => (
+        {result.answerRecords.map((ar: CustomAnswerRecord, idx: number) => {
+          const unanswered = ar.selectedChoiceId === null;
+          const revealed   = ar.isCorrect || revealedIds.has(ar.questionId);
+          return (
           <div
             key={ar.questionId}
             className={clsx(
               'rounded-xl border p-5',
-              ar.isCorrect
+              unanswered
+                ? 'border-gray-200 dark:border-white/10 bg-white dark:bg-white/5'
+                : ar.isCorrect
                 ? 'border-emerald-200 dark:border-emerald-500/25 bg-white dark:bg-emerald-500/5'
                 : 'border-rose-200 dark:border-rose-500/25 bg-white dark:bg-rose-500/5',
             )}
@@ -137,7 +184,9 @@ const CustomSetResultDetail = () => {
               <span
                 className={clsx(
                   'mt-0.5 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold',
-                  ar.isCorrect
+                  unanswered
+                    ? 'bg-gray-100 text-gray-400 dark:bg-white/10 dark:text-white/35'
+                    : ar.isCorrect
                     ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
                     : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300',
                 )}
@@ -150,12 +199,14 @@ const CustomSetResultDetail = () => {
               <span
                 className={clsx(
                   'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold',
-                  ar.isCorrect
+                  unanswered
+                    ? 'bg-gray-200 text-gray-500 dark:bg-white/15 dark:text-white/40'
+                    : ar.isCorrect
                     ? 'bg-emerald-500 text-white'
                     : 'bg-rose-500 text-white',
                 )}
               >
-                {ar.isCorrect ? t('result.correct') : t('result.incorrect')}
+                {unanswered ? t('admin.customSets.unanswered') : ar.isCorrect ? t('result.correct') : t('result.incorrect')}
               </span>
             </div>
 
@@ -169,7 +220,7 @@ const CustomSetResultDetail = () => {
                     key={c.id}
                     className={clsx(
                       'flex items-start gap-2 rounded-lg px-3 py-2 text-sm',
-                      isCorrect
+                      revealed && isCorrect
                         ? 'bg-emerald-50 dark:bg-emerald-500/15 font-medium text-emerald-800 dark:text-emerald-200'
                         : isSelected
                         ? 'bg-rose-50 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300'
@@ -177,15 +228,15 @@ const CustomSetResultDetail = () => {
                     )}
                   >
                     <span className="shrink-0 mt-0.5 w-4 text-center font-bold">
-                      {isCorrect ? '✓' : isSelected ? '✗' : ''}
+                      {revealed && isCorrect ? '✓' : isSelected ? '✗' : ''}
                     </span>
                     <span>{c.text}</span>
-                    {isCorrect && !isSelected && (
+                    {revealed && isCorrect && !isSelected && (
                       <span className="ml-auto shrink-0 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                         {t('admin.customSets.correctAnswer')}
                       </span>
                     )}
-                    {isSelected && isCorrect && (
+                    {revealed && isSelected && isCorrect && (
                       <span className="ml-auto shrink-0 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                         {t('admin.customSets.selectedCorrect')}
                       </span>
@@ -200,22 +251,30 @@ const CustomSetResultDetail = () => {
               })}
             </div>
 
-            {/* Unanswered notice */}
-            {ar.selectedChoiceId === null && (
-              <p className="mt-2 pl-9 text-xs text-gray-400 dark:text-white/30 italic">
-                {t('admin.customSets.unanswered')}
-              </p>
+            {/* See Answer / Hide Answer toggle */}
+            {!ar.isCorrect && (
+              <div className="mt-3 pl-9">
+                <button
+                  onClick={() => toggleReveal(ar.questionId)}
+                  className="text-xs font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 transition-colors"
+                >
+                  {revealedIds.has(ar.questionId)
+                    ? t('admin.customSets.hideAnswer')
+                    : t('admin.customSets.seeAnswer')}
+                </button>
+              </div>
             )}
 
-            {/* Explanation */}
-            {ar.explanation && (
+            {/* Explanation — only when revealed */}
+            {revealed && ar.explanation && (
               <p className="mt-3 pl-9 text-xs text-gray-500 dark:text-white/40 leading-relaxed border-t border-gray-100 dark:border-white/8 pt-3">
                 <span className="font-semibold">{t('result.explanation')}: </span>
                 {ar.explanation}
               </p>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
     </PageShell>
   );

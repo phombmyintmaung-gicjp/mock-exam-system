@@ -20,7 +20,8 @@
     "or": "または",
     "noData": "データがありません",
     "pageOf": "{{current}} / {{total}} ページ",
-    "noQuestionsAvailable": "このセクションにはまだ問題がありません。"
+    "noQuestionsAvailable": "このセクションにはまだ問題がありません。",
+    "viewAll": "すべて見る"
   },
   "auth": {
     "login": "ログイン",
@@ -91,7 +92,8 @@
     "systemGroup": "システム",
     "flashcards": "フラッシュカード",
     "flashcardStudy": "フラッシュカード学習",
-    "customSets": "カスタムセット"
+    "customSets": "カスタムセット",
+    "results": "受験結果"
   },
   "exam": {
     "startButton": "試験を開始する",
@@ -192,6 +194,16 @@
     "exportPdf": "PDFをダウンロード",
     "correct": "正解",
     "incorrect": "不正解",
+    "unanswered": "未回答",
+    "seeAnswer": "正解を見る",
+    "hideAnswer": "閉じる",
+    "submittedByViolation": "不正行為検出により自動送信",
+    "submittedByTimeout": "時間切れにより自動送信",
+    "violationLog": "違反ログ",
+    "violationType": {
+      "tab_switch": "タブ切り替えを検出",
+      "window_blur": "ウィンドウ切り替え・最小化を検出"
+    },
     "retake": "もう一度受験する",
     "backToExamList": "試験一覧に戻る",
     "viewHistory": "受験履歴を見る",
@@ -223,7 +235,7 @@
       "totalQuestions": "問題総数",
       "totalUsers": "ユーザー総数",
       "passRate": "合格率",
-      "examsToday": "本日の受験数",
+      "totalExams": "総受験数",
       "recentExams": "最近の試験",
       "noData": "試験データがありません",
       "columnUser": "ユーザー"
@@ -310,14 +322,49 @@
       "resultDetail": "回答詳細",
       "employee": "受験者",
       "answerBreakdown": "回答内訳",
+      "noAnswerRecords": "この受験の回答内訳データがありません。",
       "correctAnswer": "正解",
       "selectedCorrect": "選択（正解）",
       "selectedWrong": "選択（不正解）",
       "unanswered": "未回答",
+      "seeAnswer": "正解を見る",
+      "hideAnswer": "閉じる",
       "viewDetail": "詳細を見る",
       "filterPlaceholder": "名前またはメールで検索…",
       "filterAll": "すべて",
-      "noFilteredResults": "条件に一致する結果がありません。"
+      "noFilteredResults": "条件に一致する結果がありません。",
+      "import": {
+        "title": "Excelからカスタムセットを作成",
+        "subtitle": "問題データのExcelファイルをアップロードして、新しい問題を作成しながらカスタムセットを一括作成します",
+        "importButton": "Excelでインポート",
+        "uploadTitle": "ファイルをアップロード",
+        "dropText": "ここにファイルをドラッグ＆ドロップ",
+        "browseButton": "ファイルを選択",
+        "formatTitle": "カラム一覧",
+        "formatDesc": "次のカラムを含むExcelファイルを用意してください。問題はカテゴリ「Custom」として新規作成されます。",
+        "downloadTemplate": "テンプレートダウンロード",
+        "colHeader": "カラム名",
+        "col_text_notes": "問題文（必須）",
+        "col_choice1_4_notes": "選択肢。choice1・choice2は必須、choice3・choice4は省略可",
+        "col_correct_index_notes": "正解の選択肢番号（1〜4）",
+        "col_explanation_notes": "任意 — 解答後に表示される解説",
+        "tipsTitle": "注意事項",
+        "tip1": "choice1・choice2は必須です。choice3・choice4を空にすると2択問題になります",
+        "tip2": "correct_indexは1〜4の整数で、正解の選択肢番号を指定します",
+        "tip3": "スラッグを空白のままにすると、システムがランダムなコードを自動生成します",
+        "slugLabel": "スラッグ（共有URLのコード）",
+        "slugHint": "— 任意",
+        "slugPlaceholder": "例：jlpt-n5-practice（英数字・ハイフン・アンダースコアのみ）",
+        "slugInfoTitle": "共有リンクの仕組み",
+        "slugInfoDesc": "スラッグはインポート後に共有リンクのURLの末尾に使われます。空白の場合はランダムなコードが生成されます。",
+        "slugInfoSuffix": "{slug}",
+        "success": "「{{name}}」を作成しました。{{count}}件の問題をインポートしました。",
+        "resultImported": "{{count}}件インポート",
+        "resultSkipped": "{{count}}件スキップ",
+        "errorTitle": "{{count}}件の行にエラーがありました",
+        "editSet": "セットを編集",
+        "createAnother": "別のセットを作成"
+      }
     },
     "questionForm": {
       "title": "新しい問題",
@@ -375,7 +422,8 @@
       "field_correct_index": "1=choice1、2=choice2 …",
       "tipsTitle": "注意事項",
       "tip1": "correct_indexは数字：1・2・3・4",
-      "tip2": "IT問題はquestion_typeを空白のままにしてください"
+      "tip2": "IT問題はquestion_typeを空白のままにしてください",
+      "tip3": "必須フィールドが空の行はスキップされ、エラーレポートに表示されます"
     },
     "questions": {
       "title": "問題管理",
@@ -449,6 +497,20 @@
       "deleteConfirmBody": "このユーザーとすべての受験履歴を完全に削除します。この操作は取り消せません。",
       "cannotDeleteSelf": "自分のアカウントは削除できません。",
       "deleting": "削除中..."
+    },
+    "results": {
+      "title": "受験結果一覧",
+      "subtitle": "すべての従業員の受験記録",
+      "searchPlaceholder": "氏名またはメールで検索...",
+      "noResults": "結果が見つかりません。",
+      "viewDetail": "詳細",
+      "backToList": "一覧に戻る",
+      "detailTitle": "結果詳細",
+      "columnUser": "ユーザー",
+      "columnCategory": "カテゴリー",
+      "columnScore": "スコア",
+      "columnStatus": "結果",
+      "columnDate": "日時"
     },
     "userForm": {
       "title": "新しいユーザー",
@@ -543,6 +605,7 @@
       "field_front": "カードの表面に表示する漢字・語彙・文法パターン",
       "field_reading": "ひらがなの読み方（任意）",
       "field_meaning": "カード裏面に表示する英語の意味",
+      "field_meaning_my": "ミャンマー語の意味（任意）",
       "field_example_sentence": "例文 — ふりがなは {漢字|よみ} 形式で入力（任意）",
       "field_example_translation": "例文の英訳（任意）",
       "furiganaTitle": "ふりがな記法",
@@ -765,9 +828,12 @@
     "adminFlashcardsImport": "フラッシュカードインポート",
     "adminFlashcards": "フラッシュカード管理",
     "adminCustomSets": "カスタムセット",
+    "adminCustomSetsImport": "カスタムセットインポート",
     "adminCustomSetsCreate": "カスタムセット作成",
     "adminCustomSetsEdit": "カスタムセット編集",
     "adminCustomSetsResults": "受験結果",
+    "adminResults": "受験結果一覧",
+    "adminResultDetail": "結果詳細",
     "customExamLanding": "カスタム試験",
     "customExamSession": "試験中",
     "customExamResult": "試験結果",
@@ -791,7 +857,8 @@
       "passingScore": "合格スコア: {{score}}%",
       "timeLimit": "制限時間 {{minutes}}分",
       "noQuestionsYet": "このセットにはまだ問題がありません。",
-      "start": "試験を開始"
+      "start": "試験を開始",
+      "pastAttempts": "過去の受験履歴"
     },
     "result": {
       "title": "試験完了",

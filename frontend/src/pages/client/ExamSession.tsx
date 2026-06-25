@@ -18,6 +18,7 @@ import { useExamSecurity } from '@/hooks/useExamSecurity';
 import useTimer from '@/hooks/useTimer';
 import { submitExam } from '@/services/examService';
 import { EXAM_SECURITY_THRESHOLD } from '@/constants';
+import type { SecurityViolation } from '@/hooks/useExamSecurity';
 
 const SECURITY_THRESHOLD = EXAM_SECURITY_THRESHOLD;
 
@@ -43,6 +44,8 @@ const ExamSession = () => {
   const [unansweredCount, setUnansweredCount] = useState(0);
   const [securityAcknowledged, setSecurityAcknowledged] = useState(false);
   const isFinishing = useRef(false);
+  const submitReasonRef = useRef<'manual' | 'timeout' | 'violation'>('manual');
+  const violationsRef = useRef<SecurityViolation[]>([]);
   const questionStartRef = useRef<number>(Date.now());
   const perQuestionTimes = useRef<Record<number, number>>({});
 
@@ -91,7 +94,7 @@ const ExamSession = () => {
     const questionIds = session.questions.map((q) => q.id);
     try {
       isFinishing.current = true;
-      const result = await submitExam(session.sessionId, session.answers, questionIds, perQuestionTimes.current);
+      const result = await submitExam(session.sessionId, session.answers, questionIds, perQuestionTimes.current, 'manual');
       resetSession();
       deactivateGuard();
       setPendingPath(null);
@@ -109,6 +112,7 @@ const ExamSession = () => {
 
   const handleSubmit = () => {
     if (!session || isSubmitting) return;
+    submitReasonRef.current = 'manual';
     const unanswered = session.questions.filter((q) => !(q.id in session.answers)).length;
     setUnansweredCount(unanswered);
     setShowSubmitModal(true);
@@ -127,7 +131,7 @@ const ExamSession = () => {
     const questionIds = session.questions.map((q) => q.id);
     try {
       isFinishing.current = true;
-      const result = await submitExam(session.sessionId, session.answers, questionIds, perQuestionTimes.current);
+      const result = await submitExam(session.sessionId, session.answers, questionIds, perQuestionTimes.current, submitReasonRef.current, violationsRef.current);
       resetSession();
       navigate(`/exam/results/${result.id}`);
     } catch {
@@ -136,9 +140,13 @@ const ExamSession = () => {
     }
   }, [session, isSubmitting, resetSession, navigate]);
 
-  useTimer(session?.secondsRemaining ?? 0, () => { handleSubmitConfirmed(); });
+  useTimer(session?.secondsRemaining ?? 0, () => {
+    submitReasonRef.current = 'timeout';
+    handleSubmitConfirmed();
+  });
 
   const {
+    violations,
     violationCount,
     showWarning: showSecurityWarning,
     lastViolationType,
@@ -146,8 +154,13 @@ const ExamSession = () => {
   } = useExamSecurity({
     enabled: securityAcknowledged && !!session,
     threshold: SECURITY_THRESHOLD,
-    onAutoSubmit: handleSubmitConfirmed,
+    onAutoSubmit: () => {
+      submitReasonRef.current = 'violation';
+      handleSubmitConfirmed();
+    },
   });
+
+  useEffect(() => { violationsRef.current = violations; }, [violations]);
 
   if (!session) {
     return (

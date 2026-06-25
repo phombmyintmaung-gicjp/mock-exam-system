@@ -103,6 +103,7 @@ class FlashcardAdminController extends Controller
                     'front'               => $row['front'],
                     'reading'             => $row['reading']             ?: null,
                     'meaning'             => $row['meaning'],
+                    'meaning_my'          => $row['meaning_my']          ?: null,
                     'example_sentence'    => $row['example_sentence']    ?: null,
                     'example_translation' => $row['example_translation'] ?: null,
                 ]);
@@ -150,6 +151,7 @@ class FlashcardAdminController extends Controller
                 'front'               => $get('front'),
                 'reading'             => $get('reading'),
                 'meaning'             => $get('meaning'),
+                'meaning_my'          => $get('meaning_my'),
                 'example_sentence'    => $get('example_sentence'),
                 'example_translation' => $get('example_translation'),
             ];

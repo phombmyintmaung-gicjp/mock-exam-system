@@ -114,6 +114,10 @@ class ExamSessionController extends Controller
             'answers.*.question_id'         => ['required', 'integer', 'exists:questions,id'],
             'answers.*.choice_id'           => ['nullable', 'integer', 'exists:choices,id'],
             'answers.*.time_taken_seconds'  => ['nullable', 'integer', 'min:0'],
+            'submitted_by'                  => ['nullable', 'string', 'in:manual,timeout,violation'],
+            'violation_log'                 => ['nullable', 'array'],
+            'violation_log.*.type'          => ['required_with:violation_log', 'string'],
+            'violation_log.*.timestamp'     => ['required_with:violation_log', 'string'],
         ]);
 
         $session = $user->examSessions()->findOrFail($id);
@@ -135,10 +139,15 @@ class ExamSessionController extends Controller
         $categorySetting = ExamSetting::where('category', $session->category)->first();
         $passingScore    = $categorySetting?->passing_score ?? config('exam.passing_score', 70);
 
+        $submittedBy  = $request->input('submitted_by', 'manual');
+        $violationLog = $request->input('violation_log', []);
+
         $result = $this->resultService->calculate(
             session: $session,
             answers: $request->input('answers'),
-            passingScore: $passingScore
+            passingScore: $passingScore,
+            submittedBy: $submittedBy,
+            violationLog: $violationLog
         );
 
         return response()->json(['data' => $result->load('answerRecords')]);

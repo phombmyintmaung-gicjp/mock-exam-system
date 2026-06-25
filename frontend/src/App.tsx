@@ -25,8 +25,11 @@ import Flashcards from '@/pages/admin/Flashcards';
 import FlashcardImport from '@/pages/admin/FlashcardImport';
 import CustomSetList from '@/pages/admin/CustomSetList';
 import CustomSetEditor from '@/pages/admin/CustomSetEditor';
+import CustomSetImport from '@/pages/admin/CustomSetImport';
 import CustomSetResults from '@/pages/admin/CustomSetResults';
 import CustomSetResultDetail from '@/pages/admin/CustomSetResultDetail';
+import AdminResults from '@/pages/admin/AdminResults';
+import AdminResultDetail from '@/pages/admin/AdminResultDetail';
 
 import StudyHome from '@/pages/study/StudyHome';
 import FlashcardSession from '@/pages/study/FlashcardSession';
@@ -62,10 +65,13 @@ const TITLE_MAP: Array<[RegExp, string]> = [
   [/^\/admin\/categories$/,           'pageTitle.adminCategories'],
   [/^\/admin\/flashcards\/import$/,   'pageTitle.adminFlashcardsImport'],
   [/^\/admin\/flashcards$/,           'pageTitle.adminFlashcards'],
+  [/^\/admin\/custom-sets\/import$/,  'pageTitle.adminCustomSetsImport'],
   [/^\/admin\/custom-sets\/create$/,  'pageTitle.adminCustomSetsCreate'],
   [/^\/admin\/custom-sets\/\d+\/edit$/, 'pageTitle.adminCustomSetsEdit'],
   [/^\/admin\/custom-sets\/\d+\/results$/, 'pageTitle.adminCustomSetsResults'],
   [/^\/admin\/custom-sets$/,          'pageTitle.adminCustomSets'],
+  [/^\/admin\/results\/\d+$/,         'pageTitle.adminResultDetail'],
+  [/^\/admin\/results$/,              'pageTitle.adminResults'],
   [/^\/exam\/custom\/results\/\d+$/,  'pageTitle.customExamResult'],
   [/^\/exam\/custom\/session$/,       'pageTitle.customExamSession'],
   [/^\/exam\/custom\//,               'pageTitle.customExamLanding'],
@@ -146,10 +152,13 @@ const App = () => {
           <Route path="/admin/flashcards" element={<Flashcards />} />
           <Route path="/admin/flashcards/import" element={<FlashcardImport />} />
           <Route path="/admin/custom-sets" element={<CustomSetList />} />
+          <Route path="/admin/custom-sets/import" element={<CustomSetImport />} />
           <Route path="/admin/custom-sets/create" element={<CustomSetEditor />} />
           <Route path="/admin/custom-sets/:id/edit" element={<CustomSetEditor />} />
           <Route path="/admin/custom-sets/:id/results" element={<CustomSetResults />} />
           <Route path="/admin/custom-sets/:id/results/:resultId" element={<CustomSetResultDetail />} />
+          <Route path="/admin/results" element={<AdminResults />} />
+          <Route path="/admin/results/:id" element={<AdminResultDetail />} />
         </Route>
 
         {/* Client routes — require employee role */}

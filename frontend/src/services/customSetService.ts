@@ -5,7 +5,10 @@ import type {
   CustomExamLandingInfo,
   CustomExamResult,
   CustomSetDetail,
+  CustomSetImportResult,
   CustomSetSummary,
+  MyCustomExamAttempt,
+  ViolationEntry,
 } from '@/types/customSet';
 import type { Question } from '@/types/exam';
 
@@ -73,6 +76,19 @@ export async function reorderSetQuestions(setId: number, questionIds: number[]):
   await api.put(`/admin/custom-sets/${setId}/reorder`, { question_ids: questionIds });
 }
 
+export async function importCustomSetFromExcel(formData: FormData): Promise<CustomSetImportResult> {
+  const res = await api.post('/admin/custom-sets/import', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  const d = res.data.data;
+  return {
+    set:      mapDetail(d.set),
+    imported: d.imported,
+    skipped:  d.skipped,
+    errors:   d.errors,
+  };
+}
+
 export async function getSetResults(setId: number): Promise<AdminCustomExamResult[]> {
   const res = await api.get(`/admin/custom-sets/${setId}/results`);
   return res.data.data.map(
@@ -83,6 +99,7 @@ export async function getSetResults(setId: number): Promise<AdminCustomExamResul
       totalQuestions: r.total_questions as number,
       passingScore: r.passing_score as number,
       status: r.status as 'pass' | 'fail',
+      submittedBy: (r.submitted_by as string) ?? 'manual',
       completedAt: r.completed_at as string,
     }),
   );
@@ -94,6 +111,8 @@ export async function getSetResultDetail(setId: number, resultId: number): Promi
   return {
     id: d.id,
     setId: d.set_id,
+    submittedBy: (d.submitted_by as string) ?? 'manual',
+    violationLog: (d.violation_log as ViolationEntry[]) ?? [],
     user: d.user as AdminCustomExamResult['user'],
     score: d.score,
     totalQuestions: d.total_questions,
@@ -162,13 +181,31 @@ export async function submitCustomExamSession(
   sessionId: number,
   answers: Record<number, number>,
   questionIds: number[],
+  submittedBy?: string,
+  violationLog?: ViolationEntry[],
 ): Promise<{ id: number }> {
   const formatted = questionIds.map((qid) => ({
     question_id: qid,
     choice_id: answers[qid] ?? null,
   }));
-  const res = await api.post(`/custom-exams/sessions/${sessionId}/submit`, { answers: formatted });
+  const res = await api.post(`/custom-exams/sessions/${sessionId}/submit`, {
+    answers: formatted,
+    submitted_by: submittedBy ?? 'manual',
+    violation_log: violationLog ?? [],
+  });
   return { id: res.data.data.id };
+}
+
+export async function getMyCustomExamHistory(slug: string): Promise<MyCustomExamAttempt[]> {
+  const res = await api.get(`/custom-exams/${slug}/my-results`);
+  return (res.data.data as Record<string, unknown>[]).map((r) => ({
+    id: r.id as number,
+    score: r.score as number,
+    totalQuestions: r.total_questions as number,
+    passingScore: r.passing_score as number,
+    status: r.status as 'pass' | 'fail',
+    completedAt: r.completed_at as string,
+  }));
 }
 
 export async function getCustomExamResult(resultId: number): Promise<CustomExamResult> {

@@ -672,11 +672,13 @@ class JLPTQuestionSeeder extends Seeder
 
     private function insertBatch(string $category, string $questionType, array $items): void
     {
+        $categoryId = DB::table('categories')->where('name', $category)->value('id');
         foreach ($items as $item) {
             $qid = DB::table('questions')->insertGetId([
                 'passage_id'    => null,
                 'text'          => $item['text'],
                 'category'      => $category,
+                'category_id'   => $categoryId,
                 'question_type' => $questionType,
                 'explanation'   => $item['explanation'],
                 'created_at'    => now(),
@@ -695,11 +697,13 @@ class JLPTQuestionSeeder extends Seeder
 
     private function insertBatchWithPassage(string $category, string $questionType, int $passageId, array $items): void
     {
+        $categoryId = DB::table('categories')->where('name', $category)->value('id');
         foreach ($items as $item) {
             $qid = DB::table('questions')->insertGetId([
                 'passage_id'    => $passageId,
                 'text'          => $item['text'],
                 'category'      => $category,
+                'category_id'   => $categoryId,
                 'question_type' => $questionType,
                 'explanation'   => $item['explanation'],
                 'created_at'    => now(),

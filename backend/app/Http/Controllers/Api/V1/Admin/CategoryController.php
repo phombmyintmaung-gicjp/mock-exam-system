@@ -15,6 +15,15 @@ class CategoryController extends Controller
         return response()->json(['data' => $categories]);
     }
 
+    public function publicIndex(): JsonResponse
+    {
+        $categories = Category::withCount('questions')
+            ->where('name', 'not like', 'JLPT%')
+            ->orderBy('name')
+            ->get();
+        return response()->json(['data' => $categories]);
+    }
+
     public function store(StoreCategoryRequest $request): JsonResponse
     {
         $category = Category::create($request->validated());

@@ -19,6 +19,7 @@ import {
 import api from '@/services/api';
 import type { CustomSetDetail, CustomSetQuestion } from '@/types/customSet';
 import type { AdminQuestion } from '@/types/exam';
+import { APP_BASE_PATH } from '@/constants';
 
 interface ChoiceDraft {
   text: string;
@@ -214,7 +215,7 @@ const CustomSetEditor = () => {
     : bankQuestions;
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}/exam/custom/${slug}`;
+    const url = `${window.location.origin}${APP_BASE_PATH}/exam/custom/${slug}`;
     const done = () => { setCopiedSlug(true); setTimeout(() => setCopiedSlug(false), 2000); };
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(done);
@@ -261,7 +262,7 @@ const CustomSetEditor = () => {
             <span className="text-sm text-gray-500 dark:text-white/50">
               {t('admin.customSets.shareLink')}:{' '}
               <code className="rounded bg-gray-100 dark:bg-white/10 px-2 py-0.5 text-xs font-mono text-gray-700 dark:text-white/70">
-                {`${window.location.origin}/exam/custom/${slug}`}
+                {`${window.location.origin}${APP_BASE_PATH}/exam/custom/${slug}`}
               </code>
             </span>
             <button

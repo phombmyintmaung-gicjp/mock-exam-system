@@ -1,5 +1,5 @@
 import api from './api';
-import type { ExamResult, HistoryItem, PassFailStatus } from '@/types/result';
+import type { ExamResult, HistoryItem, PassFailStatus, ViolationEntry } from '@/types/result';
 import type { PaginatedResponse } from '@/types/api';
 import { PDF_FILENAME_PREFIX } from '@/constants';
 
@@ -25,6 +25,35 @@ export const getResultHistory = async (page = 1): Promise<PaginatedResponse<Hist
   return { data: items, count: res.data.count as number, next: res.data.next as string | null, previous: res.data.previous as string | null };
 };
 
+export const getAdminAllResults = async (page = 1, search = ''): Promise<PaginatedResponse<HistoryItem>> => {
+  const params: Record<string, unknown> = { page };
+  if (search) params.search = search;
+  const res = await api.get('/admin/results', { params });
+  const items = (res.data.data ?? []).map((d: Record<string, unknown>) => {
+    const session = d.session as Record<string, unknown> | null;
+    const user = d.user as Record<string, unknown> | null;
+    return {
+      id: d.id as number,
+      category: (session?.category as string) ?? '',
+      mode: (session?.mode as string) ?? '',
+      score: d.score as number,
+      totalQuestions: d.total_questions as number,
+      status: d.status as PassFailStatus,
+      submittedBy: (session?.submitted_by as 'manual' | 'timeout' | 'violation') ?? 'manual',
+      completedAt: d.completed_at as string,
+      userName: (user?.name as string) ?? '',
+    };
+  });
+  return { data: items, count: res.data.count as number, next: res.data.next as string | null, previous: res.data.previous as string | null };
+};
+
+export const getAdminResultDetail = async (id: number): Promise<{ result: ExamResult; userName: string }> => {
+  const res = await api.get(`/admin/results/${id}`);
+  const d = res.data.data as Record<string, unknown>;
+  const user = d.user as Record<string, unknown> | null;
+  return { result: mapResult(d), userName: (user?.name as string) ?? '' };
+};
+
 export const getAdminRecentResults = async (limit = 10): Promise<HistoryItem[]> => {
   const res = await api.get('/admin/results', { params: { page: 1 } });
   const items = (res.data.data ?? []).slice(0, limit).map((d: Record<string, unknown>) => {
@@ -37,6 +66,7 @@ export const getAdminRecentResults = async (limit = 10): Promise<HistoryItem[]> 
       score: d.score as number,
       totalQuestions: d.total_questions as number,
       status: d.status as PassFailStatus,
+      submittedBy: (session?.submitted_by as 'manual' | 'timeout' | 'violation') ?? 'manual',
       completedAt: d.completed_at as string,
       userName: (user?.name as string) ?? '',
     };
@@ -71,6 +101,8 @@ function mapResult(d: Record<string, unknown>): ExamResult {
     totalQuestions: d.total_questions as number,
     passingScore: d.passing_score as number,
     status: d.status as PassFailStatus,
+    submittedBy: (session?.submitted_by as 'manual' | 'timeout' | 'violation') ?? 'manual',
+    violationLog: (session?.violation_log as ViolationEntry[] | null) ?? undefined,
     completedAt: d.completed_at as string,
     answers: records.map((ar) => {
       const q = ar.question as Record<string, unknown> | null;

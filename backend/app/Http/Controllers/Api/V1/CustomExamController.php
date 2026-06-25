@@ -63,6 +63,10 @@ class CustomExamController extends Controller
             'answers'               => ['required', 'array'],
             'answers.*.question_id' => ['required', 'integer', 'exists:questions,id'],
             'answers.*.choice_id'   => ['nullable', 'integer', 'exists:choices,id'],
+            'submitted_by'              => ['nullable', 'string', 'in:manual,timeout,violation'],
+            'violation_log'             => ['nullable', 'array'],
+            'violation_log.*.type'      => ['required_with:violation_log', 'string'],
+            'violation_log.*.timestamp' => ['required_with:violation_log', 'string'],
         ]);
 
         $user    = auth()->user();
@@ -72,7 +76,9 @@ class CustomExamController extends Controller
             return response()->json(['error' => 'Session already submitted.'], 422);
         }
 
-        $result = $this->service->submitSession($session, $request->input('answers'));
+        $submittedBy  = $request->input('submitted_by', 'manual');
+        $violationLog = $request->input('violation_log', []);
+        $result = $this->service->submitSession($session, $request->input('answers'), $submittedBy, $violationLog);
 
         return response()->json(['data' => [
             'id'              => $result->id,
@@ -83,6 +89,26 @@ class CustomExamController extends Controller
             'status'          => $result->status,
             'completed_at'    => $result->completed_at,
         ]]);
+    }
+
+    public function myResults(string $slug): JsonResponse
+    {
+        $set  = $this->service->findBySlug($slug);
+        $user = auth()->user();
+
+        $results = \App\Models\CustomExamResult::where('set_id', $set->id)
+            ->where('user_id', $user->id)
+            ->orderByDesc('completed_at')
+            ->get();
+
+        return response()->json(['data' => $results->map(fn ($r) => [
+            'id'              => $r->id,
+            'score'           => $r->score,
+            'total_questions' => $r->total_questions,
+            'passing_score'   => $r->passing_score,
+            'status'          => $r->status,
+            'completed_at'    => $r->completed_at,
+        ])]);
     }
 
     public function getResult(int $id): JsonResponse

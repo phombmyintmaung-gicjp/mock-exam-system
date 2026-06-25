@@ -66,6 +66,9 @@ Route::prefix('v1')->group(function () {
             Route::post('refresh', [AuthController::class, 'refresh'])->name('auth.refresh');
         });
 
+        // IT categories (non-JLPT) — accessible to all authenticated users
+        Route::get('categories', [CategoryController::class, 'publicIndex'])->name('categories.public');
+
         // Exam questions
         Route::get('exams/questions', [QuestionController::class, 'index'])->name('exams.questions.index');
 
@@ -124,6 +127,7 @@ Route::prefix('v1')->group(function () {
 
             // Results (all users)
             Route::get('results', [ResultAdminController::class, 'index'])->name('admin.results.index');
+            Route::get('results/{id}', [ResultAdminController::class, 'show'])->name('admin.results.show');
 
             // Flashcard management
             Route::get('flashcards', [FlashcardAdminController::class, 'index'])->name('admin.flashcards.index');
@@ -142,6 +146,7 @@ Route::prefix('v1')->group(function () {
             // Custom question sets
             Route::get('custom-sets', [CustomSetController::class, 'index'])->name('admin.custom-sets.index');
             Route::post('custom-sets', [CustomSetController::class, 'store'])->name('admin.custom-sets.store');
+            Route::post('custom-sets/import', [CustomSetController::class, 'importFromExcel'])->name('admin.custom-sets.import');
             Route::get('custom-sets/{id}', [CustomSetController::class, 'show'])->name('admin.custom-sets.show');
             Route::put('custom-sets/{id}', [CustomSetController::class, 'update'])->name('admin.custom-sets.update');
             Route::delete('custom-sets/{id}', [CustomSetController::class, 'destroy'])->name('admin.custom-sets.destroy');
@@ -156,6 +161,7 @@ Route::prefix('v1')->group(function () {
         // Custom exam sessions (employee-facing, auth required, not admin-only)
         Route::prefix('custom-exams')->group(function () {
             Route::get('{slug}', [CustomExamController::class, 'show'])->name('custom-exams.show');
+            Route::get('{slug}/my-results', [CustomExamController::class, 'myResults'])->name('custom-exams.my-results');
             Route::post('{slug}/sessions', [CustomExamController::class, 'startSession'])->name('custom-exams.sessions.start');
             Route::post('sessions/{id}/submit', [CustomExamController::class, 'submitSession'])->name('custom-exams.sessions.submit');
             Route::get('results/{id}', [CustomExamController::class, 'getResult'])->name('custom-exams.results.show');

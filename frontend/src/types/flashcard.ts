@@ -8,6 +8,7 @@ export interface Flashcard {
   front: string;
   reading: string | null;
   meaning: string;
+  meaning_my: string | null;
   example_sentence: string | null;
   example_translation: string | null;
   frequency_band?: number | null;

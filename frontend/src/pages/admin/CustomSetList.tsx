@@ -9,6 +9,7 @@ import { Modal } from '@/components/ui/Modal';
 import { ClipboardCheckIcon, BarChartIcon } from '@/components/ui/Icons';
 import { listCustomSets, deleteCustomSet } from '@/services/customSetService';
 import type { CustomSetSummary } from '@/types/customSet';
+import { APP_BASE_PATH } from '@/constants';
 
 const CustomSetList = () => {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ const CustomSetList = () => {
   }, []);
 
   const handleCopyLink = (slug: string) => {
-    const url = `${window.location.origin}/exam/custom/${slug}`;
+    const url = `${window.location.origin}${APP_BASE_PATH}/exam/custom/${slug}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
         setCopiedSlug(slug);
@@ -74,7 +75,10 @@ const CustomSetList = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('admin.customSets.title')}</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-white/50">{t('admin.customSets.subtitle')}</p>
         </div>
-        <Button label={t('admin.customSets.createSet')} onClick={() => navigate('/admin/custom-sets/create')} />
+        <div className="flex gap-2">
+          <Button label={t('admin.customSets.import.importButton')} variant="secondary" onClick={() => navigate('/admin/custom-sets/import')} />
+          <Button label={t('admin.customSets.createSet')} onClick={() => navigate('/admin/custom-sets/create')} />
+        </div>
       </div>
 
       {isLoading ? (

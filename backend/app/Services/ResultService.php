@@ -27,9 +27,9 @@ class ResultService
      * @param  int                     $passingScore  The passing threshold (0-100 as a percentage).
      * @return ExamResult
      */
-    public function calculate(ExamSession $session, array $answers, int $passingScore): ExamResult
+    public function calculate(ExamSession $session, array $answers, int $passingScore, string $submittedBy = 'manual', array $violationLog = []): ExamResult
     {
-        return DB::transaction(function () use ($session, $answers, $passingScore): ExamResult {
+        return DB::transaction(function () use ($session, $answers, $passingScore, $submittedBy, $violationLog): ExamResult {
 
             // 1. Pre-load all correct choice IDs and question/choice text for snapshot.
             $questionIds      = array_column($answers, 'question_id');
@@ -105,8 +105,10 @@ class ResultService
 
             // 6. Mark the session as submitted so it cannot be re-submitted.
             $session->update([
-                'is_submitted' => true,
-                'completed_at' => $now,
+                'is_submitted'  => true,
+                'completed_at'  => $now,
+                'submitted_by'  => $submittedBy,
+                'violation_log' => empty($violationLog) ? null : $violationLog,
             ]);
 
             return $result;

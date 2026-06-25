@@ -20,7 +20,8 @@
     "or": "or",
     "noData": "No data available.",
     "pageOf": "Page {{current}} of {{total}}",
-    "noQuestionsAvailable": "No questions available for this section yet."
+    "noQuestionsAvailable": "No questions available for this section yet.",
+    "viewAll": "View all"
   },
   "auth": {
     "login": "Login",
@@ -91,7 +92,8 @@
     "systemGroup": "System",
     "flashcards": "Flashcards",
     "flashcardStudy": "Flashcard Study",
-    "customSets": "Custom Sets"
+    "customSets": "Custom Sets",
+    "results": "Results"
   },
   "exam": {
     "startButton": "Start Exam",
@@ -192,6 +194,16 @@
     "exportPdf": "Download PDF",
     "correct": "Correct",
     "incorrect": "Incorrect",
+    "unanswered": "Unanswered",
+    "seeAnswer": "View Answer",
+    "hideAnswer": "Hide",
+    "submittedByViolation": "Auto-submitted (anti-cheat)",
+    "submittedByTimeout": "Auto-submitted (time up)",
+    "violationLog": "Violation Log",
+    "violationType": {
+      "tab_switch": "Tab switch detected",
+      "window_blur": "Window switched / minimized"
+    },
     "retake": "Take Another Exam",
     "backToExamList": "Back to Exam List",
     "viewHistory": "View History",
@@ -223,7 +235,7 @@
       "totalQuestions": "Total Questions",
       "totalUsers": "Total Users",
       "passRate": "Pass Rate",
-      "examsToday": "Exams Today",
+      "totalExams": "Total Exams",
       "recentExams": "Recent Exams",
       "noData": "No exam data available yet.",
       "columnUser": "User"
@@ -310,14 +322,49 @@
       "resultDetail": "Answer Detail",
       "employee": "Employee",
       "answerBreakdown": "Answer Breakdown",
+      "noAnswerRecords": "No answer details are available for this submission.",
       "correctAnswer": "Correct answer",
       "selectedCorrect": "Selected (correct)",
       "selectedWrong": "Selected (wrong)",
       "unanswered": "Not answered",
+      "seeAnswer": "View Answer",
+      "hideAnswer": "Hide",
       "viewDetail": "View Details",
       "filterPlaceholder": "Search by name or email…",
       "filterAll": "All",
-      "noFilteredResults": "No results match the current filter."
+      "noFilteredResults": "No results match the current filter.",
+      "import": {
+        "title": "Create Custom Set from Excel",
+        "subtitle": "Upload an Excel file with question data to create new questions and a custom set in one step",
+        "importButton": "Import from Excel",
+        "uploadTitle": "Upload File",
+        "dropText": "Drag & drop file here",
+        "browseButton": "Browse File",
+        "formatTitle": "Column Reference",
+        "formatDesc": "Prepare an Excel file with the columns below. Questions are created as new records with category \"Custom\".",
+        "downloadTemplate": "Download Template",
+        "colHeader": "Column",
+        "col_text_notes": "Question text (required)",
+        "col_choice1_4_notes": "Answer choices. choice1 and choice2 are required; choice3 and choice4 are optional",
+        "col_correct_index_notes": "The number of the correct choice (1–4)",
+        "col_explanation_notes": "Optional — explanation shown after answering",
+        "tipsTitle": "Tips",
+        "tip1": "choice1 and choice2 are required. Leaving choice3/choice4 blank creates a 2-option question",
+        "tip2": "correct_index must be an integer from 1 to 4 matching a non-empty choice column",
+        "tip3": "Leave the slug blank to have the system auto-generate a random code",
+        "slugLabel": "Slug (share URL code)",
+        "slugHint": "— optional",
+        "slugPlaceholder": "e.g. jlpt-n5-practice (letters, numbers, hyphens, underscores)",
+        "slugInfoTitle": "How the share link works",
+        "slugInfoDesc": "The slug becomes the last part of the shareable URL. If left blank, a random code is generated after import.",
+        "slugInfoSuffix": "{slug}",
+        "success": "\"{{name}}\" created with {{count}} questions imported.",
+        "resultImported": "{{count}} imported",
+        "resultSkipped": "{{count}} skipped",
+        "errorTitle": "{{count}} row(s) had errors",
+        "editSet": "Edit Set",
+        "createAnother": "Create Another"
+      }
     },
     "questionForm": {
       "title": "New Question",
@@ -375,7 +422,8 @@
       "field_correct_index": "1 = choice1, 2 = choice2 …",
       "tipsTitle": "Tips",
       "tip1": "correct_index is a number: 1, 2, 3, or 4",
-      "tip2": "Leave question_type blank for IT questions"
+      "tip2": "Leave question_type blank for IT questions",
+      "tip3": "Rows with missing required fields are skipped and listed in the error report"
     },
     "questions": {
       "title": "Question Management",
@@ -449,6 +497,20 @@
       "deleteConfirmBody": "This will permanently delete the user and all their exam history. This action cannot be undone.",
       "cannotDeleteSelf": "You cannot delete your own account.",
       "deleting": "Deleting..."
+    },
+    "results": {
+      "title": "Exam Results",
+      "subtitle": "All employee exam submissions",
+      "searchPlaceholder": "Search by name or email...",
+      "noResults": "No results found.",
+      "viewDetail": "View",
+      "backToList": "Back to Results",
+      "detailTitle": "Result Detail",
+      "columnUser": "User",
+      "columnCategory": "Category",
+      "columnScore": "Score",
+      "columnStatus": "Status",
+      "columnDate": "Date"
     },
     "userForm": {
       "title": "New User",
@@ -543,6 +605,7 @@
       "field_front": "The kanji, word, or grammar pattern shown on the card front",
       "field_reading": "Hiragana reading (optional)",
       "field_meaning": "English meaning shown on the card back",
+      "field_meaning_my": "Myanmar (Burmese) meaning (optional)",
       "field_example_sentence": "Example sentence — use {kanji|reading} for furigana (optional)",
       "field_example_translation": "English translation of the example sentence (optional)",
       "furiganaTitle": "Furigana Notation",
@@ -765,9 +828,12 @@
     "adminFlashcardsImport": "Import Flashcards",
     "adminFlashcards": "Flashcards",
     "adminCustomSets": "Custom Sets",
+    "adminCustomSetsImport": "Import Custom Set",
     "adminCustomSetsCreate": "Create Custom Set",
     "adminCustomSetsEdit": "Edit Custom Set",
     "adminCustomSetsResults": "Set Results",
+    "adminResults": "Exam Results",
+    "adminResultDetail": "Result Detail",
     "customExamLanding": "Custom Exam",
     "customExamSession": "Exam in Progress",
     "customExamResult": "Exam Result",
@@ -791,7 +857,8 @@
       "passingScore": "Passing score: {{score}}%",
       "timeLimit": "{{minutes}} min time limit",
       "noQuestionsYet": "This set has no questions yet.",
-      "start": "Start Exam"
+      "start": "Start Exam",
+      "pastAttempts": "Past Attempts"
     },
     "result": {
       "title": "Exam Complete",

@@ -66,6 +66,10 @@ export const JLPT_LEVEL_THEMES: Record<JLPTLevel, LevelTheme> = {
   N5: { active: 'from-blue-500 to-indigo-500',  glow: 'shadow-blue-500/30' },
 };
 
+// ── App base path (matches vite.config.ts `base` and BrowserRouter `basename`) ─
+
+export const APP_BASE_PATH = '/miyazaki-shiken-lab';
+
 // ── API ───────────────────────────────────────────────────────────────────────
 
 export const API_BASE_PATH = '/api/v1';

@@ -1,5 +1,6 @@
 import api from './api';
 import type { ExamSession, Passage, Question, ExamMode } from '@/types/exam';
+import type { ViolationEntry } from '@/types/result';
 
 export const fetchExamQuestions = async (category: string): Promise<Question[]> => {
   const res = await api.get('/exams/questions', { params: { category } });
@@ -108,12 +109,18 @@ export const submitExam = async (
   answers: Record<number, number>,
   questionIds: number[],
   timings?: Record<number, number>,
+  submittedBy?: string,
+  violationLog?: ViolationEntry[],
 ): Promise<{ id: number }> => {
   const formatted = questionIds.map((qid) => ({
     question_id: qid,
     choice_id: answers[qid] ?? null,
     time_taken_seconds: timings?.[qid] ?? null,
   }));
-  const res = await api.post(`/exams/sessions/${sessionId}/submit`, { answers: formatted });
+  const res = await api.post(`/exams/sessions/${sessionId}/submit`, {
+    answers: formatted,
+    submitted_by: submittedBy ?? 'manual',
+    violation_log: violationLog ?? [],
+  });
   return { id: (res.data.data as { id: number }).id };
 };

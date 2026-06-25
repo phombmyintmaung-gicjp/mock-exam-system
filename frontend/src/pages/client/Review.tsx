@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -16,6 +17,16 @@ const Review = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { result, isLoading } = useResults(Number(id));
+  const [revealedIds, setRevealedIds] = useState<Set<number>>(new Set());
+
+  const toggleReveal = (questionId: number) => {
+    setRevealedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(questionId)) next.delete(questionId);
+      else next.add(questionId);
+      return next;
+    });
+  };
 
   const correctCount = result?.answers.filter((a) => a.isCorrect).length ?? 0;
   const total = result?.answers.length ?? 0;
@@ -65,16 +76,23 @@ const Review = () => {
         <div className="space-y-5">
           {isLoading
             ? Array.from({ length: 3 }).map((_, i) => <ReviewItemSkeleton key={i} />)
-            : (result?.answers ?? []).map((item, idx) => (
+            : (result?.answers ?? []).map((item, idx) => {
+                const unanswered = item.selectedChoiceId === null;
+                const revealed   = item.isCorrect || revealedIds.has(item.questionId);
+                return (
                 <div key={item.questionId} className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                   <div className="flex items-start gap-3 border-b border-gray-100 bg-gray-50 px-6 py-4">
                     <span
                       className={clsx(
                         'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold',
-                        item.isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
+                        unanswered
+                          ? 'bg-gray-300 text-gray-600'
+                          : item.isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
                       )}
                     >
-                      {item.isCorrect ? (
+                      {unanswered ? (
+                        <span style={{ fontSize: '9px', lineHeight: 1 }}>—</span>
+                      ) : item.isCorrect ? (
                         <CheckIcon className="h-3 w-3" strokeWidth={3} style={{ animation: 'scale-in 0.15s ease-out' }} />
                       ) : (
                         <XIcon className="h-3 w-3" strokeWidth={3} style={{ animation: 'scale-in 0.15s ease-out' }} />
@@ -83,7 +101,10 @@ const Review = () => {
                     <div>
                       <div className="flex items-center gap-3">
                         <span className="text-xs font-semibold uppercase text-gray-400">Q{idx + 1}</span>
-                        {item.timeTakenSeconds !== null && item.timeTakenSeconds !== undefined && (
+                        {unanswered && (
+                          <span className="text-xs font-semibold text-gray-400">{t('result.unanswered')}</span>
+                        )}
+                        {!unanswered && item.timeTakenSeconds !== null && item.timeTakenSeconds !== undefined && (
                           <span className="text-xs text-slate-400">
                             {t('result.review.timeTaken')}: {formatSeconds(item.timeTakenSeconds)}
                           </span>
@@ -95,20 +116,22 @@ const Review = () => {
 
                   <div className="space-y-2 px-6 py-4">
                     {item.choices.map((choice) => {
-                      const isCorrectChoice  = choice.id === item.correctChoiceId;
-                      const isWrongSelected  = choice.id === item.selectedChoiceId && !item.isCorrect;
+                      const isCorrectChoice = choice.id === item.correctChoiceId;
+                      const isWrongSelected = choice.id === item.selectedChoiceId && !item.isCorrect;
                       return (
                         <div
                           key={choice.id}
                           className={clsx(
                             'rounded-lg border px-4 py-2.5 text-sm',
-                            isCorrectChoice && 'border-green-400 bg-green-50 font-medium text-green-800',
-                            isWrongSelected && 'border-red-400 bg-red-50 font-medium text-red-700',
-                            !isCorrectChoice && !isWrongSelected && 'border-gray-200 text-gray-600',
+                            revealed && isCorrectChoice
+                              ? 'border-green-400 bg-green-50 font-medium text-green-800'
+                              : isWrongSelected
+                              ? 'border-red-400 bg-red-50 font-medium text-red-700'
+                              : 'border-gray-200 text-gray-600',
                           )}
                         >
                           {choice.text}
-                          {isCorrectChoice && (
+                          {revealed && isCorrectChoice && (
                             <span className="ml-2 inline-flex items-center gap-1 text-xs text-green-600">
                               <CheckIcon className="h-3 w-3" strokeWidth={3} />
                               {t('result.correct')}
@@ -125,7 +148,22 @@ const Review = () => {
                     })}
                   </div>
 
-                  {item.explanation && (
+                  {/* See Answer / Hide button for wrong and unanswered */}
+                  {!item.isCorrect && (
+                    <div className="border-t border-gray-100 px-6 py-3">
+                      <button
+                        onClick={() => toggleReveal(item.questionId)}
+                        className="text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors"
+                      >
+                        {revealedIds.has(item.questionId)
+                          ? t('result.hideAnswer')
+                          : t('result.seeAnswer')}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Explanation — only when revealed */}
+                  {revealed && item.explanation && (
                     <div className="border-t border-amber-100 bg-amber-50 px-6 py-4">
                       <p className="mb-1 text-xs font-semibold uppercase text-amber-700">
                         {t('result.review.explanation')}
@@ -134,7 +172,8 @@ const Review = () => {
                     </div>
                   )}
                 </div>
-              ))}
+              );
+            })}
         </div>
       </div>
     </PageShell>

@@ -15,6 +15,7 @@ import { FlagIcon, XIcon, ChevronLeftIcon, ChevronRightIcon, TriangleAlertIcon }
 import { useExamSessionStore } from '@/store/examSessionStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
 import { useExamSecurity } from '@/hooks/useExamSecurity';
+import type { SecurityViolation } from '@/hooks/useExamSecurity';
 import useTimer from '@/hooks/useTimer';
 import { submitCustomExamSession } from '@/services/customSetService';
 import { EXAM_SECURITY_THRESHOLD } from '@/constants';
@@ -43,6 +44,7 @@ const CustomExamSession = () => {
   const [unansweredCount, setUnansweredCount] = useState(0);
   const [securityAcknowledged, setSecurityAcknowledged] = useState(false);
   const isFinishing = useRef(false);
+  const violationsRef = useRef<SecurityViolation[]>([]);
 
   useEffect(() => {
     activateGuard();
@@ -75,13 +77,13 @@ const CustomExamSession = () => {
     return () => window.removeEventListener('beforeunload', handler);
   }, []);
 
-  const doSubmit = useCallback(async (isExit = false) => {
+  const doSubmit = useCallback(async (submittedBy: 'manual' | 'timeout' | 'violation' = 'manual', isExit = false) => {
     if (!session?.sessionId || isSubmitting) return;
     setIsSubmitting(true);
     const questionIds = session.questions.map((q) => q.id);
     try {
       isFinishing.current = true;
-      const result = await submitCustomExamSession(session.sessionId, session.answers, questionIds);
+      const result = await submitCustomExamSession(session.sessionId, session.answers, questionIds, submittedBy, violationsRef.current);
       resetSession();
       deactivateGuard();
       if (isExit) setPendingPath(null);
@@ -94,7 +96,7 @@ const CustomExamSession = () => {
 
   const handleConfirmExit = () => {
     setShowExitModal(false);
-    doSubmit(true);
+    doSubmit('manual', true);
   };
 
   const handleCancelExit = () => {
@@ -109,9 +111,10 @@ const CustomExamSession = () => {
     setShowSubmitModal(true);
   };
 
-  useTimer(session?.secondsRemaining ?? 0, () => { doSubmit(); });
+  useTimer(session?.secondsRemaining ?? 0, () => { doSubmit('timeout'); });
 
   const {
+    violations,
     violationCount,
     showWarning: showSecurityWarning,
     lastViolationType,
@@ -119,8 +122,10 @@ const CustomExamSession = () => {
   } = useExamSecurity({
     enabled: securityAcknowledged && !!session,
     threshold: EXAM_SECURITY_THRESHOLD,
-    onAutoSubmit: doSubmit,
+    onAutoSubmit: () => doSubmit('violation'),
   });
+
+  useEffect(() => { violationsRef.current = violations; }, [violations]);
 
   if (!session) {
     return (
@@ -237,7 +242,7 @@ const CustomExamSession = () => {
             </div>
             <div className="flex justify-end gap-3">
               <Button label={t('exam.goBack')} variant="secondary" onClick={() => setShowSubmitModal(false)} />
-              <Button label={t('exam.submitAnyway')} variant="danger" onClick={() => { setShowSubmitModal(false); doSubmit(); }} />
+              <Button label={t('exam.submitAnyway')} variant="danger" onClick={() => { setShowSubmitModal(false); doSubmit('manual'); }} />
             </div>
           </>
         ) : (
@@ -245,7 +250,7 @@ const CustomExamSession = () => {
             <p className="mb-6 text-slate-600 dark:text-white/75">{t('exam.submitConfirmMessage')}</p>
             <div className="flex justify-end gap-3">
               <Button label={t('common.cancel')} variant="secondary" onClick={() => setShowSubmitModal(false)} />
-              <Button label={t('exam.submitConfirmButton')} onClick={() => { setShowSubmitModal(false); doSubmit(); }} />
+              <Button label={t('exam.submitConfirmButton')} onClick={() => { setShowSubmitModal(false); doSubmit('manual'); }} />
             </div>
           </>
         )}

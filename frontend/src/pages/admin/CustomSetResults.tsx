@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Spinner } from '@/components/ui/Spinner';
-import { ChevronLeftIcon } from '@/components/ui/Icons';
+import { ChevronLeftIcon, TriangleAlertIcon } from '@/components/ui/Icons';
 import { getCustomSet, getSetResults } from '@/services/customSetService';
 import type { AdminCustomExamResult } from '@/types/customSet';
 
@@ -13,6 +13,7 @@ type StatusFilter = 'all' | 'pass' | 'fail';
 const CustomSetResults = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [setName, setSetName] = useState('');
   const [results, setResults] = useState<AdminCustomExamResult[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -117,7 +118,7 @@ const CustomSetResults = () => {
                   {filtered.map((r) => {
                     const pct = Math.round((r.score / r.totalQuestions) * 100);
                     return (
-                      <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-white/4 transition-colors">
+                      <tr key={r.id} onClick={() => navigate(`/admin/custom-sets/${id}/results/${r.id}`)} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-white/4 transition-colors">
                         <td className="px-5 py-4">
                           <p className="font-medium text-gray-900 dark:text-white">{r.user.name}</p>
                           <p className="text-xs text-gray-400 dark:text-white/35">{r.user.email}</p>
@@ -127,25 +128,28 @@ const CustomSetResults = () => {
                           <span className="ml-1 text-xs text-gray-400 dark:text-white/35">({pct}%)</span>
                         </td>
                         <td className="px-5 py-4 text-center">
-                          <span
-                            className={clsx(
-                              'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
-                              r.status === 'pass'
-                                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
-                                : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300',
+                          <div className="flex flex-wrap items-center justify-center gap-1">
+                            <span
+                              className={clsx(
+                                'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
+                                r.status === 'pass'
+                                  ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
+                                  : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-300',
+                              )}
+                            >
+                              {r.status === 'pass' ? t('result.pass') : t('result.fail')}
+                            </span>
+                            {r.submittedBy === 'violation' && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-700 dark:bg-orange-500/20 dark:text-orange-300">
+                                <TriangleAlertIcon className="h-3 w-3 shrink-0" />
+                                {t('result.submittedByViolation')}
+                              </span>
                             )}
-                          >
-                            {r.status === 'pass' ? t('result.pass') : t('result.fail')}
-                          </span>
+                          </div>
                         </td>
                         <td className="px-5 py-4 text-gray-500 dark:text-white/45">{fmt(r.completedAt)}</td>
-                        <td className="px-5 py-4 text-right">
-                          <Link
-                            to={`/admin/custom-sets/${id}/results/${r.id}`}
-                            className="text-xs font-medium text-amber-600 hover:text-amber-700 dark:text-amber-400"
-                          >
-                            {t('admin.customSets.viewDetail')}
-                          </Link>
+                        <td className="px-5 py-4 text-right text-xs font-medium text-amber-500 dark:text-amber-400">
+                          {t('admin.customSets.viewDetail')}
                         </td>
                       </tr>
                     );

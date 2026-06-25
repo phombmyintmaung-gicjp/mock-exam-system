@@ -10,6 +10,7 @@ use App\Services\CustomSetService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class CustomSetController extends Controller
 {
@@ -118,6 +119,7 @@ class CustomSetController extends Controller
     {
         $set     = CustomQuestionSet::findOrFail($id);
         $results = $this->service->getResults($set);
+        $results->load('session');
 
         return response()->json(['data' => $results->map(fn ($r) => [
             'id'              => $r->id,
@@ -131,6 +133,7 @@ class CustomSetController extends Controller
             'passing_score'   => $r->passing_score,
             'status'          => $r->status,
             'completed_at'    => $r->completed_at,
+            'submitted_by'    => $r->session?->submitted_by ?? 'manual',
         ])]);
     }
 
@@ -138,6 +141,7 @@ class CustomSetController extends Controller
     {
         $result = \App\Models\CustomExamResult::with([
             'user',
+            'session',
             'answerRecords.question.choices',
             'answerRecords.selectedChoice',
         ])->where('set_id', $setId)->findOrFail($resultId);
@@ -145,6 +149,8 @@ class CustomSetController extends Controller
         return response()->json(['data' => [
             'id'              => $result->id,
             'set_id'          => $result->set_id,
+            'submitted_by'    => $result->session?->submitted_by ?? 'manual',
+            'violation_log'   => $result->session?->violation_log ?? [],
             'user'            => [
                 'id'    => $result->user->id,
                 'name'  => $result->user->name,
@@ -157,15 +163,17 @@ class CustomSetController extends Controller
             'completed_at'    => $result->completed_at,
             'answer_records'  => $result->answerRecords->map(fn ($ar) => [
                 'question_id'        => $ar->question_id,
-                'question_text'      => $ar->question->text,
-                'explanation'        => $ar->question->explanation,
+                'question_text'      => $ar->question?->text ?? '',
+                'explanation'        => $ar->question?->explanation,
                 'is_correct'         => (bool) $ar->is_correct,
                 'selected_choice_id' => $ar->selected_choice_id,
-                'choices'            => $ar->question->choices->sortBy('order')->map(fn ($c) => [
-                    'id'         => $c->id,
-                    'text'       => $c->text,
-                    'is_correct' => (bool) $c->is_correct,
-                ])->values(),
+                'choices'            => $ar->question
+                    ? $ar->question->choices->sortBy('order')->map(fn ($c) => [
+                        'id'         => $c->id,
+                        'text'       => $c->text,
+                        'is_correct' => (bool) $c->is_correct,
+                    ])->values()
+                    : collect(),
             ])->values(),
         ]]);
     }
@@ -194,5 +202,120 @@ class CustomSetController extends Controller
                 ])->values(),
             ])->values(),
         ];
+    }
+
+    public function importFromExcel(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file'               => ['required', 'file', 'mimes:xlsx,xls', 'max:10240'],
+            'name'               => ['required', 'string', 'max:200'],
+            'slug'               => ['nullable', 'string', 'max:100', 'regex:/^[a-zA-Z0-9_-]+$/', 'unique:custom_question_sets,slug'],
+            'time_limit_minutes' => ['required', 'integer', 'min:0', 'max:300'],
+            'passing_score'      => ['required', 'integer', 'min:1', 'max:100'],
+            'description'        => ['nullable', 'string', 'max:500'],
+            'is_active'          => ['nullable', 'boolean'],
+        ]);
+
+        $rows     = $this->parseQuestionRows($request->file('file')->getRealPath());
+        $imported = 0;
+        $errors   = [];
+
+        $set = $this->service->create(auth()->user(), [
+            'name'               => $request->input('name'),
+            'description'        => $request->input('description'),
+            'slug'               => $request->input('slug') ?: null,
+            'time_limit_seconds' => (int) $request->input('time_limit_minutes') * 60,
+            'passing_score'      => (int) $request->input('passing_score'),
+            'is_active'          => $request->boolean('is_active', true),
+        ]);
+
+        foreach ($rows as $row) {
+            $lineNum = $row['line'];
+
+            if (count($row['choices']) < 2) {
+                $errors[] = "Row {$lineNum}: at least 2 choices required (choice1 and choice2).";
+                continue;
+            }
+
+            $hasCorrect = collect($row['choices'])->contains('is_correct', true);
+            if (!$hasCorrect) {
+                $errors[] = "Row {$lineNum}: correct_index must match a non-empty choice (1–" . count($row['choices']) . ").";
+                continue;
+            }
+
+            try {
+                $this->service->createAndAddQuestion($set, [
+                    'text'        => $row['text'],
+                    'explanation' => $row['explanation'] ?: null,
+                    'choices'     => $row['choices'],
+                ]);
+                $imported++;
+            } catch (\Throwable $e) {
+                $errors[] = "Row {$lineNum}: " . $e->getMessage();
+            }
+        }
+
+        $set->load('questions.choices');
+
+        return response()->json([
+            'data' => [
+                'set'      => $this->formatDetail($set),
+                'imported' => $imported,
+                'skipped'  => count($errors),
+                'errors'   => $errors,
+            ],
+        ], 201);
+    }
+
+    private function parseQuestionRows(string $path): array
+    {
+        $spreadsheet = IOFactory::load($path);
+        $sheet       = $spreadsheet->getActiveSheet();
+        $data        = $sheet->toArray(nullValue: '', calculateFormulas: false, formatData: false);
+
+        if (empty($data)) {
+            return [];
+        }
+
+        $rawHeader = array_shift($data);
+        $header    = array_map(fn ($h) => strtolower(trim((string) $h)), $rawHeader);
+        $col       = array_flip($header);
+
+        foreach (['text', 'choice1', 'choice2', 'correct_index'] as $required) {
+            if (!isset($col[$required])) {
+                return [];
+            }
+        }
+
+        $rows = [];
+        foreach ($data as $index => $row) {
+            $text = trim((string) ($row[$col['text']] ?? ''));
+            if ($text === '') {
+                continue;
+            }
+
+            $correctIndex = (int) ($row[$col['correct_index']] ?? 0);
+            $choices      = [];
+            for ($i = 1; $i <= 4; $i++) {
+                $key = "choice{$i}";
+                $ct  = isset($col[$key]) ? trim((string) ($row[$col[$key]] ?? '')) : '';
+                if ($ct === '') {
+                    continue;
+                }
+                $choices[] = ['text' => $ct, 'is_correct' => $correctIndex === $i];
+            }
+
+            $explCol     = $col['explanation'] ?? null;
+            $explanation = $explCol !== null ? trim((string) ($row[$explCol] ?? '')) : '';
+
+            $rows[] = [
+                'line'        => $index + 2,
+                'text'        => $text,
+                'explanation' => $explanation,
+                'choices'     => $choices,
+            ];
+        }
+
+        return $rows;
     }
 }

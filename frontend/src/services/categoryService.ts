@@ -7,6 +7,11 @@ export async function getCategories(): Promise<Category[]> {
   return res.data.data;
 }
 
+export async function getITCategories(): Promise<Category[]> {
+  const res = await api.get<ApiResponse<(Category & { questions_count: number })[]>>('/categories');
+  return res.data.data.map((c) => ({ id: c.id, name: c.name, questionsCount: c.questions_count }));
+}
+
 export async function createCategory(name: string): Promise<Category> {
   const res = await api.post<ApiResponse<Category>>('/admin/categories', { name });
   return res.data.data;

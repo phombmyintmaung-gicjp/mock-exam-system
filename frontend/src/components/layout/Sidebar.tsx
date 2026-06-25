@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button';
 import {
   HomeIcon, HelpCircleIcon, UsersIcon, CogIcon, BarChartIcon,
   ClipboardCheckIcon, ClockIcon, BoltIcon, UserIcon, TagIcon,
-  LayersIcon, DocumentTextIcon, BookOpenIcon, LogoutIcon,
+  LayersIcon, DocumentTextIcon, BookOpenIcon, LogoutIcon, TableCellsIcon,
 } from '@/components/ui/Icons';
 
 interface SidebarProps {
@@ -68,7 +68,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     {
       title: t('nav.usersGroup'),
       links: [
-        { to: '/admin/users', label: t('nav.users'), icon: <UsersIcon className={si} /> },
+        { to: '/admin/users',   label: t('nav.users'),   icon: <UsersIcon className={si} /> },
+        { to: '/admin/results', label: t('nav.results'), icon: <TableCellsIcon className={si} /> },
       ],
     },
     {
