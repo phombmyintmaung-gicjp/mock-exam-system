@@ -48,10 +48,17 @@ class ExamSettingSeeder extends Seeder
             ['category' => 'JLPT-N5-文法読解', 'time_limit_seconds' => 2400, 'passing_score' => 60, 'question_count' => 31],
         ];
 
+        // Build a category name → id lookup to populate the FK
+        $categoryIds = DB::table('categories')->pluck('id', 'name');
+
         foreach ($settings as $s) {
             DB::table('exam_settings')->updateOrInsert(
                 ['category' => $s['category']],
-                array_merge($s, ['created_at' => now(), 'updated_at' => now()])
+                array_merge($s, [
+                    'category_id' => $categoryIds[$s['category']] ?? null,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
+                ])
             );
         }
     }
