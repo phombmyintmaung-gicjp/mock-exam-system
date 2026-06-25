@@ -859,7 +859,9 @@
       "timeLimit": "制限時間 {{minutes}}分",
       "noQuestionsYet": "このセットにはまだ問題がありません。",
       "start": "試験を開始",
-      "pastAttempts": "過去の受験履歴"
+      "pastAttempts": "過去の受験履歴",
+      "alreadyCompleted": "この試験は受験済みです",
+      "alreadyCompletedSub": "このリンクは1回のみ有効です。受験結果は上記の履歴をご確認ください。"
     },
     "result": {
       "title": "試験完了",

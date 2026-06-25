@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
-import { Button } from '@/components/ui/Button';
 import { BarSkeleton } from '@/components/ui/Shimmer';
 import { getCategoryStats, getDifficultQuestions } from '@/services/analyticsService';
 import type { CategoryStat, DifficultyStats } from '@/types/analytics';

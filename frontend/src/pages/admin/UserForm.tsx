@@ -113,7 +113,7 @@ const UserForm = () => {
             <select
               value={role}
               onChange={(e) => setRole(Number(e.target.value) as 1 | 2)}
-              className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm text-gray-700 dark:text-white focus:border-blue-500 focus:outline-none sm:max-w-xs"
+              className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-slate-800 dark:text-white px-3 py-2.5 text-sm text-gray-700 focus:border-blue-500 focus:outline-none sm:max-w-xs"
             >
               <option value={2}>{t('nav.employee')}</option>
               <option value={1}>{t('nav.admin')}</option>

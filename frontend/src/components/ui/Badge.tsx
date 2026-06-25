@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 
-type BadgeVariant = 'pass' | 'fail' | 'easy' | 'medium' | 'hard';
+type BadgeVariant = 'pass' | 'fail' | 'easy' | 'medium' | 'hard' | 'neutral';
 
 interface BadgeProps {
   label: string;
@@ -12,7 +12,8 @@ const variantClasses: Record<BadgeVariant, string> = {
   fail: 'bg-rose-500/20 text-rose-300 border border-rose-500/30 shadow-sm shadow-rose-500/10',
   easy: 'bg-sky-500/20 text-sky-300 border border-sky-500/30 shadow-sm shadow-sky-500/10',
   medium: 'bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-sm shadow-amber-500/10',
-  hard: 'bg-red-500/20 text-red-300 border border-red-500/30 shadow-sm shadow-red-500/10',
+  hard:    'bg-red-500/20 text-red-300 border border-red-500/30 shadow-sm shadow-red-500/10',
+  neutral: 'bg-slate-500/20 text-slate-400 border border-slate-500/30 shadow-sm shadow-slate-500/10',
 };
 
 const Badge = ({ label, variant }: BadgeProps) => {

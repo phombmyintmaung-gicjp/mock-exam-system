@@ -259,7 +259,7 @@ const Flashcards = () => {
                 <select
                   value={form.type}
                   onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as FlashcardType }))}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                 >
                   {TYPES.map((tp) => <option key={tp} value={tp}>{t(`study.${tp}.title`)}</option>)}
                 </select>
@@ -269,7 +269,7 @@ const Flashcards = () => {
                 <select
                   value={form.level}
                   onChange={(e) => setForm((f) => ({ ...f, level: e.target.value as FlashcardLevel }))}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                 >
                   {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
                 </select>
@@ -282,7 +282,7 @@ const Flashcards = () => {
                 <input
                   value={form.front}
                   onChange={(e) => setForm((f) => ({ ...f, front: e.target.value }))}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                   placeholder="漢字 / 語彙 / 文法パターン"
                 />
               </div>
@@ -291,7 +291,7 @@ const Flashcards = () => {
                 <input
                   value={form.reading}
                   onChange={(e) => setForm((f) => ({ ...f, reading: e.target.value }))}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                   placeholder="ひらがな（任意）"
                 />
               </div>
@@ -303,7 +303,7 @@ const Flashcards = () => {
                 <input
                   value={form.meaning}
                   onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                   placeholder="English meaning"
                 />
               </div>
@@ -312,7 +312,7 @@ const Flashcards = () => {
                 <input
                   value={form.meaning_my}
                   onChange={(e) => setForm((f) => ({ ...f, meaning_my: e.target.value }))}
-                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                  className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                   placeholder="မြန်မာဘာသာ အဓိပ္ပါယ် (ရွေးချယ်နိုင်သည်)"
                 />
               </div>
@@ -323,7 +323,7 @@ const Flashcards = () => {
               <input
                 value={form.example_sentence}
                 onChange={(e) => setForm((f) => ({ ...f, example_sentence: e.target.value }))}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                 placeholder="例文（任意）"
               />
               <p className="mt-1.5 flex items-start gap-1.5 text-xs text-slate-400 dark:text-white/40">
@@ -339,7 +339,7 @@ const Flashcards = () => {
               <input
                 value={form.example_translation}
                 onChange={(e) => setForm((f) => ({ ...f, example_translation: e.target.value }))}
-                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+                className="block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-amber-500 focus:outline-none dark:border-white/15 dark:bg-slate-800 dark:text-white"
                 placeholder="Example translation (optional)"
               />
             </div>

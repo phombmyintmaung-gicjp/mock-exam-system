@@ -45,6 +45,7 @@ html {
 
 /* Dark mode: "Midnight Ember" — deep charcoal with amber-rose accents */
 .dark {
+  color-scheme: dark;
   --app-bg: #111009;
   --app-gradient: linear-gradient(135deg, #111009 0%, #1c1508 28%, #1a0f05 58%, #0f1010 100%);
   --dot-color: rgba(251, 191, 36, 0.04);

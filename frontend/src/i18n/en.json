@@ -859,7 +859,9 @@
       "timeLimit": "{{minutes}} min time limit",
       "noQuestionsYet": "This set has no questions yet.",
       "start": "Start Exam",
-      "pastAttempts": "Past Attempts"
+      "pastAttempts": "Past Attempts",
+      "alreadyCompleted": "You have already completed this exam",
+      "alreadyCompletedSub": "This link is valid once per user. See your result in the history below."
     },
     "result": {
       "title": "Exam Complete",

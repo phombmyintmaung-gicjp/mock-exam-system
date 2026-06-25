@@ -172,6 +172,15 @@ class CustomSetService
 
     public function startSession(CustomQuestionSet $set, User $user): CustomExamSession
     {
+        $alreadySubmitted = CustomExamSession::where('set_id', $set->id)
+            ->where('user_id', $user->id)
+            ->where('is_submitted', true)
+            ->exists();
+
+        if ($alreadySubmitted) {
+            abort(422, 'already_completed');
+        }
+
         return CustomExamSession::create([
             'set_id'       => $set->id,
             'user_id'      => $user->id,

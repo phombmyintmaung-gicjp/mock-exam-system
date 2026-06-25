@@ -45,7 +45,7 @@ const Results = () => {
         <div className="flex min-h-[60vh] items-center justify-center">
           <div className="text-center">
             <Spinner size="lg" />
-            <p className="mt-4 text-sm text-gray-500">{t('common.loading')}</p>
+            <p className="mt-4 text-sm text-gray-500 dark:text-white/50">{t('common.loading')}</p>
           </div>
         </div>
       </PageShell>
@@ -56,7 +56,7 @@ const Results = () => {
     return (
       <PageShell>
         <div className="flex min-h-[60vh] items-center justify-center">
-          <p className="text-sm text-red-500">{t('common.error')}</p>
+          <p className="text-sm text-red-500 dark:text-red-400">{t('common.error')}</p>
         </div>
       </PageShell>
     );

@@ -261,7 +261,7 @@ const QuestionForm = () => {
                       setCategoryId(newId);
                     }
                   }}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-slate-800 dark:text-white px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                 >
                   <option value="">{t('admin.questionForm.categoryPlaceholder')}</option>
                   {categories.map((c) => (
@@ -304,7 +304,7 @@ const QuestionForm = () => {
                   <select
                     value={questionType}
                     onChange={(e) => setQuestionType(e.target.value)}
-                    className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-white/5 dark:text-white px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none"
+                    className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-white/15 dark:bg-slate-800 dark:text-white px-3 py-2.5 text-sm text-gray-700 focus:border-amber-500 focus:outline-none"
                   >
                     <option value="">{t('admin.questionForm.questionTypePlaceholder')}</option>
                     {mondaiOptions.map((m) => (

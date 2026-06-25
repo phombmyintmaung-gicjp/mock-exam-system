@@ -181,7 +181,7 @@ const Passages = () => {
                       </div>
                     </td>
                     <td className="px-5 py-3.5">
-                      <Badge label={p.level} variant="default" />
+                      <Badge label={p.level} variant="neutral" />
                     </td>
                     <td className="px-5 py-3.5 text-slate-600 dark:text-white/60">
                       {p.category?.name ?? <span className="text-slate-300 dark:text-white/20">—</span>}

@@ -4,6 +4,14 @@ import { Button } from '@/components/ui/Button';
 import { TriangleAlertIcon } from '@/components/ui/Icons';
 import type { ViolationType } from '@/hooks/useExamSecurity';
 
+interface ExamViolationModalProps {
+  isOpen: boolean;
+  violationType: ViolationType | null;
+  violationCount: number;
+  threshold: number;
+  onDismiss: () => void;
+}
+
 export function ExamViolationModal({
   isOpen,
   violationType,

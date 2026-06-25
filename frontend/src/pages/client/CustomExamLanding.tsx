@@ -5,7 +5,7 @@ import { clsx } from 'clsx';
 import { PageShell } from '@/components/layout/PageShell';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
-import { ClipboardCheckIcon, ClockIcon, BoltIcon } from '@/components/ui/Icons';
+import { ClipboardCheckIcon, ClockIcon, BoltIcon, CheckIcon } from '@/components/ui/Icons';
 import { getCustomSetBySlug, startCustomExamSession, getMyCustomExamHistory } from '@/services/customSetService';
 import { useExamSessionStore } from '@/store/examSessionStore';
 import type { CustomExamLandingInfo, MyCustomExamAttempt } from '@/types/customSet';
@@ -138,7 +138,17 @@ const CustomExamLanding = () => {
             </p>
           )}
 
-          {info.questionCount === 0 ? (
+          {history.length > 0 ? (
+            <div className="flex flex-col items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+              <CheckIcon className="h-6 w-6 text-emerald-500 dark:text-emerald-400" strokeWidth={2.5} />
+              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                {t('customExam.landing.alreadyCompleted')}
+              </p>
+              <p className="text-center text-xs text-emerald-600/70 dark:text-emerald-400/70">
+                {t('customExam.landing.alreadyCompletedSub')}
+              </p>
+            </div>
+          ) : info.questionCount === 0 ? (
             <p className="text-center text-sm text-gray-400 dark:text-white/30">
               {t('customExam.landing.noQuestionsYet')}
             </p>

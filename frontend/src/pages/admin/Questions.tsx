@@ -325,7 +325,7 @@ const Questions = () => {
             <select
               value={jlptSection}
               onChange={(e) => { setJlptSection(e.target.value as JLPTTestType | 'all'); setJlptType(''); }}
-              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-amber-500 focus:outline-none"
+              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-amber-500 focus:outline-none"
             >
               <option value="all">{t('admin.questions.allSections')}</option>
               <option value="文字語彙">{t('admin.questions.sectionMojiGoi')}</option>
@@ -335,7 +335,7 @@ const Questions = () => {
             <select
               value={jlptType}
               onChange={(e) => setJlptType(e.target.value)}
-              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-amber-500 focus:outline-none"
+              className="rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-700 dark:text-white/80 focus:border-amber-500 focus:outline-none"
             >
               <option value="">{t('admin.questions.allTypes')}</option>
               {(jlptSection === 'all' ? QUESTION_TYPES.all : QUESTION_TYPES[jlptSection]).map((qt) => (

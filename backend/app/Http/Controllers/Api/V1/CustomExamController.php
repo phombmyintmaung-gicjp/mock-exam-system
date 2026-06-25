@@ -30,9 +30,14 @@ class CustomExamController extends Controller
 
     public function startSession(string $slug): JsonResponse
     {
-        $set     = $this->service->findBySlug($slug);
-        $user    = auth()->user();
-        $session = $this->service->startSession($set, $user);
+        $set  = $this->service->findBySlug($slug);
+        $user = auth()->user();
+
+        try {
+            $session = $this->service->startSession($set, $user);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getStatusCode());
+        }
 
         $questions = $set->questions->map(fn ($q) => [
             'id'          => $q->id,
