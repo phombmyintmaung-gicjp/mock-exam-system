@@ -156,10 +156,10 @@ const Passages = () => {
                   <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40">
                     {t('admin.passages.colLevel')}
                   </th>
-                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40">
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40 whitespace-nowrap">
                     {t('admin.passages.colCategory')}
                   </th>
-                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40">
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40 whitespace-nowrap">
                     {t('admin.passages.colQuestions')}
                   </th>
                   <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-white/40">
@@ -193,13 +193,13 @@ const Passages = () => {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => openEdit(p)}
-                          className="text-sm font-medium text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300"
+                          className="text-sm font-medium text-amber-600 hover:text-amber-500 dark:text-amber-400 dark:hover:text-amber-300 whitespace-nowrap"
                         >
                           {t('common.edit')}
                         </button>
                         <button
                           onClick={() => setDeleteTarget(p)}
-                          className="text-sm font-medium text-rose-500 hover:text-rose-400 dark:text-rose-400 dark:hover:text-rose-300"
+                          className="text-sm font-medium text-rose-500 hover:text-rose-400 dark:text-rose-400 dark:hover:text-rose-300 whitespace-nowrap"
                         >
                           {t('common.delete')}
                         </button>

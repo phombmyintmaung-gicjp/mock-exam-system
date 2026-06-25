@@ -233,7 +233,7 @@ const FlashcardImport = () => {
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-white/10">
                     <th className="pb-1.5 text-left font-semibold text-slate-500 dark:text-white/40">{t('admin.flashcards.colField')}</th>
-                    <th className="pb-1.5 text-center font-semibold text-slate-500 dark:text-white/40">{t('admin.flashcards.colRequired')}</th>
+                    <th className="pb-1.5 text-center font-semibold text-slate-500 dark:text-white/40 whitespace-nowrap">{t('admin.flashcards.colRequired')}</th>
                     <th className="pb-1.5 text-left font-semibold text-slate-500 dark:text-white/40">{t('admin.flashcards.colNotes')}</th>
                   </tr>
                 </thead>

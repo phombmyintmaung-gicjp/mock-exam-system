@@ -233,8 +233,8 @@ const UserManagement = () => {
               <tr className="border-b border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnName')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnEmail')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnRole')}</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnStatus')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45 whitespace-nowrap">{t('admin.users.columnRole')}</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45 whitespace-nowrap">{t('admin.users.columnStatus')}</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-white/45">{t('admin.users.columnActions')}</th>
               </tr>
             </thead>
@@ -249,9 +249,9 @@ const UserManagement = () => {
                   )
                 : filtered.map((user) => (
                     <tr key={user.id} className="border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-gray-50 dark:hover:bg-white/5">
-                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{user.name}</td>
+                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">{user.name}</td>
                       <td className="px-6 py-4 text-gray-600 dark:text-white/60">{user.email}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={
                             user.role === 1
@@ -288,14 +288,14 @@ const UserManagement = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <button
-                            className="text-xs font-medium text-amber-600 hover:text-amber-800"
+                            className="text-xs font-medium text-amber-600 hover:text-amber-800 whitespace-nowrap"
                             onClick={() => navigate(`/admin/users/${user.id}/edit`)}
                           >
                             {t('common.edit')}
                           </button>
                           {currentUser?.id !== user.id && (
                             <button
-                              className="text-xs font-medium text-rose-500 hover:text-rose-700"
+                              className="text-xs font-medium text-rose-500 hover:text-rose-700 whitespace-nowrap"
                               onClick={() => { setDeleteError(null); setDeleteTarget(user); }}
                             >
                               {t('common.delete')}

@@ -103,9 +103,9 @@ const CustomSetList = () => {
               <tr>
                 <th className="px-5 py-3">{t('admin.customSets.colName')}</th>
                 <th className="px-5 py-3">{t('admin.customSets.colCode')}</th>
-                <th className="px-5 py-3 text-center">{t('admin.customSets.colQuestions')}</th>
+                <th className="px-5 py-3 text-center whitespace-nowrap">{t('admin.customSets.colQuestions')}</th>
                 <th className="px-5 py-3 text-center">{t('admin.customSets.colPassing')}</th>
-                <th className="px-5 py-3">{t('admin.customSets.colTime')}</th>
+                <th className="px-5 py-3 whitespace-nowrap">{t('admin.customSets.colTime')}</th>
                 <th className="px-5 py-3 text-center">{t('admin.customSets.colStatus')}</th>
                 <th className="px-5 py-3 text-right">{t('admin.customSets.colActions')}</th>
               </tr>
@@ -128,7 +128,7 @@ const CustomSetList = () => {
                       </code>
                       <button
                         onClick={() => handleCopyLink(s.slug)}
-                        className="text-xs text-amber-600 hover:text-amber-700 dark:text-amber-400 font-medium"
+                        className="text-xs text-amber-600 hover:text-amber-700 dark:text-amber-400 font-medium whitespace-nowrap"
                       >
                         {copiedSlug === s.slug ? t('admin.customSets.linkCopied') : t('admin.customSets.copyLink')}
                       </button>
@@ -136,11 +136,13 @@ const CustomSetList = () => {
                   </td>
                   <td className="px-5 py-4 text-center text-gray-600 dark:text-white/60">{s.questionCount}</td>
                   <td className="px-5 py-4 text-center text-gray-600 dark:text-white/60">{s.passingScore}%</td>
-                  <td className="px-5 py-4 text-gray-600 dark:text-white/60">{formatTime(s.timeLimitSeconds)}</td>
+                  <td className="px-5 py-4 text-gray-600 dark:text-white/60 whitespace-nowrap">
+                    {formatTime(s.timeLimitSeconds)}
+                  </td>
                   <td className="px-5 py-4 text-center">
                     <span
                       className={clsx(
-                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+                        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
                         s.isActive
                           ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
                           : 'bg-gray-100 text-gray-500 dark:bg-white/10 dark:text-white/40',
@@ -153,21 +155,21 @@ const CustomSetList = () => {
                     <div className="flex items-center justify-end gap-3">
                       <Link
                         to={`/admin/custom-sets/${s.id}/results`}
-                        className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-white/40 dark:hover:text-white/70"
+                        className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-white/40 dark:hover:text-white/70 whitespace-nowrap"
                       >
                         <BarChartIcon className="h-3.5 w-3.5" />
                         {t('admin.customSets.viewResults')}
                       </Link>
                       <Link
                         to={`/admin/custom-sets/${s.id}/edit`}
-                        className="text-xs font-medium text-amber-600 hover:text-amber-700 dark:text-amber-400"
+                        className="text-xs font-medium text-amber-600 hover:text-amber-700 dark:text-amber-400 whitespace-nowrap"
                       >
                         {t('common.edit')}
                       </Link>
                       <button
                         onClick={() => setDeleteTarget(s)}
                         disabled={deletingId === s.id}
-                        className="text-xs font-medium text-rose-500 hover:text-rose-600 dark:text-rose-400 disabled:opacity-40"
+                        className="text-xs font-medium text-rose-500 hover:text-rose-600 dark:text-rose-400 disabled:opacity-40 whitespace-nowrap"
                       >
                         {t('common.delete')}
                       </button>

@@ -138,7 +138,7 @@ const AdminResults = () => {
                             variant={item.status}
                           />
                           {item.submittedBy === 'violation' && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-700 dark:bg-orange-500/20 dark:text-orange-300">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-700 dark:bg-orange-500/20 dark:text-orange-300 whitespace-nowrap">
                               <TriangleAlertIcon className="h-3 w-3 shrink-0" />
                               {t('result.submittedByViolation')}
                             </span>
@@ -148,7 +148,7 @@ const AdminResults = () => {
                       <td className="px-6 py-4 text-slate-400 dark:text-white/45">
                         {item.completedAt ? fmt(item.completedAt) : '—'}
                       </td>
-                      <td className="px-6 py-4 text-right text-xs font-medium text-amber-500 dark:text-amber-400">
+                      <td className="px-6 py-4 text-right text-xs font-medium text-amber-500 dark:text-amber-400 whitespace-nowrap">
                         {t('admin.results.viewDetail')}
                       </td>
                     </tr>

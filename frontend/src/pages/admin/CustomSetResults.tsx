@@ -127,7 +127,7 @@ const CustomSetResults = () => {
                           {r.score} / {r.totalQuestions}
                           <span className="ml-1 text-xs text-gray-400 dark:text-white/35">({pct}%)</span>
                         </td>
-                        <td className="px-5 py-4 text-center">
+                        <td className="px-5 py-4 text-center whitespace-nowrap">
                           <div className="flex flex-wrap items-center justify-center gap-1">
                             <span
                               className={clsx(
@@ -148,7 +148,7 @@ const CustomSetResults = () => {
                           </div>
                         </td>
                         <td className="px-5 py-4 text-gray-500 dark:text-white/45">{fmt(r.completedAt)}</td>
-                        <td className="px-5 py-4 text-right text-xs font-medium text-amber-500 dark:text-amber-400">
+                        <td className="px-5 py-4 text-right text-xs font-medium text-amber-500 dark:text-amber-400 whitespace-nowrap">
                           {t('admin.customSets.viewDetail')}
                         </td>
                       </tr>

@@ -364,7 +364,7 @@ const CustomSetImport = () => {
                     <thead className="bg-gray-50 dark:bg-white/5">
                       <tr>
                         <th className="px-4 py-2 text-left font-semibold text-gray-500 dark:text-white/40">{t('admin.customSets.import.colHeader')}</th>
-                        <th className="px-4 py-2 text-center font-semibold text-gray-500 dark:text-white/40">{t('admin.questionImport.colRequired')}</th>
+                        <th className="px-4 py-2 text-center font-semibold text-gray-500 dark:text-white/40 whitespace-nowrap">{t('admin.questionImport.colRequired')}</th>
                         <th className="px-4 py-2 text-left font-semibold text-gray-500 dark:text-white/40">{t('admin.questionImport.colNotes')}</th>
                       </tr>
                     </thead>

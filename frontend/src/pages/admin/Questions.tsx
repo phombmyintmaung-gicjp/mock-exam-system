@@ -243,7 +243,7 @@ const Questions = () => {
   const switchTab = (next: Tab) => {
     setTab(next);
     setItSearch('');
-    setItDifficulty('');
+    // setItDifficulty('');
     setJlptLevel('all');
     setJlptSection('all');
     setJlptType('');
@@ -410,7 +410,9 @@ const Questions = () => {
                                 {level}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-slate-600 dark:text-white/60">{section}</td>
+                            <td className="px-6 py-4 text-slate-600 dark:text-white/60 whitespace-nowrap">
+                              {section}
+                            </td>
                             <td className="px-6 py-4 text-slate-600 dark:text-white/60 font-mono text-xs">
                               {q.question_type ?? '—'}
                             </td>
@@ -419,13 +421,13 @@ const Questions = () => {
                         <td className="px-6 py-4">
                           <div className="flex gap-3">
                             <button
-                              className="text-xs font-medium text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300"
+                              className="text-xs font-medium text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 whitespace-nowrap"
                               onClick={() => navigate(`/admin/questions/${q.id}/edit`)}
                             >
                               {t('common.edit')}
                             </button>
                             <button
-                              className="text-xs font-medium text-rose-500 hover:text-rose-700"
+                              className="text-xs font-medium text-rose-500 hover:text-rose-700 whitespace-nowrap dark:text-rose-400 dark:hover:text-rose-300"
                               onClick={() => setDeleteTargetId(q.id)}
                             >
                               {t('common.delete')}
