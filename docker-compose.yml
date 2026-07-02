@@ -2,6 +2,7 @@ services:
   # ── MySQL ────────────────────────────────────────────────────
   db:
     image: mysql:8.0
+    container_name: mock-exam-db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: mock_exam
@@ -13,16 +14,19 @@ services:
     ports:
       - "3309:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-secret}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - default
 
   # ── Laravel backend ──────────────────────────────────────────
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: mock-exam-backend
     restart: unless-stopped
     environment:
       APP_ENV: ${APP_ENV:-local}
@@ -44,28 +48,38 @@ services:
     volumes:
       - ./backend:/var/www/html
       - /var/www/html/vendor
-    ports:
-      - "8002:8000"
+    expose:
+      - "8000"
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - default
+      - proxy-net
 
-  # ── React frontend ───────────────────────────────────────────
+  # ── React frontend (production build) ────────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: production
+      args:
+        VITE_API_BASE_URL: /miyazaki-shiken-lab/api/v1
+    container_name: mock-exam-frontend
     restart: unless-stopped
-    environment:
-      BACKEND_URL: http://backend:8000
-      HMR_CLIENT_PORT: 5175
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    ports:
-      - "5175:5173"
+    expose:
+      - "80"
     depends_on:
       - backend
+    networks:
+      - default
+      - proxy-net
 
 volumes:
   db_data:
+
+networks:
+  default:
+    name: mock-exam-system-net
+  proxy-net:
+    external: true
