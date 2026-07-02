@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    // Creates the passages table for JLPT reading comprehension texts.
     public function up(): void
     {
         Schema::create('passages', function (Blueprint $table) {
@@ -16,13 +14,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('content');
             $table->enum('level', ['N1', 'N2', 'N3', 'N4', 'N5']);
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('passages');

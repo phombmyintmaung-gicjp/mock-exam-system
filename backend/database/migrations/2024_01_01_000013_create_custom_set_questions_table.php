@@ -6,20 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    // Creates the pivot table linking questions to custom sets with display ordering.
     public function up(): void
     {
-        Schema::create('custom_exam_sessions', function (Blueprint $table) {
+        Schema::create('custom_set_questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('set_id')->constrained('custom_question_sets')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->boolean('is_submitted')->default(false);
-            $table->timestamp('completed_at')->nullable();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
+            $table->smallInteger('sort_order')->default(0);
             $table->timestamps();
+
+            $table->unique(['set_id', 'question_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('custom_exam_sessions');
+        Schema::dropIfExists('custom_set_questions');
     }
 };

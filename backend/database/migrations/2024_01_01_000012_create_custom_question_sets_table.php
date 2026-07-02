@@ -6,15 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    // Creates the custom_question_sets table for admin-curated shareable exam sets.
     public function up(): void
     {
         Schema::create('custom_question_sets', function (Blueprint $table) {
             $table->id();
             $table->string('name', 200);
             $table->text('description')->nullable();
-            $table->string('slug', 16)->unique();
+            $table->string('slug', 100)->unique();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
-            $table->integer('time_limit_seconds')->default(0); // 0 = no limit
+            $table->integer('time_limit_seconds')->default(0);
             $table->smallInteger('passing_score')->default(70);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

@@ -6,18 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    // Creates the exam_results table; user_id is denormalized for analytics performance.
     public function up(): void
     {
         Schema::create('exam_results', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')
-                ->unique() // One result per session (one-to-one)
-                ->constrained('exam_sessions')
-                ->cascadeOnDelete();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-            // user_id is intentionally denormalized here for analytics query performance.
+            $table->foreignId('session_id')->unique()->constrained('exam_sessions')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->smallInteger('score');
             $table->smallInteger('total_questions');
             $table->smallInteger('passing_score');
@@ -25,8 +20,8 @@ return new class extends Migration
             $table->timestamp('completed_at');
             $table->timestamps();
 
-            $table->index(['user_id', 'completed_at']); // Supports score-trend queries
-            $table->index(['user_id', 'status']);        // Supports category-stats queries
+            $table->index(['user_id', 'completed_at']);
+            $table->index(['user_id', 'status']);
         });
     }
 

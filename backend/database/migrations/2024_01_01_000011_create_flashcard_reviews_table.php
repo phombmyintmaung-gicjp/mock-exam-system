@@ -6,15 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Spaced repetition (SM-2) review state per user per flashcard.
-     *
-     * Each row tracks where the user is in the SM-2 algorithm for one card:
-     *   - interval_days  — current inter-review interval (days)
-     *   - ease_factor    — difficulty multiplier (min 1.3, default 2.5)
-     *   - repetitions    — consecutive successful reviews without reset
-     *   - next_review_at — when this card is next due
-     */
+    // Creates the flashcard_reviews table for spaced-repetition scheduling per user.
     public function up(): void
     {
         Schema::create('flashcard_reviews', function (Blueprint $table) {

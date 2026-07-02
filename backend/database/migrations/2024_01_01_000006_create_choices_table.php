@@ -6,17 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    // Creates the choices table; each question has exactly one correct choice.
     public function up(): void
     {
         Schema::create('choices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('question_id')
-                ->constrained('questions')
-                ->cascadeOnDelete();
+            $table->foreignId('question_id')->constrained()->cascadeOnDelete();
             $table->string('text', 500);
             $table->boolean('is_correct')->default(false);
             $table->smallInteger('order')->default(0);
-            // No timestamps — choices are fully owned by their parent question.
         });
     }
 
