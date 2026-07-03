@@ -17,7 +17,9 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "kanjivg-js": ["node_modules/kanjivg-js/dist/core/index.d.ts"],
+      "kanjivg-js/react": ["node_modules/kanjivg-js/dist/components/index.d.ts"]
     }
   },
   "include": ["src"],

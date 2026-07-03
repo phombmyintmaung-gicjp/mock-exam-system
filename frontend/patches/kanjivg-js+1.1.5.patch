@@ -1,0 +1,31 @@
+diff --git a/node_modules/kanjivg-js/dist/index.esm.js b/node_modules/kanjivg-js/dist/index.esm.js
+index f664dd3..23adf35 100644
+--- a/node_modules/kanjivg-js/dist/index.esm.js
++++ b/node_modules/kanjivg-js/dist/index.esm.js
+@@ -323,7 +323,7 @@ class KanjiVG {
+             let indexContent;
+             // Browser build: fetch from public assets
+             if (IS_BROWSER) {
+-                const response = await fetch('/kvg-index.json');
++                const response = await fetch(`${import.meta.env.BASE_URL}kvg-index.json`);
+                 if (!response.ok) {
+                     throw new Error(`Failed to fetch index: ${response.status}`);
+                 }
+@@ -404,7 +404,7 @@ class KanjiVG {
+             let indexContent;
+             // Browser build: fetch from public assets
+             if (IS_BROWSER) {
+-                const response = await fetch('/radical-index.json');
++                const response = await fetch(`${import.meta.env.BASE_URL}radical-index.json`);
+                 if (!response.ok) {
+                     throw new Error(`Failed to fetch radical index: ${response.status}`);
+                 }
+@@ -455,7 +455,7 @@ class KanjiVG {
+                 let attempt = 0;
+                 let lastError;
+                 while (attempt < maxAttempts) {
+-                    const response = await fetch(`/kanji/${unicode}.svg`);
++                    const response = await fetch(`${import.meta.env.BASE_URL}kanji/${unicode}.svg`);
+                     if (response.ok) {
+                         return await response.text();
+                     }

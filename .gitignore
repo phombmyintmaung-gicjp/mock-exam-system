@@ -11,6 +11,11 @@ backend/vendor/
 frontend/dist/
 frontend/.vite/
 
+# kanjivg-js vite-plugin copies these into public/ on every dev/build run
+frontend/public/kanji/
+frontend/public/kvg-index.json
+frontend/public/radical-index.json
+
 # ============================================================
 # Environment & secrets
 # ============================================================
