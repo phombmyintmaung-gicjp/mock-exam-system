@@ -145,6 +145,41 @@ class AnalyticsService
     }
 
     /**
+     * Return how many times each question has been answered incorrectly, aggregated across all users.
+     * Only questions with at least one incorrect answer are included (inner join).
+     *
+     * @return list<array{questionId: int, questionText: string, category: string, questionType: string|null, attemptCount: int, incorrectCount: int}>
+     */
+    public function getIncorrectCountsByCategory(): array
+    {
+        return DB::table('answer_records')
+            ->join('questions', 'questions.id', '=', 'answer_records.question_id')
+            ->whereNull('questions.deleted_at')
+            ->select([
+                'questions.id as question_id',
+                'questions.text as question_text',
+                'questions.category',
+                'questions.question_type',
+                DB::raw('COUNT(*) as attempt_count'),
+                DB::raw('SUM(CASE WHEN answer_records.is_correct = 0 THEN 1 ELSE 0 END) as incorrect_count'),
+            ])
+            ->groupBy('questions.id', 'questions.text', 'questions.category', 'questions.question_type')
+            ->havingRaw('SUM(CASE WHEN answer_records.is_correct = 0 THEN 1 ELSE 0 END) > 0')
+            ->orderBy('questions.category')
+            ->orderBy('incorrect_count', 'desc')
+            ->get()
+            ->map(fn ($row) => [
+                'questionId'     => (int) $row->question_id,
+                'questionText'   => $row->question_text,
+                'category'       => $row->category,
+                'questionType'   => $row->question_type,
+                'attemptCount'   => (int) $row->attempt_count,
+                'incorrectCount' => (int) $row->incorrect_count,
+            ])
+            ->all();
+    }
+
+    /**
      * Return the user's score history ordered by completion time.
      * Score is expressed as a percentage (score / total_questions * 100).
      *

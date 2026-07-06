@@ -1,5 +1,5 @@
 import api from './api';
-import type { CategoryStat, WeakArea, ScoreTrend, RetryStats, DifficultyStats } from '@/types/analytics';
+import type { CategoryStat, WeakArea, ScoreTrend, RetryStats, DifficultyStats, QuestionIncorrectStat } from '@/types/analytics';
 
 export const getCategoryStats = async (): Promise<CategoryStat[]> => {
   const res = await api.get('/analytics/category-stats');
@@ -44,6 +44,11 @@ export const getDifficultQuestions = async (): Promise<DifficultyStats[]> => {
     attemptCount: d.attemptCount as number,
     correctRate:  d.correctRate as number,
   }));
+};
+
+export const getIncorrectCounts = async (): Promise<QuestionIncorrectStat[]> => {
+  const res = await api.get('/analytics/incorrect-counts');
+  return res.data.data ?? [];
 };
 
 export const getScoreTrends = async (): Promise<ScoreTrend[]> => {

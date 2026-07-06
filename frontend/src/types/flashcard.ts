@@ -13,3 +13,10 @@ export interface Flashcard {
   example_translation: string | null;
   frequency_band?: number | null;
 }
+
+export interface CustomFlashcardSet {
+  id: number;
+  name: string;
+  type: FlashcardType;
+  levels: FlashcardLevel[];
+}

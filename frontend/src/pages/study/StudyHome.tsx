@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
-import { ArrowLeftIcon, BookOpenIcon, ChevronRightIcon } from '@/components/ui/Icons';
+import { ArrowLeftIcon, BookOpenIcon, ChevronRightIcon, BookmarkIcon } from '@/components/ui/Icons';
 
 interface StudyCardProps {
   to: string;
@@ -59,7 +59,18 @@ const StudyHome = () => {
           <ArrowLeftIcon className="h-4 w-4" />
           {backLabel}
         </Link>
-        <LanguageToggle />
+        <div className="flex items-center gap-2">
+          {token && (
+            <Link
+              to="/study/bookmarks"
+              className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/20 px-3.5 py-1.5 text-sm font-medium text-slate-700 backdrop-blur-sm transition-colors hover:bg-white/30 dark:text-white/70"
+            >
+              <BookmarkIcon className="h-4 w-4" />
+              {t('study.bookmark.title')}
+            </Link>
+          )}
+          <LanguageToggle />
+        </div>
       </header>
 
       {/* Hero */}

@@ -20,11 +20,12 @@ class FlashcardReviewController extends Controller
     public function due(Request $request): JsonResponse
     {
         /** @var \App\Models\User $user */
-        $user  = auth()->user();
-        $cards = $this->service->getDueCards(
+        $user   = auth()->user();
+        $levels = $request->query('level') ? explode(',', $request->query('level')) : [];
+        $cards  = $this->service->getDueCards(
             $user,
             $request->query('type'),
-            $request->query('level'),
+            $levels,
             (int) ($request->query('limit', 50))
         );
 

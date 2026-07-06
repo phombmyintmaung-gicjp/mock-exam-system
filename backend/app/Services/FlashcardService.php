@@ -7,11 +7,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class FlashcardService
 {
-    public function list(?string $type, ?string $level): LengthAwarePaginator
+    public function list(?string $type, array $levels = []): LengthAwarePaginator
     {
         $query = Flashcard::query()->orderBy('level')->orderBy('front');
-        if ($type)  $query->where('type',  $type);
-        if ($level) $query->where('level', $level);
+        if ($type)   $query->where('type', $type);
+        if ($levels) $query->whereIn('level', $levels);
         return $query->paginate(200);
     }
 

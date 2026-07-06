@@ -79,6 +79,7 @@
     "examSelect": "Take Exam",
     "history": "History",
     "weakAreas": "Weak Areas",
+    "questionStats": "Question Stats",
     "profile": "Profile",
     "passages": "Passages",
     "categories": "Categories",
@@ -93,7 +94,8 @@
     "flashcards": "Flashcards",
     "flashcardStudy": "Flashcard Study",
     "customSets": "Custom Sets",
-    "results": "Results"
+    "results": "Results",
+    "bookmarks": "Bookmarks"
   },
   "exam": {
     "startButton": "Start Exam",
@@ -655,6 +657,20 @@
     "grammar": {
       "title": "Grammar",
       "description": "Study grammar patterns and usage"
+    },
+    "bookmark": {
+      "add": "Add bookmark",
+      "remove": "Remove bookmark",
+      "title": "Bookmarks",
+      "description": "Save difficult cards to review later",
+      "empty": "You haven't bookmarked any cards yet"
+    },
+    "customSet": {
+      "mySets": "My Sets",
+      "save": "Save as set",
+      "namePrompt": "Enter a name for this set",
+      "saveSuccess": "Set saved",
+      "deleteConfirm": "Delete this set?"
     }
   },
   "home": {
@@ -802,6 +818,15 @@
       "attempts": "{{count}} attempt(s)",
       "bestScore": "Best",
       "latestScore": "Latest"
+    },
+    "questionStats": {
+      "title": "Question Stats",
+      "subtitle": "How often each question has been answered incorrectly across all users, by category (view only)",
+      "columnQuestion": "Question",
+      "columnAttempts": "Attempts",
+      "columnIncorrect": "Incorrect",
+      "questionCount": "{{count}} question(s)",
+      "empty": "No statistics available yet"
     }
   },
   "notFound": {
@@ -814,6 +839,7 @@
     "register": "Register",
     "study": "Study",
     "flashcardSession": "Flashcard Study",
+    "bookmarkedFlashcards": "Bookmarks",
     "adminDashboard": "Dashboard",
     "adminQuestionsImport": "Import Questions",
     "adminQuestionsNew": "New Question",
@@ -846,6 +872,7 @@
     "readingSession": "Reading Exam",
     "profileHistory": "Exam History",
     "profileWeakAreas": "Weak Areas",
+    "questionStats": "Question Stats",
     "profile": "Profile"
   },
   "customExam": {

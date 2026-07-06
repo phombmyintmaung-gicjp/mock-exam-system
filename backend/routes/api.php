@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\V1\Admin\CustomSetController;
 use App\Http\Controllers\Api\V1\CustomExamController;
 use App\Http\Controllers\Api\V1\FlashcardController;
 use App\Http\Controllers\Api\V1\FlashcardReviewController;
+use App\Http\Controllers\Api\V1\FlashcardBookmarkController;
+use App\Http\Controllers\Api\V1\CustomFlashcardSetController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 /*
@@ -36,10 +38,18 @@ Route::prefix('v1')->group(function () {
     // -------------------------------------------------------------------------
     Route::get('study/flashcards', [FlashcardController::class, 'index'])->name('study.flashcards.index');
 
-    // SRS review routes (auth required — placed here to register before the wildcard {id} in the auth block)
+    // SRS review + bookmark routes (auth required — placed here to register before the wildcard {id} in the auth block)
     Route::middleware('auth:api')->group(function () {
         Route::get('study/flashcards/due', [FlashcardReviewController::class, 'due'])->name('study.flashcards.due');
         Route::post('study/flashcards/{id}/review', [FlashcardReviewController::class, 'store'])->name('study.flashcards.review');
+
+        Route::get('study/flashcards/bookmarked', [FlashcardBookmarkController::class, 'index'])->name('study.flashcards.bookmarked');
+        Route::post('study/flashcards/{id}/bookmark', [FlashcardBookmarkController::class, 'store'])->name('study.flashcards.bookmark');
+        Route::delete('study/flashcards/{id}/bookmark', [FlashcardBookmarkController::class, 'destroy'])->name('study.flashcards.unbookmark');
+
+        Route::get('flashcard-sets', [CustomFlashcardSetController::class, 'index'])->name('flashcard-sets.index');
+        Route::post('flashcard-sets', [CustomFlashcardSetController::class, 'store'])->name('flashcard-sets.store');
+        Route::delete('flashcard-sets/{id}', [CustomFlashcardSetController::class, 'destroy'])->name('flashcard-sets.destroy');
     });
 
     // -------------------------------------------------------------------------
@@ -88,6 +98,7 @@ Route::prefix('v1')->group(function () {
             Route::get('weak-areas', [AnalyticsController::class, 'weakAreas'])->name('analytics.weak-areas');
             Route::get('score-trend', [AnalyticsController::class, 'scoreTrend'])->name('analytics.score-trend');
             Route::get('retry-stats', [AnalyticsController::class, 'retryStats'])->name('analytics.retry-stats');
+            Route::get('incorrect-counts', [AnalyticsController::class, 'incorrectCounts'])->name('analytics.incorrect-counts');
         });
 
         // -------------------------------------------------------------------------

@@ -108,4 +108,15 @@ class AnalyticsController extends Controller
 
         return response()->json(['data' => $questions]);
     }
+
+    /**
+     * Return how many times each question has been answered incorrectly, aggregated across
+     * all users. Read-only, employee-facing (not admin-only, unlike difficultQuestions()).
+     */
+    public function incorrectCounts(): JsonResponse
+    {
+        $stats = $this->analyticsService->getIncorrectCountsByCategory();
+
+        return response()->json(['data' => $stats]);
+    }
 }

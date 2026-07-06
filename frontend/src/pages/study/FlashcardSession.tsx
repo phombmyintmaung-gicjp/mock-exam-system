@@ -3,11 +3,17 @@ import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { FlipCard } from '@/components/shared/FlipCard';
+import { FlashcardBrowser } from '@/components/shared/FlashcardBrowser';
 import { Spinner } from '@/components/ui/Spinner';
-import { getFlashcards, getDueFlashcards, submitSrsReview, type SrsRating } from '@/services/flashcardService';
-import type { Flashcard, FlashcardType, FlashcardLevel } from '@/types/flashcard';
+import { Modal } from '@/components/ui/Modal';
+import {
+  getFlashcards, getDueFlashcards, submitSrsReview, type SrsRating,
+  getBookmarkedFlashcards, addBookmark, removeBookmark,
+  getCustomFlashcardSets, createCustomFlashcardSet, deleteCustomFlashcardSet,
+} from '@/services/flashcardService';
+import type { Flashcard, FlashcardType, FlashcardLevel, CustomFlashcardSet } from '@/types/flashcard';
 import { useAuthStore } from '@/store/authStore';
-import { ArrowLeftIcon, ShuffleIcon, FolderIcon, ChevronLeftIcon, ChevronRightIcon, CheckCircleIcon } from '@/components/ui/Icons';
+import { ArrowLeftIcon, ShuffleIcon, FolderIcon, CheckCircleIcon, XIcon, BookmarkIcon } from '@/components/ui/Icons';
 
 const LEVELS: FlashcardLevel[] = ['N1', 'N2', 'N3', 'N4', 'N5'];
 
@@ -35,7 +41,7 @@ const FlashcardSession = () => {
   const token = useAuthStore((s) => s.token);
 
   const [mode, setMode]           = useState<SessionMode>('browse');
-  const [level, setLevel]         = useState<FlashcardLevel | ''>('');
+  const [levels, setLevels]       = useState<FlashcardLevel[]>([]);
   const [cards, setCards]         = useState<Flashcard[]>([]);
   const [index, setIndex]         = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +50,12 @@ const FlashcardSession = () => {
   const [flipped, setFlipped]     = useState(false);
   const [reviewed, setReviewed]   = useState(0);
   const [submitting, setSubmitting] = useState(false);
+
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(new Set());
+  const [customSets, setCustomSets]       = useState<CustomFlashcardSet[]>([]);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [setName, setSetName]             = useState('');
+  const [savingSet, setSavingSet]         = useState(false);
 
   const flashcardType = (type as FlashcardType) ?? 'kanji';
 
@@ -55,10 +67,10 @@ const FlashcardSession = () => {
     setFlipped(false);
     try {
       if (mode === 'review' && token) {
-        const data = await getDueFlashcards(flashcardType, level || undefined);
+        const data = await getDueFlashcards(flashcardType, levels);
         setCards(data);
       } else {
-        const data = await getFlashcards(flashcardType, level || undefined);
+        const data = await getFlashcards(flashcardType, levels);
         setCards(shuffled ? shuffle(data) : data);
       }
     } catch {
@@ -66,15 +78,70 @@ const FlashcardSession = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [flashcardType, level, shuffled, mode, token]);
+  }, [flashcardType, levels, shuffled, mode, token]);
 
   useEffect(() => { void load(); }, [load]);
 
   // Reset flip state when navigating to a new card
   useEffect(() => { setFlipped(false); }, [index]);
 
-  const prev = () => setIndex((i) => Math.max(0, i - 1));
-  const next = () => setIndex((i) => Math.min(cards.length - 1, i + 1));
+  // Load the user's bookmarks and saved sets once logged in
+  useEffect(() => {
+    if (!token) return;
+    void getBookmarkedFlashcards().then((data) => setBookmarkedIds(new Set(data.map((c) => c.id)))).catch(() => {});
+    void getCustomFlashcardSets(flashcardType).then(setCustomSets).catch(() => {});
+  }, [token, flashcardType]);
+
+  const toggleLevel = (l: FlashcardLevel) => {
+    setLevels((prev) => (prev.includes(l) ? prev.filter((x) => x !== l) : [...prev, l]));
+  };
+
+  const toggleBookmark = async (flashcardId: number) => {
+    const wasBookmarked = bookmarkedIds.has(flashcardId);
+    setBookmarkedIds((prev) => {
+      const next = new Set(prev);
+      if (wasBookmarked) next.delete(flashcardId); else next.add(flashcardId);
+      return next;
+    });
+    try {
+      if (wasBookmarked) await removeBookmark(flashcardId);
+      else await addBookmark(flashcardId);
+    } catch {
+      // revert on failure
+      setBookmarkedIds((prev) => {
+        const next = new Set(prev);
+        if (wasBookmarked) next.add(flashcardId); else next.delete(flashcardId);
+        return next;
+      });
+    }
+  };
+
+  const applySet = (set: CustomFlashcardSet) => setLevels(set.levels);
+
+  const handleDeleteSet = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    setCustomSets((prev) => prev.filter((s) => s.id !== id));
+    try {
+      await deleteCustomFlashcardSet(id);
+    } catch {
+      void getCustomFlashcardSets(flashcardType).then(setCustomSets).catch(() => {});
+    }
+  };
+
+  const handleSaveSet = async () => {
+    if (!setName.trim() || levels.length === 0 || savingSet) return;
+    setSavingSet(true);
+    try {
+      const created = await createCustomFlashcardSet({ name: setName.trim(), type: flashcardType, levels });
+      setCustomSets((prev) => [...prev, created]);
+      setShowSaveModal(false);
+      setSetName('');
+    } catch {
+      // leave modal open so the user can retry
+    } finally {
+      setSavingSet(false);
+    }
+  };
 
   const handleRate = async (rating: SrsRating) => {
     if (submitting) return;
@@ -169,13 +236,13 @@ const FlashcardSession = () => {
         </div>
       )}
 
-      {/* Level filter */}
-      <div className="relative z-10 mb-6 flex flex-wrap justify-center gap-2 px-4">
+      {/* Level filter — multi-select */}
+      <div className="relative z-10 mb-2 flex flex-wrap justify-center gap-2 px-4">
         <button
-          onClick={() => setLevel('')}
+          onClick={() => setLevels([])}
           className={clsx(
             'rounded-full border px-4 py-1 text-sm font-medium transition-colors',
-            level === ''
+            levels.length === 0
               ? 'border-amber-500 bg-amber-500 text-white'
               : 'border-slate-200 text-slate-600 hover:border-amber-400 dark:border-white/15 dark:text-white/55',
           )}
@@ -185,10 +252,10 @@ const FlashcardSession = () => {
         {LEVELS.map((l) => (
           <button
             key={l}
-            onClick={() => setLevel(l)}
+            onClick={() => toggleLevel(l)}
             className={clsx(
               'rounded-full border px-4 py-1 text-sm font-medium transition-colors',
-              level === l
+              levels.includes(l)
                 ? 'border-amber-500 bg-amber-500 text-white'
                 : 'border-slate-200 text-slate-600 hover:border-amber-400 dark:border-white/15 dark:text-white/55',
             )}
@@ -197,6 +264,37 @@ const FlashcardSession = () => {
           </button>
         ))}
       </div>
+
+      {/* Custom study sets — only shown when logged in */}
+      {token && (
+        <div className="relative z-10 mb-6 flex w-full max-w-2xl flex-wrap items-center justify-center gap-2 px-4">
+          {customSets.map((set) => (
+            <button
+              key={set.id}
+              onClick={() => applySet(set)}
+              className="group flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-400/30 dark:bg-indigo-500/10 dark:text-indigo-300"
+            >
+              {set.name}
+              <span className="text-indigo-400 dark:text-indigo-400/70">({set.levels.join('+')})</span>
+              <span
+                role="button"
+                onClick={(e) => { void handleDeleteSet(e, set.id); }}
+                className="rounded-full p-0.5 text-indigo-300 transition-colors hover:bg-indigo-200 hover:text-indigo-600 dark:text-indigo-400/50 dark:hover:bg-indigo-500/20"
+              >
+                <XIcon className="h-3 w-3" />
+              </span>
+            </button>
+          ))}
+          {levels.length > 0 && (
+            <button
+              onClick={() => setShowSaveModal(true)}
+              className="flex items-center gap-1.5 rounded-full border border-dashed border-slate-300 px-3 py-1 text-xs font-medium text-slate-500 transition-colors hover:border-amber-400 hover:text-amber-600 dark:border-white/20 dark:text-white/50"
+            >
+              + {t('study.customSet.save')}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Card area */}
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pb-10 w-full">
@@ -216,31 +314,31 @@ const FlashcardSession = () => {
               {t('study.srs.reviewAgain')}
             </button>
           </div>
+        ) : mode === 'browse' ? (
+          <FlashcardBrowser
+            cards={cards}
+            emptyMessage={t('study.noCards')}
+            bookmarkedIds={bookmarkedIds}
+            onToggleBookmark={token ? (id) => { void toggleBookmark(id); } : undefined}
+          />
         ) : cards.length === 0 ? (
           <div className="text-center">
             <FolderIcon className="mx-auto h-12 w-12 text-slate-300 dark:text-white/20" strokeWidth={1.5} />
-            <p className="mt-3 text-slate-500 dark:text-white/40">
-              {mode === 'review' ? t('study.srs.noDue') : t('study.noCards')}
-            </p>
+            <p className="mt-3 text-slate-500 dark:text-white/40">{t('study.srs.noDue')}</p>
           </div>
         ) : (
           <div className="flex w-full max-w-sm flex-col items-center gap-6">
-            {/* Progress */}
             <p className="text-sm font-medium text-slate-500 dark:text-white/40">
-              {mode === 'review'
-                ? `${reviewed} / ${cards.length} ${t('study.srs.reviewed')}`
-                : `${index + 1} / ${cards.length}`}
+              {reviewed} / {cards.length} {t('study.srs.reviewed')}
             </p>
 
-            {/* Flip card — pass onFlip to detect when card is flipped */}
             <FlipCard
               key={`${cards[index].id}-${index}`}
               card={cards[index]}
               onFlip={() => setFlipped(true)}
             />
 
-            {/* SRS rating buttons — shown after card is flipped in review mode */}
-            {mode === 'review' && flipped && (
+            {flipped && (
               <div className="flex w-full gap-2">
                 {SRS_RATINGS.map(({ rating, labelKey, color }) => (
                   <button
@@ -257,45 +355,33 @@ const FlashcardSession = () => {
                 ))}
               </div>
             )}
-
-            {/* Browse mode navigation */}
-            {mode === 'browse' && (
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={prev}
-                  disabled={index === 0}
-                  className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm transition-all hover:border-amber-400 hover:shadow-md disabled:opacity-30 dark:border-white/10 dark:bg-white/5"
-                >
-                  <ChevronLeftIcon className="h-5 w-5 text-slate-600 dark:text-white/60" />
-                </button>
-
-                <div className="h-1.5 w-40 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
-                  <div
-                    className="h-full rounded-full bg-amber-500 transition-all duration-300"
-                    style={{ width: `${((index + 1) / cards.length) * 100}%` }}
-                  />
-                </div>
-
-                <button
-                  onClick={next}
-                  disabled={index === cards.length - 1}
-                  className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm transition-all hover:border-amber-400 hover:shadow-md disabled:opacity-30 dark:border-white/10 dark:bg-white/5"
-                >
-                  <ChevronRightIcon className="h-5 w-5 text-slate-600 dark:text-white/60" />
-                </button>
-              </div>
-            )}
-
-            {/* Browse mode done state */}
-            {mode === 'browse' && index === cards.length - 1 && (
-              <p className="flex items-center gap-1.5 text-center text-sm text-amber-600 dark:text-amber-400">
-                <CheckCircleIcon className="h-4 w-4" />
-                {t('study.allDone')}
-              </p>
-            )}
           </div>
         )}
       </main>
+
+      {/* Save custom set modal */}
+      <Modal isOpen={showSaveModal} title={t('study.customSet.namePrompt')} onClose={() => setShowSaveModal(false)}>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-1.5 text-xs text-slate-400 dark:text-white/40">
+            <BookmarkIcon className="h-4 w-4" />
+            {typeLabel[flashcardType]} — {levels.join(' + ')}
+          </div>
+          <input
+            type="text"
+            value={setName}
+            onChange={(e) => setSetName(e.target.value)}
+            placeholder={t('study.customSet.namePrompt')}
+            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-amber-400 focus:outline-none dark:border-white/15 dark:bg-white/5 dark:text-white"
+          />
+          <button
+            onClick={() => { void handleSaveSet(); }}
+            disabled={!setName.trim() || savingSet}
+            className="rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-600 disabled:opacity-50"
+          >
+            {t('study.customSet.save')}
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

@@ -96,6 +96,7 @@ export function KanjiStrokeOrderOld({ character, size = 72 }: KanjiStrokeOrderPr
 import { useEffect, useState } from 'react';
 import { KanjiVG, type KanjiData } from 'kanjivg-js';
 import { KanjiCard } from 'kanjivg-js/react';
+import { RefreshIcon } from '@/components/ui/Icons';
 
 const kv = new KanjiVG();
 
@@ -157,10 +158,11 @@ export function KanjiStrokeOrder({ character, size = 72 }: KanjiStrokeOrderProps
           e.stopPropagation();
           setReplayKey((k) => k + 1);
         }}
-        className="text-xs text-slate-400 transition-colors hover:text-amber-500"
+        className="flex items-center gap-1 text-xs text-slate-400 transition-colors hover:text-amber-500"
         title="Replay stroke order"
       >
-        ↺ {character}
+        <RefreshIcon className="h-3 w-3" strokeWidth={2.5} />
+        {character}
       </button>
     </div>
   );

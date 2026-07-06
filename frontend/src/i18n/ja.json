@@ -79,6 +79,7 @@
     "examSelect": "試験を選ぶ",
     "history": "受験履歴",
     "weakAreas": "苦手分野",
+    "questionStats": "問題別統計",
     "profile": "プロフィール",
     "passages": "文章管理",
     "categories": "カテゴリ管理",
@@ -93,7 +94,8 @@
     "flashcards": "フラッシュカード",
     "flashcardStudy": "フラッシュカード学習",
     "customSets": "カスタムセット",
-    "results": "受験結果"
+    "results": "受験結果",
+    "bookmarks": "ブックマーク"
   },
   "exam": {
     "startButton": "試験を開始する",
@@ -655,6 +657,20 @@
     "grammar": {
       "title": "文法",
       "description": "文法パターンと使い方を学ぶ"
+    },
+    "bookmark": {
+      "add": "ブックマークに追加",
+      "remove": "ブックマークを解除",
+      "title": "ブックマーク",
+      "description": "苦手なカードを保存して復習",
+      "empty": "ブックマークしたカードはありません"
+    },
+    "customSet": {
+      "mySets": "マイセット",
+      "save": "セットとして保存",
+      "namePrompt": "セット名を入力してください",
+      "saveSuccess": "セットを保存しました",
+      "deleteConfirm": "このセットを削除しますか？"
     }
   },
   "home": {
@@ -802,6 +818,15 @@
       "attempts": "{{count}} 回受験",
       "bestScore": "最高スコア",
       "latestScore": "最近のスコア"
+    },
+    "questionStats": {
+      "title": "問題別統計",
+      "subtitle": "全ユーザーの誤答数をカテゴリ別に表示（閲覧のみ）",
+      "columnQuestion": "問題",
+      "columnAttempts": "受験回数",
+      "columnIncorrect": "誤答数",
+      "questionCount": "{{count}} 問",
+      "empty": "統計データがありません"
     }
   },
   "notFound": {
@@ -814,6 +839,7 @@
     "register": "登録",
     "study": "学習",
     "flashcardSession": "フラッシュカード学習",
+    "bookmarkedFlashcards": "ブックマーク",
     "adminDashboard": "ダッシュボード",
     "adminQuestionsImport": "問題インポート",
     "adminQuestionsNew": "問題作成",
@@ -846,6 +872,7 @@
     "readingSession": "読解試験",
     "profileHistory": "受験履歴",
     "profileWeakAreas": "弱点分析",
+    "questionStats": "問題別統計",
     "profile": "プロフィール"
   },
   "customExam": {

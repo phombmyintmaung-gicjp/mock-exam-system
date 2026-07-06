@@ -34,3 +34,12 @@ export interface DifficultyStats {
   attemptCount: number;
   correctRate: number;
 }
+
+export interface QuestionIncorrectStat {
+  questionId: number;
+  questionText: string;
+  category: string;
+  questionType: string | null;
+  attemptCount: number;
+  incorrectCount: number;
+}

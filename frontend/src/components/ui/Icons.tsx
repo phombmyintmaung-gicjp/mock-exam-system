@@ -300,3 +300,26 @@ export function TableCellsIcon({ className, strokeWidth = 2 }: IconProps) {
     </svg>
   );
 }
+
+export function BookmarkIcon({ className, strokeWidth = 2, filled = false }: IconProps & { filled?: boolean }) {
+  if (filled) {
+    return (
+      <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+        <path d="M6.32 2.577a49.255 49.255 0 0111.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 01-1.085.67L12 18.089l-7.165 3.583A.75.75 0 013.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={strokeWidth}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-1.057 1.907-2.185C7.507 2.5 9.5 2.25 12 2.25c2.5 0 4.5.25 5.593.72z" />
+    </svg>
+  );
+}
+
+export function RefreshIcon({ className, strokeWidth = 2 }: IconProps) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={strokeWidth}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+    </svg>
+  );
+}

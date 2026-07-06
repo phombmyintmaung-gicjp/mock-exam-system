@@ -13,9 +13,11 @@ class FlashcardController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        $levels = $request->query('level') ? explode(',', $request->query('level')) : [];
+
         $paginator = $this->service->list(
             $request->query('type'),
-            $request->query('level'),
+            $levels,
         );
         return response()->json([
             'data'     => $paginator->items(),

@@ -70,7 +70,7 @@ class FlashcardReviewService
      *
      * @return \Illuminate\Database\Eloquent\Collection<int, Flashcard>
      */
-    public function getDueCards(User $user, ?string $type = null, ?string $level = null, int $limit = 50)
+    public function getDueCards(User $user, ?string $type = null, array $levels = [], int $limit = 50)
     {
         // IDs of cards the user has reviewed and are due now
         $dueIds = FlashcardReview::where('user_id', $user->id)
@@ -83,8 +83,8 @@ class FlashcardReviewService
 
         $query = Flashcard::query();
 
-        if ($type)  $query->where('type', $type);
-        if ($level) $query->where('level', $level);
+        if ($type)   $query->where('type', $type);
+        if ($levels) $query->whereIn('level', $levels);
 
         return $query->where(function ($q) use ($dueIds, $seenIds) {
             $q->whereIn('id', $dueIds)          // due for review

@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import type { Flashcard } from '@/types/flashcard';
 import { Furigana } from '@/components/shared/Furigana';
 import { KanjiStrokeOrder } from '@/components/shared/KanjiStrokeOrder';
+import { BookmarkIcon } from '@/components/ui/Icons';
 
 const BAND_COLORS: Record<number, string> = {
   1: 'bg-emerald-500',
@@ -16,9 +17,11 @@ const BAND_COLORS: Record<number, string> = {
 interface FlipCardProps {
   card: Flashcard;
   onFlip?: () => void;
+  isBookmarked?: boolean;
+  onToggleBookmark?: () => void;
 }
 
-export function FlipCard({ card, onFlip }: FlipCardProps) {
+export function FlipCard({ card, onFlip, isBookmarked, onToggleBookmark }: FlipCardProps) {
   const { t } = useTranslation();
   const [flipped, setFlipped] = useState(false);
   const isKanjiSingle = card.type === 'kanji' && card.front.length === 1;
@@ -36,6 +39,21 @@ export function FlipCard({ card, onFlip }: FlipCardProps) {
       style={{ perspective: '1200px' }}
       onClick={handleFlip}
     >
+      {onToggleBookmark && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onToggleBookmark(); }}
+          title={t(isBookmarked ? 'study.bookmark.remove' : 'study.bookmark.add')}
+          className={clsx(
+            'absolute top-4 left-4 z-10 flex h-8 w-8 items-center justify-center rounded-full transition-colors',
+            isBookmarked
+              ? 'text-amber-500'
+              : 'text-slate-300 hover:text-amber-400 dark:text-white/25 dark:hover:text-amber-400',
+          )}
+        >
+          <BookmarkIcon className="h-5 w-5" filled={!!isBookmarked} />
+        </button>
+      )}
       <div
         className="relative h-full w-full transition-transform duration-500"
         style={{

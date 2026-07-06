@@ -1,16 +1,16 @@
 import publicApi from './publicApi';
 import api from './api';
-import type { Flashcard, FlashcardType, FlashcardLevel } from '@/types/flashcard';
+import type { Flashcard, FlashcardType, FlashcardLevel, CustomFlashcardSet } from '@/types/flashcard';
 import type { PaginatedResponse, ApiResponse } from '@/types/api';
 
 // Public — no auth required
 export async function getFlashcards(
   type?: FlashcardType,
-  level?: FlashcardLevel,
+  levels?: FlashcardLevel[],
 ): Promise<Flashcard[]> {
   const params: Record<string, string> = {};
-  if (type)  params.type  = type;
-  if (level) params.level = level;
+  if (type)          params.type  = type;
+  if (levels?.length) params.level = levels.join(',');
   const res = await publicApi.get<PaginatedResponse<Flashcard>>('/study/flashcards', { params });
   return res.data.data;
 }
@@ -76,11 +76,11 @@ export type SrsRating = 0 | 1 | 2 | 3;
 
 export async function getDueFlashcards(
   type?: FlashcardType,
-  level?: FlashcardLevel,
+  levels?: FlashcardLevel[],
 ): Promise<FlashcardWithReview[]> {
   const params: Record<string, string> = {};
-  if (type)  params.type  = type;
-  if (level) params.level = level;
+  if (type)           params.type  = type;
+  if (levels?.length) params.level = levels.join(',');
   const res = await api.get('/study/flashcards/due', { params });
   return (res.data.data as Record<string, unknown>[]).map((d) => ({
     ...(d as unknown as Flashcard),
@@ -98,4 +98,41 @@ export async function getDueFlashcards(
 
 export async function submitSrsReview(flashcardId: number, rating: SrsRating): Promise<void> {
   await api.post(`/study/flashcards/${flashcardId}/review`, { rating });
+}
+
+// ── Bookmarks ──────────────────────────────────────────────────────────────
+
+export async function getBookmarkedFlashcards(): Promise<Flashcard[]> {
+  const res = await api.get<{ data: Flashcard[] }>('/study/flashcards/bookmarked');
+  return res.data.data;
+}
+
+export async function addBookmark(flashcardId: number): Promise<void> {
+  await api.post(`/study/flashcards/${flashcardId}/bookmark`);
+}
+
+export async function removeBookmark(flashcardId: number): Promise<void> {
+  await api.delete(`/study/flashcards/${flashcardId}/bookmark`);
+}
+
+// ── Custom Study Sets ────────────────────────────────────────────────────────
+
+export async function getCustomFlashcardSets(type?: FlashcardType): Promise<CustomFlashcardSet[]> {
+  const params: Record<string, string> = {};
+  if (type) params.type = type;
+  const res = await api.get<{ data: CustomFlashcardSet[] }>('/flashcard-sets', { params });
+  return res.data.data;
+}
+
+export async function createCustomFlashcardSet(data: {
+  name: string;
+  type: FlashcardType;
+  levels: FlashcardLevel[];
+}): Promise<CustomFlashcardSet> {
+  const res = await api.post<ApiResponse<CustomFlashcardSet>>('/flashcard-sets', data);
+  return res.data.data;
+}
+
+export async function deleteCustomFlashcardSet(id: number): Promise<void> {
+  await api.delete(`/flashcard-sets/${id}`);
 }

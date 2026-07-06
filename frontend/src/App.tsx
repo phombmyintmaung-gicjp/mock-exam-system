@@ -33,6 +33,7 @@ import AdminResultDetail from '@/pages/admin/AdminResultDetail';
 
 import StudyHome from '@/pages/study/StudyHome';
 import FlashcardSession from '@/pages/study/FlashcardSession';
+import BookmarkedFlashcards from '@/pages/study/BookmarkedFlashcards';
 
 import ExamSelect from '@/pages/client/ExamSelect';
 import ExamSession from '@/pages/client/ExamSession';
@@ -42,6 +43,7 @@ import Review from '@/pages/client/Review';
 import History from '@/pages/client/History';
 import Profile from '@/pages/client/Profile';
 import WeakAreas from '@/pages/client/WeakAreas';
+import QuestionStats from '@/pages/client/QuestionStats';
 import ReadingSession from '@/pages/client/ReadingSession';
 import CustomExamLanding from '@/pages/client/CustomExamLanding';
 import CustomExamSession from '@/pages/client/CustomExamSession';
@@ -81,10 +83,12 @@ const TITLE_MAP: Array<[RegExp, string]> = [
   [/^\/exam\/select$/,                'pageTitle.examSelect'],
   [/^\/study\/session\//,             'pageTitle.studySession'],
   [/^\/reading\/session\//,           'pageTitle.readingSession'],
+  [/^\/study\/bookmarks$/,            'pageTitle.bookmarkedFlashcards'],
   [/^\/study\/[^/]+$/,                'pageTitle.flashcardSession'],
   [/^\/study$/,                       'pageTitle.study'],
   [/^\/profile\/history$/,            'pageTitle.profileHistory'],
   [/^\/profile\/weak-areas$/,         'pageTitle.profileWeakAreas'],
+  [/^\/profile\/question-stats$/,     'pageTitle.questionStats'],
   [/^\/profile$/,                     'pageTitle.profile'],
 ];
 
@@ -166,11 +170,13 @@ const App = () => {
           <Route path="/exam/select" element={<ExamSelect />} />
           <Route path="/exam/session/:category" element={<ExamSession />} />
           <Route path="/study/session/:category" element={<StudySession />} />
+          <Route path="/study/bookmarks" element={<BookmarkedFlashcards />} />
           <Route path="/exam/results/:id" element={<Results />} />
           <Route path="/exam/results/:id/review" element={<Review />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/history" element={<History />} />
           <Route path="/profile/weak-areas" element={<WeakAreas />} />
+          <Route path="/profile/question-stats" element={<QuestionStats />} />
           <Route path="/reading/session/:category" element={<ReadingSession />} />
           <Route path="/exam/custom/:slug" element={<CustomExamLanding />} />
           <Route path="/exam/custom/session" element={<CustomExamSession />} />

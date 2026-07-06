@@ -11,6 +11,7 @@ import {
   HomeIcon, HelpCircleIcon, UsersIcon, CogIcon, BarChartIcon,
   ClipboardCheckIcon, ClockIcon, BoltIcon, UserIcon, TagIcon,
   LayersIcon, DocumentTextIcon, BookOpenIcon, LogoutIcon, TableCellsIcon,
+  BookmarkIcon,
 } from '@/components/ui/Icons';
 
 interface SidebarProps {
