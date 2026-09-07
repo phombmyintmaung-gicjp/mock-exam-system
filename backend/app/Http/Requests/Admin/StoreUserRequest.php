@@ -17,7 +17,10 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'                 => ['required', 'email', 'max:254', 'unique:users,email'],
+            // Database consolidation — approved decision: admin-created accounts
+            // follow the same employee validation as self-registration.
+            'employee_code'         => ['required', 'string', 'exists:employees,employee_code'],
+            'email'                 => ['required', 'email', 'max:254', 'unique:mockexam_users,email'],
             'name'                  => ['required', 'string', 'max:150'],
             'role'                  => ['required', 'integer', 'in:1,2'],
             'target_certification'  => ['nullable', 'string', 'max:200'],

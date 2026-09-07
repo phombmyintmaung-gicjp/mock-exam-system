@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -59,11 +60,17 @@ class AuthService
      * Create a new employee account pending admin approval.
      * Does NOT auto-login — returns a message array instead.
      *
-     * @param  array{name: string, email: string, password: string} $data
+     * Database consolidation — approved decision: employee_code is required and
+     * already validated by RegisterRequest (exists:employees,employee_code) — this
+     * resolves it to the shared employee's id and stores it on the new account.
+     *
+     * @param  array{employee_code: string, name: string, email: string, password: string} $data
      * @return array{message: string}
      */
     public function register(array $data): array
     {
+        $employee = Employee::where('employee_code', $data['employee_code'])->first();
+
         $existing = User::where('email', $data['email'])
             ->where('approval_status', 'rejected')
             ->first();
@@ -74,6 +81,7 @@ class AuthService
                 'password'        => $data['password'],
                 'is_active'       => false,
                 'approval_status' => 'pending',
+                'employee_id'     => $employee?->id,
             ]);
         } else {
             User::create([
@@ -83,6 +91,7 @@ class AuthService
                 'role'            => 2,
                 'is_active'       => false,
                 'approval_status' => 'pending',
+                'employee_id'     => $employee?->id,
             ]);
         }
 

@@ -19,7 +19,10 @@ class UpdateUserRequest extends FormRequest
         $userId = $this->route('id');
 
         return [
-            'email'                 => ['sometimes', 'email', 'max:254', "unique:users,email,{$userId}"],
+            // Database consolidation — approved decision: lets an admin fix a
+            // wrong/missing employee link after the fact; same validation as store().
+            'employee_code'         => ['sometimes', 'string', 'exists:employees,employee_code'],
+            'email'                 => ['sometimes', 'email', 'max:254', "unique:mockexam_users,email,{$userId}"],
             'name'                  => ['sometimes', 'string', 'max:150'],
             'role'                  => ['sometimes', 'integer', 'in:1,2'],
             'target_certification'  => ['nullable', 'string', 'max:200'],

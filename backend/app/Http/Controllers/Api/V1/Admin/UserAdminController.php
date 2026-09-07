@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -84,7 +85,14 @@ class UserAdminController extends Controller
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = User::create($request->validated());
+        // Database consolidation: resolve employee_code (already validated to exist)
+        // to the shared employee's id — employee_code itself is not a column here.
+        $validated = $request->validated();
+        $employee  = Employee::where('employee_code', $validated['employee_code'])->first();
+        unset($validated['employee_code']);
+        $validated['employee_id'] = $employee?->id;
+
+        $user = User::create($validated);
 
         return response()->json(['data' => $user], 201);
     }
@@ -135,8 +143,16 @@ class UserAdminController extends Controller
      */
     public function update(UpdateUserRequest $request, int $id): JsonResponse
     {
-        $user = User::findOrFail($id);
-        $user->update($request->validated());
+        $user      = User::findOrFail($id);
+        $validated = $request->validated();
+
+        if (array_key_exists('employee_code', $validated)) {
+            $employee = Employee::where('employee_code', $validated['employee_code'])->first();
+            unset($validated['employee_code']);
+            $validated['employee_id'] = $employee?->id;
+        }
+
+        $user->update($validated);
 
         return response()->json(['data' => $user]);
     }

@@ -11,6 +11,11 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
+    // Database consolidation: renamed from `users` (which now belongs to the Main
+    // system) — this is Mock Exam's own authentication table, distinct from the
+    // shared `employees` identity table. See CLAUDE.md "Database Consolidation".
+    protected $table = 'mockexam_users';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -24,6 +29,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'is_active',
         'approval_status',
+        'employee_id',
     ];
 
     /**
@@ -72,6 +78,12 @@ class User extends Authenticatable implements JWTSubject
     // -------------------------------------------------------------------------
     // Relationships
     // -------------------------------------------------------------------------
+
+    /** The shared company employee this Mock Exam account belongs to, if linked. */
+    public function employee(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
+    }
 
     public function examSessions(): HasMany
     {

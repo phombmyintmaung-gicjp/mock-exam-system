@@ -1,27 +1,20 @@
 services:
-  # ── MySQL ────────────────────────────────────────────────────
-  db:
-    image: mysql:8.0
-    container_name: mock-exam-db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: mock_exam
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-secret}
-      MYSQL_USER: ${DB_USERNAME:-mock_exam}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
-    volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3309:3306"
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${DB_ROOT_PASSWORD:-secret}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - default
-
   # ── Laravel backend ──────────────────────────────────────────
+  # No own MySQL service — database consolidation: this app shares ONE physical
+  # MySQL database (company_system_db) with the Main system and DTS. The shared
+  # `db` service is owned by exam-history-management's own docker-compose.yml
+  # (container name "company-mysql") and reached here over the external
+  # `company-db-net` network. No native cross-compose-file `depends_on` health-gate
+  # exists, so this relies on `restart: unless-stopped` to recover from a first-boot
+  # race if company-mysql isn't up yet — see CLAUDE.md "Database Consolidation".
+  # `company-db-net` must be created once (`docker network create company-db-net`)
+  # and company-mysql must be started before this service, for the same reason.
+  #
+  # CACHE_STORE/SESSION_DRIVER/QUEUE_CONNECTION stay `database` — this app's
+  # `cache`/`jobs`/`failed_jobs`/etc. tables are unprefixed in the shared database;
+  # no collision exists today (Main uses file-based cache/session, DTS uses none of
+  # these), but this is a known, documented follow-up risk if that ever changes —
+  # see CLAUDE.md "Database Consolidation" risk notes.
   backend:
     build:
       context: ./backend
@@ -34,11 +27,11 @@ services:
       APP_DEBUG: ${APP_DEBUG:-true}
       APP_URL: http://localhost:8000
       DB_CONNECTION: mysql
-      DB_HOST: db
+      DB_HOST: company-mysql
       DB_PORT: 3306
-      DB_DATABASE: mock_exam
-      DB_USERNAME: ${DB_USERNAME:-mock_exam}
-      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      DB_DATABASE: company_system_db
+      DB_USERNAME: root
+      DB_PASSWORD: secret
       JWT_SECRET: ${JWT_SECRET}
       JWT_TTL: ${JWT_TTL:-60}
       JWT_REFRESH_TTL: ${JWT_REFRESH_TTL:-20160}
@@ -50,12 +43,10 @@ services:
       - /var/www/html/vendor
     expose:
       - "8000"
-    depends_on:
-      db:
-        condition: service_healthy
     networks:
       - default
       - proxy-net
+      - company-db-net
 
   # ── React frontend (production build) ────────────────────────
   frontend:
@@ -75,11 +66,12 @@ services:
       - default
       - proxy-net
 
-volumes:
-  db_data:
-
 networks:
   default:
     name: mock-exam-system-net
   proxy-net:
+    external: true
+  # Owned by exam-history-management's own docker-compose.yml — see the `backend`
+  # service comment above.
+  company-db-net:
     external: true
