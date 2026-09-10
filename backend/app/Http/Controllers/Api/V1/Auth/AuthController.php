@@ -77,6 +77,10 @@ class AuthController extends Controller
     {
         $result = $this->authService->register($request->validated());
 
+        if (($result['error'] ?? false) === true) {
+            return response()->json(['error' => $result['message']], 422);
+        }
+
         return response()->json(['data' => $result], 201);
     }
 

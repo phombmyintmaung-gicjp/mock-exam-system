@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminOnly;
+use App\Http\Middleware\SharedJwtAuth;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,6 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // One-Login shared authentication foundation (2026-09, Phase 5): primes the `api`
+        // guard from the shared Main JWT cookie before any route's own `auth:api` runs.
+        // Always a no-op pass-through when no valid shared cookie is present (including on
+        // guest routes like login/register), so it is safe to run on every API request.
+        $middleware->api(prepend: SharedJwtAuth::class);
+
         // Register the named 'admin' middleware alias used in routes/api.php
         $middleware->alias([
             'admin' => AdminOnly::class,

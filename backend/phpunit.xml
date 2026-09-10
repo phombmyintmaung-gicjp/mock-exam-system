@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  CRITICAL: bootstrap is tests/bootstrap-testing-env.php, NOT vendor/autoload.php directly.
+  This app had NO test infrastructure at all before the auth-unification effort (no
+  phpunit.xml, no tests/ directory). This container's real DB_DATABASE
+  (company_system_db, the shared production database) is set by docker-compose.yml and
+  lands in $_SERVER at PHP startup — the <env force="true"> entries below only update
+  getenv()/$_ENV, NOT $_SERVER, and Laravel's env() helper reads $_SERVER first, so
+  force="true" alone does NOT redirect tests away from the real database. This is the
+  exact same class of gap that wiped exam-history-management's own production database on
+  2026-09-09, and that discussion-topic-system's phpunit.xml also had (fixed the same way,
+  2026-09-10). See tests/bootstrap-testing-env.php for the full context. Never point
+  `bootstrap` back at vendor/autoload.php directly.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap-testing-env.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="DB_CONNECTION" value="mysql"/>
+        <env name="DB_DATABASE" value="dts_testing"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+    </php>
+</phpunit>

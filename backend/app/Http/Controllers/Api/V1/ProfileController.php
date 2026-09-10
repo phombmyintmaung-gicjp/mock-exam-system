@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Services\SharedCredentialService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -38,11 +38,14 @@ class ProfileController extends Controller
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
-        if (! Hash::check($request->input('current_password'), $user->password)) {
+        // Auth unification: verify/update against the shared Main `users` password
+        // when this account is linked to an employee with a shared account —
+        // mirrors discussion-topic-system's own ProfileController precedent.
+        if (! SharedCredentialService::verifyPassword($user, $request->input('current_password'))) {
             return response()->json(['error' => 'Current password is incorrect.'], 422);
         }
 
-        $user->update(['password' => $request->input('password')]);
+        SharedCredentialService::updatePassword($user, $request->input('password'));
 
         return response()->json(['data' => ['message' => 'Password updated successfully.']]);
     }

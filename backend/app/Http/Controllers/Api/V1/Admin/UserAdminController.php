@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Employee;
 use App\Models\User;
+use App\Services\SharedCredentialService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -92,9 +93,19 @@ class UserAdminController extends Controller
         unset($validated['employee_code']);
         $validated['employee_id'] = $employee?->id;
 
+        $plainPassword = $validated['password'];
+
         $user = User::create($validated);
 
-        return response()->json(['data' => $user], 201);
+        // Auth unification: route the admin-supplied password through
+        // SharedCredentialService rather than trusting the raw mass-assignment above —
+        // for an employee who already has a shared Main `users` account, login checks
+        // ONLY that shared password (see SharedCredentialService::verifyPassword()), so
+        // leaving mockexam_users.password as the sole write here would silently have no
+        // effect on this user's actual ability to log in.
+        SharedCredentialService::updatePassword($user, $plainPassword);
+
+        return response()->json(['data' => $user->fresh()], 201);
     }
 
     /**
@@ -152,9 +163,19 @@ class UserAdminController extends Controller
             $validated['employee_id'] = $employee?->id;
         }
 
+        // Auth unification: password is handled separately via SharedCredentialService
+        // below, not through this mass-assignment — see store() for why.
+        $passwordProvided = array_key_exists('password', $validated);
+        $plainPassword    = $validated['password'] ?? null;
+        unset($validated['password']);
+
         $user->update($validated);
 
-        return response()->json(['data' => $user]);
+        if ($passwordProvided) {
+            SharedCredentialService::updatePassword($user, $plainPassword);
+        }
+
+        return response()->json(['data' => $user->fresh()]);
     }
 
     public function destroy(int $id): JsonResponse
