@@ -45,7 +45,11 @@ class SharedJwtAuthTest extends TestCase
         ]);
     }
 
-    private function makeSharedUser(string $employeeCode, string $email): int
+    // Default session_token deliberately matches mintSharedJwt()'s default `sid`, so every
+    // existing call site (written before Phase 8) keeps resolving successfully without
+    // being touched — only tests that explicitly care about the logout/revocation check
+    // pass a different value on one side or the other.
+    private function makeSharedUser(string $employeeCode, string $email, ?string $sessionToken = 'e2e-fixed-test-session-token'): int
     {
         return DB::table('users')->insertGetId([
             'employee_code' => $employeeCode,
@@ -53,6 +57,7 @@ class SharedJwtAuthTest extends TestCase
             'email'         => $email,
             'password'      => bcrypt('irrelevant-for-this-suite'),
             'role'          => 3,
+            'session_token' => $sessionToken,
             'created_at'    => now(),
             'updated_at'    => now(),
         ]);
@@ -78,12 +83,13 @@ class SharedJwtAuthTest extends TestCase
     }
 
     /** Mints a JWT exactly matching what Main's tymon/jwt-auth issues (HS256, `sub` claim), signed with the shared test secret. */
-    private function mintSharedJwt(int $sharedUserId, ?int $expiresInSeconds = 3600, ?string $secret = null): string
+    private function mintSharedJwt(int $sharedUserId, ?int $expiresInSeconds = 3600, ?string $secret = null, ?string $sid = 'e2e-fixed-test-session-token'): string
     {
         $secret  = $secret ?? self::TEST_SECRET;
         $header  = $this->base64UrlEncode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
         $payload = $this->base64UrlEncode(json_encode([
             'sub' => $sharedUserId,
+            'sid' => $sid,
             'iat' => time(),
             'exp' => $expiresInSeconds === null ? null : time() + $expiresInSeconds,
         ]));
@@ -248,5 +254,39 @@ class SharedJwtAuthTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+    }
+
+    /** Phase 8 — a token that was valid a moment ago is rejected the instant Main's own logout nulls session_token, mirroring Main's own CheckActiveSession. */
+    public function test_shared_jwt_rejected_after_main_logout_nulls_session_token(): void
+    {
+        $employeeId = $this->makeEmployee('ZSJ09');
+        $sharedId   = $this->makeSharedUser('ZSJ09', 'shared-zsj09@gicjp.com', sessionToken: 'session-before-logout');
+        $this->makeMockUser($employeeId, 'mock-zsj09@gicjp.com');
+
+        $jwt = $this->mintSharedJwt($sharedId, sid: 'session-before-logout');
+
+        // Simulate Main's own AuthService::logout(): nulls users.session_token, before this
+        // token is ever presented anywhere — a single isolated request, avoiding any
+        // possibility of the test HTTP client's guard state leaking between two sequential
+        // calls in one test (a test-harness-only concern; a real deployment gets a fresh
+        // request/container per HTTP request regardless).
+        DB::table('users')->where('id', $sharedId)->update(['session_token' => null]);
+
+        $this->withSharedCookie($jwt)->getJson('/api/v1/profile')->assertStatus(401);
+    }
+
+    /** Phase 8 — a stale sid (e.g. from a previous login, superseded by a newer one) is also rejected, not just a null session_token. */
+    public function test_shared_jwt_rejected_when_sid_no_longer_matches_current_session_token(): void
+    {
+        $employeeId = $this->makeEmployee('ZSJ10');
+        $sharedId   = $this->makeSharedUser('ZSJ10', 'shared-zsj10@gicjp.com', sessionToken: 'old-session');
+        $this->makeMockUser($employeeId, 'mock-zsj10@gicjp.com');
+
+        // Token minted for the OLD session, but the user has since logged in again elsewhere,
+        // rotating users.session_token to a new value.
+        $jwt = $this->mintSharedJwt($sharedId, sid: 'old-session');
+        DB::table('users')->where('id', $sharedId)->update(['session_token' => 'new-session-from-another-login']);
+
+        $this->withSharedCookie($jwt)->getJson('/api/v1/profile')->assertStatus(401);
     }
 }

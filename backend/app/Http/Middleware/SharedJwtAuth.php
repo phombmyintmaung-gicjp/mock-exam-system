@@ -38,10 +38,11 @@ class SharedJwtAuth
     }
 
     // Resolves a mockexam_users identity from the shared Main JWT cookie, or null if the
-    // cookie is absent/invalid/expired, the shared account has no employee link, that
-    // employee has no mockexam_users account, or (a data-integrity anomaly) more than one
-    // mockexam_users row claims the same employee — every one of those cases is left for
-    // the existing bearer-token guard to handle instead, never guessed at here.
+    // cookie is absent/invalid/expired, the shared session has been logged out on Main
+    // (Phase 8), the shared account has no employee link, that employee has no
+    // mockexam_users account, or (a data-integrity anomaly) more than one mockexam_users
+    // row claims the same employee — every one of those cases is left for the existing
+    // bearer-token guard to handle instead, never guessed at here.
     private function resolveViaSharedJwt(Request $request): ?User
     {
         $cookieName = config('shared_auth.cookie_name', 'jwt_token');
@@ -56,12 +57,25 @@ class SharedJwtAuth
             return null;
         }
 
-        $employeeCode = DB::table('users')->where('id', $payload['sub'])->value('employee_code');
-        if (!$employeeCode) {
+        $sharedRow = DB::table('users')->where('id', $payload['sub'])->first();
+        if (!$sharedRow || !$sharedRow->employee_code) {
             return null;
         }
 
-        $employeeId = Employee::where('employee_code', $employeeCode)->value('id');
+        // One-Login shared authentication foundation (Phase 8 — shared logout/revocation):
+        // mirrors Main's own CheckActiveSession middleware exactly. Main's login() stores a
+        // fresh session_token UUID on the users row and embeds the SAME value as this JWT's
+        // `sid` claim; Main's own logout() nulls session_token. Comparing the two here means
+        // a JWT that was perfectly valid a moment ago is rejected the instant the user logs
+        // out of Main — without a new table, endpoint, or schema change, since both sides
+        // already existed for Main's own single-session enforcement (found during the
+        // Phase 7 E2E test, which showed Main itself already rejects a logged-out token this
+        // way while DTS/Mock previously did not).
+        if (!$sharedRow->session_token || ($payload['sid'] ?? null) !== $sharedRow->session_token) {
+            return null;
+        }
+
+        $employeeId = Employee::where('employee_code', $sharedRow->employee_code)->value('id');
         if (!$employeeId) {
             return null;
         }

@@ -105,6 +105,7 @@ function TitleManager() {
 const App = () => {
   const theme = useThemeStore((s) => s.theme);
   const token = useAuthStore((s) => s.token);
+  const authChecked = useAuthStore((s) => s.authChecked);
   const setUser = useAuthStore((s) => s.setUser);
   const logout = useAuthStore((s) => s.logout);
 
@@ -117,15 +118,33 @@ const App = () => {
     }
   }, [theme]);
 
-  // On every mount, refresh the user from the DB so that role or profile
-  // changes made outside the current session (e.g. admin promoting a user)
-  // take effect on the next page load without requiring a re-login.
+  // On every mount (and whenever the token changes), refresh the user from the
+  // DB so that role/profile changes made outside the current session take
+  // effect without requiring a re-login. One-Login shared authentication
+  // foundation (Phase 6): this now always runs, even with no local token —
+  // fetchMe() succeeds purely from the shared Main JWT cookie if one is
+  // present (the api guard is primed by SharedJwtAuth before the app's own
+  // bearer-token check ever runs), which is how a browser already logged into
+  // Main gets recognized here without a second login. The legacy
+  // token/login flow is completely unaffected and remains the fallback.
   useEffect(() => {
-    if (!token) return;
     fetchMe()
-      .then(setUser)
-      .catch(() => logout()); // token invalid / expired → force re-login
+      .then((freshUser) => {
+        setUser(freshUser);
+        if (!token) {
+          useAuthStore.setState({ token: '__shared_cookie_session__' });
+        }
+      })
+      .catch(() => {
+        if (token) logout(); // an existing local token was rejected by the server → force re-login
+        // no local token and no shared cookie session either → stay logged out, same as before
+      })
+      .finally(() => useAuthStore.setState({ authChecked: true }));
   }, [token, setUser, logout]);
+
+  if (!authChecked) {
+    return <div className="flex min-h-screen items-center justify-center" />;
+  }
 
   return (
     <BrowserRouter basename="/miyazaki-shiken-lab" future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
