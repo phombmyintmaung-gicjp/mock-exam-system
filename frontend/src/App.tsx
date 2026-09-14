@@ -17,7 +17,6 @@ import QuestionForm from '@/pages/admin/QuestionForm';
 import QuestionImport from '@/pages/admin/QuestionImport';
 import ExamSettings from '@/pages/admin/ExamSettings';
 import UserManagement from '@/pages/admin/UserManagement';
-import UserForm from '@/pages/admin/UserForm';
 import Reports from '@/pages/admin/Reports';
 import Passages from '@/pages/admin/Passages';
 import Categories from '@/pages/admin/Categories';
@@ -159,7 +158,7 @@ const App = () => {
         <Route path="/study/:type" element={<FlashcardSession />} />
 
         {/* Admin routes — require admin role */}
-        <Route element={<PrivateRoute requiredRole={1} />}>
+        <Route element={<PrivateRoute requiredRole="admin" />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/questions" element={<Questions />} />
           <Route path="/admin/questions/new" element={<QuestionForm />} />
@@ -167,8 +166,6 @@ const App = () => {
           <Route path="/admin/questions/import" element={<QuestionImport />} />
           <Route path="/admin/exams" element={<ExamSettings />} />
           <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/admin/users/new" element={<UserForm />} />
-          <Route path="/admin/users/:id/edit" element={<UserForm />} />
           <Route path="/admin/reports" element={<Reports />} />
           <Route path="/admin/passages" element={<Passages />} />
           <Route path="/admin/categories" element={<Categories />} />
@@ -185,7 +182,7 @@ const App = () => {
         </Route>
 
         {/* Client routes — require employee role */}
-        <Route element={<PrivateRoute requiredRole={2} />}>
+        <Route element={<PrivateRoute requiredRole="member" />}>
           <Route path="/exam/select" element={<ExamSelect />} />
           <Route path="/exam/session/:category" element={<ExamSession />} />
           <Route path="/study/session/:category" element={<StudySession />} />

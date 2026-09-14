@@ -98,13 +98,19 @@ const res: any = await api.get('/users/1');
 
 ## Endpoint Catalog
 
-### Auth (public)
+### Auth — retired (One-Login migration, 2026-09)
+
+`mockexam_users` no longer exists — Main's shared `users` table is the sole authentication
+authority for this app (see the root `CLAUDE.md`'s "Authentication" section). Every route
+below now returns `410` unconditionally; a person authenticates once at the Main Staff
+Portal and this app reads the shared `jwt_token` cookie instead.
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/api/v1/auth/login/` | Obtain JWT token |
-| POST | `/api/v1/auth/logout/` | Invalidate token |
-| POST | `/api/v1/auth/refresh/` | Refresh JWT token |
+| POST | `/api/v1/auth/login/` | Retired — `410` |
+| POST | `/api/v1/auth/register/` | Retired — `410` |
+| POST | `/api/v1/auth/logout/` | Retired (no-op success) — nothing local left to invalidate |
+| POST | `/api/v1/auth/refresh/` | Retired — `410` |
 
 ### Exams
 

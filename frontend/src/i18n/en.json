@@ -25,6 +25,12 @@
   },
   "auth": {
     "login": "Login",
+    "ssoTitle": "Sign in via the Staff Portal",
+    "ssoSubtitle": "Shiken Lab no longer has its own password login — sign in once at the Main Staff Portal, then come back here.",
+    "ssoButton": "Go to Staff Portal login",
+    "ssoRegisterTitle": "Create your account at the Staff Portal",
+    "ssoRegisterSubtitle": "Shiken Lab no longer creates accounts itself — register once at the Main Staff Portal, then come back here and you'll be signed in automatically.",
+    "ssoRegisterButton": "Go to Staff Portal registration",
     "logout": "Logout",
     "logoutConfirmTitle": "Confirm Logout",
     "logoutConfirmMessage": "Are you sure you want to log out?",
@@ -174,12 +180,6 @@
       "network": "Network",
       "security": "Security",
       "linux": "Linux"
-    },
-    "certBanner": {
-      "goal": "Your Goal",
-      "it": "Practice for {{cert}}",
-      "jlpt": "Practice for JLPT {{level}}",
-      "start": "Start practicing"
     }
   },
   "result": {
@@ -474,6 +474,7 @@
     },
     "users": {
       "title": "User Management",
+      "movedToMain": "User management has moved to the Main Staff Portal's Admin Users page. Accounts are now created and managed there, and Shiken Lab picks up that identity automatically.",
       "subtitle": "Manage employee accounts",
       "newButton": "+ New User",
       "searchPlaceholder": "Search users...",
@@ -782,6 +783,7 @@
   "profile": {
     "title": "Profile",
     "subtitle": "Personal information and settings",
+    "movedToMain": "Profile editing and password changes have moved to the Main Staff Portal.",
     "nameLabel": "Name",
     "certificationLabel": "Target Certification",
     "saveButton": "Save Changes",

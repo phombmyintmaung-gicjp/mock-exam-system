@@ -34,20 +34,28 @@ When writing analytics queries:
 
 ### Schema reference
 
-#### Accounts — `backend/app/Models/`
+#### Accounts — One-Login migration (2026-09)
 
-**`users`**
+There is **no local accounts table in this app anymore** — `mockexam_users` was fully
+retired and dropped. `App\Models\User` (`backend/app/Models/User.php`) reads the
+company-wide shared `users` table directly (owned by the Main Staff Portal
+exam-history-management, in the same physical `company_system_db` database):
+
 | Column | Type | Notes |
 |--------|------|-------|
 | `id` | BIGINT PK AUTO_INCREMENT | |
-| `email` | VARCHAR(254) UNIQUE | login identifier |
-| `name` | VARCHAR(150) | display name |
-| `role` | ENUM('admin','employee') | |
-| `target_certification` | VARCHAR(200) | nullable |
-| `password` | VARCHAR(255) | hashed by Laravel (bcrypt) |
-| `is_active` | BOOLEAN | default TRUE |
-| `created_at` | TIMESTAMP | timestamps() |
-| `updated_at` | TIMESTAMP | timestamps() |
+| `email` | VARCHAR(254) UNIQUE | |
+| `name` | VARCHAR(150) | |
+| `password` | VARCHAR(255) | hashed — never verified or written by this app; Main is the sole credential authority |
+| `role` | TINYINT UNSIGNED, nullable | `NULL` or `1` = Admin, `3` = Member — **not** the old local `1`=admin/`2`=employee scheme; a `NULL` role must be treated as Admin, same as `1` (see `User::isAdmin()`) |
+| `employee_code` | VARCHAR(50) UNIQUE, nullable | FK → `employees.employee_code`; the join key `User::employee()` uses — **not** an `employee_id` column, which this table doesn't have |
+| `session_token` | VARCHAR(36), nullable, unique | single active session enforcement — compared against the shared JWT's `sid` claim on every request |
+| `last_active_at` | TIMESTAMP, nullable | |
+
+The old `target_certification`/`is_active`/`approval_status` fields have **no replacement**
+— that whole self-registration-pending-review workflow was removed, not rehomed, once
+registration itself moved to the Main Staff Portal. See the root `CLAUDE.md`'s
+"Authentication" section for the full picture.
 
 #### Exams — `backend/app/Models/`
 

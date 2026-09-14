@@ -182,16 +182,49 @@ Both `ExamSession` and `CustomExamSession` enforce the same security policy:
 
 The only difference between the two pages: `CustomExamSession.onClose` (cancel button in the notice) navigates to `/exam/custom/${slug}` instead of `/exam/select`.
 
+## Authentication — One-Login (2026-09)
+
+This app shares one physical MySQL database (`company_system_db`) with the Main Staff
+Portal (exam-history-management) and Chōrei Hub (discussion-topic-system), all reachable
+over the same `company-db-net` Docker network. **Main's own `users` table is the sole
+authentication authority for all three apps.** This app has **no local user/account table
+at all** — `mockexam_users` was fully retired and dropped; `App\Models\User` reads Main's
+shared `users` table directly (joined to `employees` via the `employee_code` natural key,
+not an `employee_id` FK — the shared table has no such column).
+
+- **Login/registration/logout/refresh/profile-edit/change-password are all retired** —
+  `POST /auth/login`, `/auth/register`, `/auth/refresh`, `PUT /profile`,
+  `POST /profile/change-password` all return `410`. A person logs in once at the Main Staff
+  Portal, and this app just reads the shared `jwt_token` cookie it sets
+  (`App\Http\Middleware\SharedJwtAuth` primes the `api` guard; `RequireSharedAuth` is the
+  actual gate on protected routes — replaces `auth:api` everywhere in `routes/api.php`).
+  There is nothing left to register, log out of, or refresh locally.
+- **Admin User Management is retired** — `UserAdminController`'s every action (list, create,
+  update, delete, approve, reject) returns `410`. The old `approval_status`/`is_active`
+  workflow existed only because this app used to self-register accounts pending admin
+  review; now that an account only exists because Main already created/approved it, that
+  workflow — and the `target_certification` profile field — are gone, not rehomed.
+- **Role comes directly from Main's `users.role`** — `NULL` or `1` = Admin, `3` = Member,
+  a **different number space** from this app's old local `1`=admin/`2`=employee scheme.
+  **A `NULL` role must be treated as Admin, same as `1`** — never compare `role === 1`
+  alone; always use `isAdminRole()` from `frontend/src/types/user.ts` (backend:
+  `User::isAdmin()`).
+- `SHARED_JWT_SECRET` in `.env` must match Main's own `JWT_SECRET` exactly — see
+  `config/shared_auth.php`.
+
 ## Post-Login Redirect
 
-- `PrivateRoute` saves the attempted URL in `location.state.from` when redirecting unauthenticated users to `/login`
-- `Login.tsx` reads `(location.state as { from?: string })?.from` after successful authentication
-- Redirect rules after login:
-  - **Employee** with `from`: redirect to `from`
-  - **Employee** without `from`: redirect to `/exam/select`
-  - **Admin** with `from` starting with `/admin/`: redirect to `from`
-  - **Admin** with `from` pointing at an employee route, or no `from`: redirect to `/admin/dashboard`
-- Already-logged-in users who land on `/login` follow the same rules
+Since login itself now happens at the Main Staff Portal (not in this app), the previous
+"return to the page you originally tried to reach" behavior no longer round-trips through
+an external redirect — a user bounced to `/login` while unauthenticated is sent to Main and,
+on return, lands on the generic default page below, not their original URL. This is a known,
+deliberate simplification from the One-Login migration, not a bug to fix locally.
+
+- `PrivateRoute` (`requiredRole?: 'admin' | 'member'`) gates on `isAdminRole(user.role)` —
+  `'admin'` routes redirect non-admins to `/exam/select`; `'member'` routes admit anyone
+  authenticated, admins included.
+- Default landing page after the shared cookie resolves: **Admin** → `/admin/dashboard`;
+  **Member** → `/exam/select`.
 
 ## Seeder Order
 

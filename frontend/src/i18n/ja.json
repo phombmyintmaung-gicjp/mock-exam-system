@@ -25,6 +25,12 @@
   },
   "auth": {
     "login": "ログイン",
+    "ssoTitle": "スタッフポータルでサインイン",
+    "ssoSubtitle": "Shiken Lab独自のパスワードログインは廃止されました。まずスタッフポータルでサインインしてから、このページに戻ってきてください。",
+    "ssoButton": "スタッフポータルのログインへ",
+    "ssoRegisterTitle": "スタッフポータルでアカウントを作成",
+    "ssoRegisterSubtitle": "Shiken Lab独自のアカウント作成は廃止されました。まずスタッフポータルで登録してから、このページに戻ってくると自動的にサインインされます。",
+    "ssoRegisterButton": "スタッフポータルの登録へ",
     "logout": "ログアウト",
     "logoutConfirmTitle": "ログアウトの確認",
     "logoutConfirmMessage": "本当にログアウトしますか？",
@@ -174,12 +180,6 @@
       "network": "ネットワーク",
       "security": "セキュリティ",
       "linux": "Linux"
-    },
-    "certBanner": {
-      "goal": "目標資格",
-      "it": "{{cert}} の練習を始めましょう",
-      "jlpt": "JLPT {{level}} の練習を始めましょう",
-      "start": "今すぐ練習"
     }
   },
   "result": {
@@ -474,6 +474,7 @@
     },
     "users": {
       "title": "ユーザー管理",
+      "movedToMain": "ユーザー管理はスタッフポータルの管理者ユーザーページに移動しました。アカウントの作成・管理はそちらで行われ、Shiken Labはそのアイデンティティを自動的に引き継ぎます。",
       "subtitle": "従業員アカウントを管理する",
       "newButton": "+ 新しいユーザー",
       "searchPlaceholder": "ユーザーを検索...",
@@ -782,6 +783,7 @@
   "profile": {
     "title": "プロフィール",
     "subtitle": "個人情報と設定",
+    "movedToMain": "プロフィール編集とパスワード変更はスタッフポータルに移動しました。",
     "nameLabel": "名前",
     "certificationLabel": "目標資格",
     "saveButton": "変更を保存する",

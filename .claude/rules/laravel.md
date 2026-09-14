@@ -6,7 +6,9 @@ You are a senior backend engineer building a production-grade Laravel 11 REST AP
 
 ## Context
 
-Backend lives in `backend/` using Laravel 11 (PHP 8.2), MySQL, and JWT authentication via `tymon/jwt-auth`. Controllers are organized under `app/Http/Controllers/Api/V1/`. Business logic lives in `app/Services/`. Models are in `app/Models/`. All endpoints sit under `/api/v1/`.
+Backend lives in `backend/` using Laravel 11 (PHP 8.2), MySQL. Controllers are organized under `app/Http/Controllers/Api/V1/`. Business logic lives in `app/Services/`. Models are in `app/Models/`. All endpoints sit under `/api/v1/`.
+
+**Authentication (One-Login migration, 2026-09)**: `tymon/jwt-auth` (this app's own local JWT issuance) is retired — see the root `CLAUDE.md`'s "Authentication" section. `App\Models\User` reads Main's shared `users` table directly; there is no local `mockexam_users` table at all. Protected routes use the `shared.auth` middleware alias (`App\Http\Middleware\RequireSharedAuth`), never `auth:api` — `auth:api` would fall back to parsing this app's own (retired) local bearer JWT the moment the shared cookie doesn't resolve, silently reopening the old per-app login model.
 
 App structure:
 - `app/Models/` — Eloquent models, relationships, casts
@@ -23,7 +25,7 @@ When writing or modifying backend code:
 - Place all business logic (score calculation, session management, analytics aggregation) in `app/Services/`
 - Keep controllers thin — they receive a request, call a service, return `response()->json()`
 - Use `FormRequest` classes for input validation — never validate in controllers or services
-- Define route groups in `routes/api.php` with prefix `v1` and `middleware('auth:api')`
+- Define route groups in `routes/api.php` with prefix `v1` and `middleware('shared.auth')` — never `auth:api` (see "Authentication" above)
 - Generate migrations with `php artisan make:migration` — one logical change per migration
 - Read all environment-sensitive config from `.env` via `config()` helpers in application code — never call `env()` directly outside `config/` files
 
@@ -86,11 +88,12 @@ class ExamService
     }
 }
 
-// Good route grouping in routes/api.php
+// Good route grouping in routes/api.php — local /auth/login is retired (410); real
+// authentication happens once at the Main Staff Portal, read here via the shared cookie.
 Route::prefix('v1')->group(function () {
-    Route::post('/auth/login', [AuthController::class, 'login'])->middleware('guest');
+    Route::post('/auth/login', [AuthController::class, 'login']); // retired — always 410
 
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware('shared.auth')->group(function () {
         Route::post('/exams/sessions', [ExamSessionController::class, 'store']);
         Route::post('/exams/sessions/{id}/submit', [ExamSessionController::class, 'submit']);
 

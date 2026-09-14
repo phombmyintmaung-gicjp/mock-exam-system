@@ -39,7 +39,7 @@ Route::prefix('v1')->group(function () {
     Route::get('study/flashcards', [FlashcardController::class, 'index'])->name('study.flashcards.index');
 
     // SRS review + bookmark routes (auth required — placed here to register before the wildcard {id} in the auth block)
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware('shared.auth')->group(function () {
         Route::get('study/flashcards/due', [FlashcardReviewController::class, 'due'])->name('study.flashcards.due');
         Route::post('study/flashcards/{id}/review', [FlashcardReviewController::class, 'store'])->name('study.flashcards.review');
 
@@ -63,7 +63,7 @@ Route::prefix('v1')->group(function () {
     // -------------------------------------------------------------------------
     // Authenticated routes
     // -------------------------------------------------------------------------
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware('shared.auth')->group(function () {
 
         // User profile (all authenticated users)
         Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');

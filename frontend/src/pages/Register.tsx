@@ -1,57 +1,26 @@
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Link } from 'react-router-dom';
 import clsx from 'clsx';
-import { Button } from '@/components/ui/Button';
-import { register } from '@/services/authService';
 import { useAuthStore } from '@/store/authStore';
+import { isAdminRole } from '@/types/user';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { ArrowLeftIcon } from '@/components/ui/Icons';
 
-const ALLOWED_DOMAIN = '@gicjp.com';
-
+// One-Login migration (2026-09): local registration is retired entirely — this app never
+// creates an account itself anymore. A new employee registers once at the Main Staff
+// Portal; Mock reads that same shared `users` row directly the moment they open it ("ALL
+// USERS come from [Main's] USERS TABLE"). This page is a plain redirect, not a form.
 const Register = () => {
   const { t } = useTranslation();
   const { token, user } = useAuthStore();
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [serverError, setServerError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [registered, setRegistered] = useState(false);
-
   if (token && user) {
-    return <Navigate to={user.role === 1 ? '/admin/dashboard' : '/exam/select'} replace />;
+    return <Navigate to={isAdminRole(user.role) ? '/admin/dashboard' : '/exam/select'} replace />;
   }
 
-  const validate = (): boolean => {
-    const errors: Record<string, string> = {};
-    if (!name.trim()) errors.name = t('auth.nameRequired');
-    if (!email.toLowerCase().endsWith(ALLOWED_DOMAIN)) errors.email = t('auth.emailDomainError');
-    if (password.length < 8) errors.password = t('auth.passwordTooShort');
-    if (password !== confirmPassword) errors.confirmPassword = t('auth.passwordMismatch');
-    setFieldErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setServerError('');
-    if (!validate()) return;
-    setLoading(true);
-    try {
-      await register(name, email, password, confirmPassword);
-      setRegistered(true);
-    } catch (err: unknown) {
-      const res = (err as { response?: { data?: { errors?: Record<string, string[]>; message?: string; error?: string } } })?.response?.data;
-      const firstFieldError = res?.errors ? Object.values(res.errors)[0]?.[0] : undefined;
-      setServerError(firstFieldError ?? res?.error ?? res?.message ?? t('common.error'));
-    } finally {
-      setLoading(false);
-    }
+  const goToMainRegister = () => {
+    window.location.href = '/miyazaki-staff-portal/register';
   };
 
   const benefits = [
@@ -122,133 +91,24 @@ const Register = () => {
     </div>
   );
 
-  if (registered) {
-    return pageShell(
-      <div className="glass-card rounded-2xl p-8 shadow-2xl shadow-black/15 dark:shadow-black/40 text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-500/20">
-          <svg className="h-8 w-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-          {t('auth.registerPendingTitle')}
-        </h2>
-        <p className="text-sm text-slate-500 dark:text-white/50 mb-6">
-          {t('auth.registerPendingBody')}
-        </p>
-        <Link
-          to="/login"
-          className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-600"
-        >
-          <ArrowLeftIcon className="h-4 w-4" />
-          {t('auth.registerPendingBack')}
-        </Link>
-      </div>
-    );
-  }
-
   return pageShell(
     <>
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('auth.register')}</h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-white/50">{t('auth.registerPage.subtitle')}</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('auth.ssoRegisterTitle')}</h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-white/50">{t('auth.ssoRegisterSubtitle')}</p>
         </div>
         <LanguageToggle />
       </div>
 
       <div className="glass-card rounded-2xl p-8 shadow-2xl shadow-black/15 dark:shadow-black/40">
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-              {t('auth.name')}
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: '' })); }}
-              placeholder={t('auth.namePlaceholder')}
-              required
-              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.name && 'ring-1 ring-rose-400')}
-            />
-            {fieldErrors.name && <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.name}</p>}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-              {t('auth.email')}
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: '' })); }}
-              placeholder={`yourname${ALLOWED_DOMAIN}`}
-              required
-              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.email && 'ring-1 ring-rose-400')}
-            />
-            {fieldErrors.email
-              ? <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.email}</p>
-              : <p className="mt-1 text-xs text-slate-400 dark:text-white/30">{ALLOWED_DOMAIN} only</p>
-            }
-          </div>
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-              {t('auth.password')}
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setFieldErrors((p) => ({ ...p, password: '' })); }}
-              placeholder="••••••••"
-              required
-              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.password && 'ring-1 ring-rose-400')}
-            />
-            {fieldErrors.password
-              ? <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.password}</p>
-              : <p className="mt-1 text-xs text-slate-400 dark:text-white/30">{t('auth.passwordHint')}</p>
-            }
-          </div>
-
-          {/* Confirm Password */}
-          <div>
-            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-white/80">
-              {t('auth.confirmPassword')}
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => { setConfirmPassword(e.target.value); setFieldErrors((p) => ({ ...p, confirmPassword: '' })); }}
-              placeholder="••••••••"
-              required
-              className={clsx('glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all', fieldErrors.confirmPassword && 'ring-1 ring-rose-400')}
-            />
-            {fieldErrors.confirmPassword && (
-              <p className="mt-1 text-xs text-rose-500 dark:text-rose-400">{fieldErrors.confirmPassword}</p>
-            )}
-          </div>
-
-          {serverError && (
-            <div className="rounded-xl border border-rose-400/30 bg-rose-500/15 px-4 py-3 text-sm text-rose-300">
-              {serverError}
-            </div>
-          )}
-
-          <Button
-            label={loading ? t('auth.registering') : t('auth.registerButton')}
-            type="submit"
-            disabled={loading}
-            className="w-full py-2.5 text-base"
-          />
-        </form>
+        <button
+          type="button"
+          onClick={goToMainRegister}
+          className="w-full rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 py-2.5 text-base font-semibold text-white shadow-lg shadow-emerald-500/30 transition-transform hover:scale-[1.01]"
+        >
+          {t('auth.ssoRegisterButton')}
+        </button>
 
         <p className="mt-6 text-center text-sm text-slate-400 dark:text-white/40">
           {t('auth.alreadyHaveAccount')}{' '}

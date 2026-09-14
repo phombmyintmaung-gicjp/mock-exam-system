@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
+import { isAdminRole } from '@/types/user';
 import { logout as logoutApi } from '@/services/authService';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -43,6 +44,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const handleLogout = async () => {
     try { await logoutApi(); } catch {}
+    // One-Login migration, Phase 3 (2026-09): this app's own logout only invalidates its own
+    // (retired) local JWT — it never revoked the shared Main session, so the shared jwt_token
+    // cookie (same origin, Path=/) would silently re-authenticate this browser again right
+    // after "logging out". Calling Main's own logout directly nulls users.session_token
+    // (which SharedJwtAuth's shared-JWT check compares against) and clears the cookie itself.
+    try { await fetch('/miyazaki-staff-portal/api/v1/auth/logout', { method: 'POST', credentials: 'include' }); } catch {}
     logout();
     navigate('/');
   };
@@ -99,7 +106,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { to: '/profile',            label: t('nav.profile'),   icon: <UserIcon className={si} />, end: true },
   ];
 
-  const isAdmin = user?.role === 1;
+  const isAdmin = !!user && isAdminRole(user.role);
 
   const renderNavItem = (link: NavLinkItem, accent?: 'amber' | 'rose') => {
     const href = link.to + (link.search ?? '');

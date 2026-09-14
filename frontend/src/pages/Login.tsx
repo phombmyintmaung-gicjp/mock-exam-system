@@ -1,70 +1,25 @@
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Navigate, Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
-import { login } from '@/services/authService';
+import { Navigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { isAdminRole } from '@/types/user';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { ArrowLeftIcon, BookOpenIcon } from '@/components/ui/Icons';
 
+// One-Login migration, Phase 3 (2026-09): local email/password login is retired entirely.
+// Authentication now happens once at the Main Staff Portal; this app only ever rides the
+// shared jwt_token cookie it sets (see App.tsx's fetchMe()-on-mount check). This page is a
+// plain redirect, not a form submit.
 const Login = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from;
-  const { token, user, setAuth } = useAuthStore();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberEmail, setRememberEmail] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('rememberedEmail');
-    if (saved) {
-      setEmail(saved);
-      setRememberEmail(true);
-    }
-  }, []);
+  const { token, user } = useAuthStore();
 
   if (token && user) {
-    const defaultPath = user.role === 1 ? '/admin/dashboard' : '/exam/select';
-    const destination = from && (user.role !== 1 || from.startsWith('/admin/')) ? from : defaultPath;
-    return <Navigate to={destination} replace />;
+    const defaultPath = isAdminRole(user.role) ? '/admin/dashboard' : '/exam/select';
+    return <Navigate to={defaultPath} replace />;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
-      const { token: newToken, user: newUser } = await login(email, password);
-      if (rememberEmail) {
-        localStorage.setItem('rememberedEmail', email);
-      } else {
-        localStorage.removeItem('rememberedEmail');
-      }
-      setAuth(newUser, newToken);
-      const defaultPath = newUser.role === 1 ? '/admin/dashboard' : '/exam/select';
-      const destination = from && (newUser.role !== 1 || from.startsWith('/admin/')) ? from : defaultPath;
-      navigate(destination, { replace: true });
-    } catch (err: unknown) {
-      const status = (err as { response?: { status?: number; data?: { error?: string } } })?.response?.status;
-      const code = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      if (status === 429) {
-        setError(t('auth.tooManyAttempts'));
-      } else if (status === 403 && code === 'pending') {
-        setError(t('auth.accountPending'));
-      } else if (status === 403 && code === 'rejected') {
-        setError(t('auth.accountRejected'));
-      } else if (status === 403 && code === 'inactive') {
-        setError(t('auth.accountInactive'));
-      } else {
-        setError(t('auth.invalidCredentials'));
-      }
-    } finally {
-      setLoading(false);
-    }
+  const goToMainLogin = () => {
+    window.location.href = '/miyazaki-staff-portal/login';
   };
 
   return (
@@ -125,73 +80,20 @@ const Login = () => {
 
           <div className="flex items-start justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('auth.login')}</h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-white/50">{t('app.subtitle')}</p>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('auth.ssoTitle')}</h2>
+              <p className="mt-1 text-sm text-slate-500 dark:text-white/50">{t('auth.ssoSubtitle')}</p>
             </div>
             <LanguageToggle />
           </div>
 
           <div className="glass-card rounded-2xl p-8 shadow-2xl shadow-black/15 dark:shadow-black/40">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1.5">
-                  {t('auth.email')}
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="email@example.com"
-                  required
-                  className="glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-slate-700 dark:text-white/80 mb-1.5">
-                  {t('auth.password')}
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  className="glass-input block w-full rounded-xl px-4 py-2.5 text-sm transition-all"
-                />
-                <label className="mt-2.5 flex cursor-pointer items-center gap-2 select-none">
-                  <input
-                    type="checkbox"
-                    checked={rememberEmail}
-                    onChange={(e) => setRememberEmail(e.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 accent-amber-500 dark:border-white/20"
-                  />
-                  <span className="text-xs text-slate-500 dark:text-white/50">{t('auth.rememberEmail')}</span>
-                </label>
-              </div>
-
-              {error && (
-                <div className="rounded-xl border border-rose-400/30 bg-rose-500/15 px-4 py-3 text-sm text-rose-300">
-                  {error}
-                </div>
-              )}
-
-              <Button
-                label={loading ? t('auth.loggingIn') : t('auth.login')}
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 text-base"
-              />
-            </form>
-
-            <p className="mt-6 text-center text-sm text-slate-400 dark:text-white/40">
-              {t('auth.noAccount')}{' '}
-              <Link to="/register" className="font-semibold text-amber-500 hover:text-amber-400 hover:underline transition-colors dark:text-amber-300 dark:hover:text-amber-200">
-                {t('auth.signUpLink')}
-              </Link>
-            </p>
+            <button
+              type="button"
+              onClick={goToMainLogin}
+              className="w-full rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 py-2.5 text-base font-semibold text-white shadow-lg shadow-rose-500/30 transition-transform hover:scale-[1.01]"
+            >
+              {t('auth.ssoButton')}
+            </button>
 
             <div className="mt-4 border-t border-slate-100 pt-4 dark:border-white/10">
               <Link

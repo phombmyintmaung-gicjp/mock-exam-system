@@ -3,155 +3,53 @@
 namespace App\Http\Controllers\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 
+// One-Login migration (2026-09): this app has no local login/registration/logout/refresh
+// session of any kind anymore — every action below is retired (410). Authentication
+// happens once at the Main Staff Portal via the shared jwt_token cookie; SharedJwtAuth/
+// RequireSharedAuth resolve identity directly from Main's shared `users` table —
+// mockexam_users no longer exists at all ("ALL USERS come from [Main's] USERS TABLE").
+// The frontend calls Main's own /auth/logout directly instead (see Sidebar.tsx's
+// handleLogout()), which is what actually revokes the shared session. AuthService (this
+// app's own login/register/logout/refresh logic, all against the now-gone local JWT) has
+// been deleted entirely rather than left unused, since nothing calls any of it anymore.
 class AuthController extends Controller
 {
-    public function __construct(
-        private readonly AuthService $authService
-    ) {}
-
     /**
-     * @OA\Post(
-     *     path="/auth/login",
-     *     tags={"Auth"},
-     *     summary="Login and obtain a JWT token",
-     *     operationId="authLogin",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"email","password"},
-     *             @OA\Property(property="email", type="string", format="email", example="admin@gicjp.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="secret")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Authenticated",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1Q..."),
-     *                 @OA\Property(property="token_type", type="string", example="bearer"),
-     *                 @OA\Property(property="expires_in", type="integer", example=3600),
-     *                 @OA\Property(property="user", type="object",
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="name", type="string"),
-     *                     @OA\Property(property="email", type="string"),
-     *                     @OA\Property(property="role", type="string", enum={"admin","employee"})
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="Invalid credentials",
-     *         @OA\JsonContent(@OA\Property(property="error", type="string"))
-     *     ),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
+     * POST /auth/login — retired. Deliberately takes no FormRequest — this must return
+     * 410 unconditionally, never a 422 from LoginRequest's own validation running first.
      */
-    /**
-     * @OA\Post(
-     *     path="/auth/register",
-     *     tags={"Auth"},
-     *     summary="Register a new employee account",
-     *     operationId="authRegister",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name","email","password","password_confirmation"},
-     *             @OA\Property(property="name", type="string", example="Yamada Taro"),
-     *             @OA\Property(property="email", type="string", format="email", example="yamada@gicjp.com"),
-     *             @OA\Property(property="password", type="string", format="password", example="secret123"),
-     *             @OA\Property(property="password_confirmation", type="string", example="secret123")
-     *         )
-     *     ),
-     *     @OA\Response(response=201, description="Account created",
-     *         @OA\JsonContent(@OA\Property(property="data", type="object"))
-     *     ),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
-     */
-    public function register(RegisterRequest $request): JsonResponse
+    public function login(): JsonResponse
     {
-        $result = $this->authService->register($request->validated());
-
-        if (($result['error'] ?? false) === true) {
-            return response()->json(['error' => $result['message']], 422);
-        }
-
-        return response()->json(['data' => $result], 201);
-    }
-
-    public function login(LoginRequest $request): JsonResponse
-    {
-        $result = $this->authService->login($request->validated());
-
-        if ($result === 'pending') {
-            return response()->json(['error' => 'pending'], 403);
-        }
-
-        if ($result === 'rejected') {
-            return response()->json(['error' => 'rejected'], 403);
-        }
-
-        if ($result === 'inactive') {
-            return response()->json(['error' => 'inactive'], 403);
-        }
-
-        if ($result === null) {
-            return response()->json(['error' => 'Invalid credentials.'], 401);
-        }
-
-        return response()->json(['data' => $result]);
+        return response()->json(['error' => 'Local login has been retired. Please sign in at the Main Staff Portal.'], 410);
     }
 
     /**
-     * @OA\Post(
-     *     path="/auth/logout",
-     *     tags={"Auth"},
-     *     summary="Invalidate the current JWT token",
-     *     operationId="authLogout",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response=200, description="Logged out",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="message", type="string", example="Successfully logged out.")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
+     * POST /auth/register — retired. Deliberately takes no FormRequest — this must return
+     * 410 unconditionally, never a 422 from RegisterRequest's own validation running first.
+     */
+    public function register(): JsonResponse
+    {
+        return response()->json(['error' => 'Local registration has been retired. Sign in at the Main Staff Portal — your account here is created automatically.'], 410);
+    }
+
+    /**
+     * POST /auth/logout — retired. There is no local JWT to invalidate anymore; the shared
+     * session lives entirely on Main's `users` row and is revoked by Main's own
+     * /auth/logout. Kept as a route so an old cached frontend bundle gets a no-op success
+     * instead of an error.
      */
     public function logout(): JsonResponse
     {
-        $this->authService->logout();
-
         return response()->json(['data' => ['message' => 'Successfully logged out.']]);
     }
 
     /**
-     * @OA\Post(
-     *     path="/auth/refresh",
-     *     tags={"Auth"},
-     *     summary="Refresh the JWT token",
-     *     operationId="authRefresh",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(response=200, description="Token refreshed",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1Q...")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="Token expired or invalid")
-     * )
+     * POST /auth/refresh — retired. There is no local JWT left to refresh.
      */
     public function refresh(): JsonResponse
     {
-        $token = $this->authService->refresh();
-
-        return response()->json(['data' => ['token' => $token]]);
+        return response()->json(['error' => 'Local token refresh has been retired.'], 410);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminOnly;
+use App\Http\Middleware\RequireSharedAuth;
 use App\Http\Middleware\SharedJwtAuth;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,9 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // guest routes like login/register), so it is safe to run on every API request.
         $middleware->api(prepend: SharedJwtAuth::class);
 
-        // Register the named 'admin' middleware alias used in routes/api.php
+        // Register the named middleware aliases used in routes/api.php
         $middleware->alias([
-            'admin' => AdminOnly::class,
+            'admin'       => AdminOnly::class,
+            // One-Login migration, Phase 3: replaces 'auth:api' as the protected-route gate.
+            'shared.auth' => RequireSharedAuth::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

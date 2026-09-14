@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
+import { isAdminRole } from '@/types/user';
 import { HomeIcon, ChevronRightIcon } from '@/components/ui/Icons';
 
 interface Crumb {
@@ -22,7 +23,7 @@ const Breadcrumb = () => {
 
   if (SESSION_PATHS.some((p) => location.pathname.startsWith(p))) return null;
 
-  const isAdmin = user?.role === 1;
+  const isAdmin = !!user && isAdminRole(user.role);
   const homeHref = isAdmin ? '/admin/dashboard' : '/exam/select';
 
   const labelMap: Record<string, string> = {

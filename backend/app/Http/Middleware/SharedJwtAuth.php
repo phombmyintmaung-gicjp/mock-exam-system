@@ -8,27 +8,26 @@ use App\Services\SharedJwtVerifier;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
-// One-Login shared authentication foundation (2026-09, Phase 5): primes the `api` guard
-// with a mockexam_users identity resolved from the shared Main JWT cookie, BEFORE the
-// existing `auth:api` middleware runs. Tymon's JWTGuard::user() returns whatever was
-// already set via setUser()/login() without attempting its own token-based resolution
-// (confirmed in vendor/tymon/jwt-auth/src/JWTGuard.php — `if ($this->user !== null) return
-// $this->user;`), so this middleware never conflicts with, and never needs to touch, the
-// existing bearer-token JWT check — if this middleware can't resolve a shared identity, it
-// simply does nothing and lets `auth:api` proceed exactly as it always has (this app's own
-// JWT_SECRET, own token, own login flow — completely unaffected). The shared-JWT branch is
-// currently inert in any real deployment, since SHARED_JWT_SECRET is not yet set in any
-// real .env (see config/shared_auth.php) — it activates only once that's configured later.
-// Always calls $next($request) regardless of outcome — this middleware never itself
-// rejects a request; only the existing `auth:api` middleware after it can do that.
+// One-Login migration (2026-09): primes the `api` guard with a `users` identity resolved
+// directly from the shared Main JWT cookie, before ANY route-specific middleware runs
+// (prepended to the whole `api` group in bootstrap/app.php) — including guest routes like
+// /auth/login, where it's simply a no-op. mockexam_users no longer exists at all — "ALL
+// USERS come from [Main's] USERS TABLE." Always calls $next($request) regardless of
+// outcome; this middleware itself never rejects anything, since it has no idea yet whether
+// the route even requires authentication. The actual gate is `RequireSharedAuth` (see that
+// class), applied only to protected route groups in routes/api.php — it reads the
+// request-attribute this middleware sets below rather than asking the `api` guard directly,
+// specifically to avoid Tymon's JWTGuard::user() falling back to parsing this app's own
+// (retired) local bearer JWT when the shared cookie doesn't resolve.
 class SharedJwtAuth
 {
     public function handle(Request $request, Closure $next): Response
     {
         $user = $this->resolveViaSharedJwt($request);
+
+        $request->attributes->set('shared_user', $user);
 
         if ($user) {
             Auth::guard('api')->setUser($user);
@@ -37,12 +36,9 @@ class SharedJwtAuth
         return $next($request);
     }
 
-    // Resolves a mockexam_users identity from the shared Main JWT cookie, or null if the
-    // cookie is absent/invalid/expired, the shared session has been logged out on Main
-    // (Phase 8), the shared account has no employee link, that employee has no
-    // mockexam_users account, or (a data-integrity anomaly) more than one mockexam_users
-    // row claims the same employee — every one of those cases is left for the existing
-    // bearer-token guard to handle instead, never guessed at here.
+    // Resolves a `users` identity from the shared Main JWT cookie, or null if the cookie is
+    // absent/invalid/expired, the shared session has been logged out on Main (Phase 8), or
+    // the account has no employee link.
     private function resolveViaSharedJwt(Request $request): ?User
     {
         $cookieName = config('shared_auth.cookie_name', 'jwt_token');
@@ -57,8 +53,8 @@ class SharedJwtAuth
             return null;
         }
 
-        $sharedRow = DB::table('users')->where('id', $payload['sub'])->first();
-        if (!$sharedRow || !$sharedRow->employee_code) {
+        $user = User::find($payload['sub']);
+        if (!$user || !$user->employee_code) {
             return null;
         }
 
@@ -67,21 +63,16 @@ class SharedJwtAuth
         // fresh session_token UUID on the users row and embeds the SAME value as this JWT's
         // `sid` claim; Main's own logout() nulls session_token. Comparing the two here means
         // a JWT that was perfectly valid a moment ago is rejected the instant the user logs
-        // out of Main — without a new table, endpoint, or schema change, since both sides
-        // already existed for Main's own single-session enforcement (found during the
-        // Phase 7 E2E test, which showed Main itself already rejects a logged-out token this
-        // way while DTS/Mock previously did not).
-        if (!$sharedRow->session_token || ($payload['sid'] ?? null) !== $sharedRow->session_token) {
+        // out of Main — without a new table, endpoint, or schema change.
+        if (!$user->session_token || ($payload['sid'] ?? null) !== $user->session_token) {
             return null;
         }
 
-        $employeeId = Employee::where('employee_code', $sharedRow->employee_code)->value('id');
-        if (!$employeeId) {
+        $employeeExists = Employee::where('employee_code', $user->employee_code)->exists();
+        if (!$employeeExists) {
             return null;
         }
 
-        $matches = User::where('employee_id', $employeeId)->get();
-
-        return $matches->count() === 1 ? $matches->first() : null;
+        return $user;
     }
 }

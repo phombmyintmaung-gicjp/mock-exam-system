@@ -2,39 +2,26 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-// One-Login shared authentication foundation (2026-09, Phase 5): covers
-// App\Http\Middleware\SharedJwtAuth, which primes the `api` guard from the shared Main JWT
-// cookie BEFORE the existing `auth:api` middleware runs — added ahead of (never in place
-// of) this app's own tymon/jwt-auth bearer-token check. Same DatabaseTransactions-only
-// precedent as the rest of this session's tests — this suite runs against `dts_testing`,
-// a database shared across all three apps' test suites; never RefreshDatabase here.
-//
-// IMPORTANT test-harness note: Laravel's json()/getJson() test helpers only forward
-// registered cookies when the request chain also calls withCredentials() first —
-// prepareCookiesForJsonRequest() otherwise returns an empty cookie set (mirrors a real
-// browser's fetch()/XHR needing credentials: 'include' for a cross-origin-looking
-// request). Every request below that relies on the shared cookie chains
-// withCredentials()->withUnencryptedCookie() — withUnencryptedCookie (not withCookie) is
-// required too, since the middleware reads the RAW cookie value directly, matching how
-// Main's own jwt_token cookie is actually delivered (see Phase 4's audit: this app's `api`
-// middleware group carries no EncryptCookies).
+// One-Login migration (2026-09): covers App\Http\Middleware\SharedJwtAuth, which resolves
+// identity ONLY from the shared Main JWT cookie, directly against the shared `users` table
+// — mockexam_users no longer exists at all ("ALL USERS come from [Main's] USERS TABLE").
+// Same DatabaseTransactions-only precedent as the rest of this session's tests — this suite
+// runs against `dts_testing`, a database shared across all three apps' test suites; never
+// RefreshDatabase here.
 class SharedJwtAuthTest extends TestCase
 {
     use DatabaseTransactions;
 
     private const TEST_SECRET = 'testing-only-shared-jwt-secret-do-not-use-in-production';
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Cache::flush(); // login is rate-limited per-IP; avoid cross-test 429s on the legacy-login test below
-    }
-
+    // Employee is guarded (Mock only ever reads this Main-owned table) — insert via raw
+    // query builder for test seeding rather than mass-assignment.
     private function makeEmployee(string $code): int
     {
         return DB::table('employees')->insertGetId([
@@ -45,35 +32,15 @@ class SharedJwtAuthTest extends TestCase
         ]);
     }
 
-    // Default session_token deliberately matches mintSharedJwt()'s default `sid`, so every
-    // existing call site (written before Phase 8) keeps resolving successfully without
-    // being touched — only tests that explicitly care about the logout/revocation check
-    // pass a different value on one side or the other.
-    private function makeSharedUser(string $employeeCode, string $email, ?string $sessionToken = 'e2e-fixed-test-session-token'): int
+    private function makeUser(string $employeeCode, string $email, ?int $role = 3, ?string $sessionToken = 'e2e-fixed-test-session-token'): User
     {
-        return DB::table('users')->insertGetId([
+        return User::create([
             'employee_code' => $employeeCode,
             'name'          => 'Shared Account',
             'email'         => $email,
-            'password'      => bcrypt('irrelevant-for-this-suite'),
-            'role'          => 3,
+            'password'      => Hash::make('irrelevant-for-this-suite'),
+            'role'          => $role,
             'session_token' => $sessionToken,
-            'created_at'    => now(),
-            'updated_at'    => now(),
-        ]);
-    }
-
-    private function makeMockUser(int $employeeId, string $email, int $role = 2): \App\Models\User
-    {
-        return \App\Models\User::create([
-            'email'                => $email,
-            'name'                 => 'Mock Account',
-            'role'                 => $role,
-            'password'             => bcrypt('irrelevant-for-this-suite'),
-            'is_active'            => true,
-            'approval_status'      => 'approved',
-            'employee_id'          => $employeeId,
-            'target_certification' => null,
         ]);
     }
 
@@ -82,7 +49,6 @@ class SharedJwtAuthTest extends TestCase
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
-    /** Mints a JWT exactly matching what Main's tymon/jwt-auth issues (HS256, `sub` claim), signed with the shared test secret. */
     private function mintSharedJwt(int $sharedUserId, ?int $expiresInSeconds = 3600, ?string $secret = null, ?string $sid = 'e2e-fixed-test-session-token'): string
     {
         $secret  = $secret ?? self::TEST_SECRET;
@@ -103,29 +69,27 @@ class SharedJwtAuthTest extends TestCase
         return $this->withCredentials()->withUnencryptedCookie('jwt_token', $jwt);
     }
 
-    /** Test 1 — a valid shared JWT resolves the correct mockexam_users identity. */
-    public function test_valid_shared_jwt_resolves_mock_user(): void
+    /** Test 1 — a valid shared JWT resolves the correct users identity. */
+    public function test_valid_shared_jwt_resolves_user(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ01');
-        $sharedId   = $this->makeSharedUser('ZSJ01', 'shared-zsj01@gicjp.com');
-        $mockUser   = $this->makeMockUser($employeeId, 'mock-zsj01@gicjp.com');
+        $this->makeEmployee('ZSJ01');
+        $user = $this->makeUser('ZSJ01', 'shared-zsj01@gicjp.com');
 
-        $jwt = $this->mintSharedJwt($sharedId);
+        $jwt = $this->mintSharedJwt($user->id);
 
         $response = $this->withSharedCookie($jwt)->getJson('/api/v1/profile');
 
         $response->assertStatus(200);
-        $response->assertJsonPath('data.id', $mockUser->id);
+        $response->assertJsonPath('data.id', $user->id);
     }
 
-    /** Test 2 — an expired shared JWT is rejected (falls through to the existing bearer-token guard, which also fails with no token → 401). */
+    /** Test 2 — an expired shared JWT is rejected. */
     public function test_expired_shared_jwt_is_rejected(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ02');
-        $sharedId   = $this->makeSharedUser('ZSJ02', 'shared-zsj02@gicjp.com');
-        $this->makeMockUser($employeeId, 'mock-zsj02@gicjp.com');
+        $this->makeEmployee('ZSJ02');
+        $user = $this->makeUser('ZSJ02', 'shared-zsj02@gicjp.com');
 
-        $jwt = $this->mintSharedJwt($sharedId, expiresInSeconds: -60);
+        $jwt = $this->mintSharedJwt($user->id, expiresInSeconds: -60);
 
         $response = $this->withSharedCookie($jwt)->getJson('/api/v1/profile');
 
@@ -135,18 +99,17 @@ class SharedJwtAuthTest extends TestCase
     /** Test 3 — a shared JWT signed with the wrong secret (invalid signature) is rejected. */
     public function test_invalid_signature_shared_jwt_is_rejected(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ03');
-        $sharedId   = $this->makeSharedUser('ZSJ03', 'shared-zsj03@gicjp.com');
-        $this->makeMockUser($employeeId, 'mock-zsj03@gicjp.com');
+        $this->makeEmployee('ZSJ03');
+        $user = $this->makeUser('ZSJ03', 'shared-zsj03@gicjp.com');
 
-        $jwt = $this->mintSharedJwt($sharedId, secret: 'a-completely-different-wrong-secret');
+        $jwt = $this->mintSharedJwt($user->id, secret: 'a-completely-different-wrong-secret');
 
         $response = $this->withSharedCookie($jwt)->getJson('/api/v1/profile');
 
         $response->assertStatus(401);
     }
 
-    /** Test 4 — no shared cookie and no bearer token → unauthenticated. */
+    /** Test 4 — no shared cookie is unauthenticated. */
     public function test_missing_cookie_is_unauthenticated(): void
     {
         $response = $this->getJson('/api/v1/profile');
@@ -154,33 +117,50 @@ class SharedJwtAuthTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** Test 5 — a valid shared JWT resolves the exact correct mockexam_users.id, not some other one. */
-    public function test_shared_jwt_resolves_the_correct_mockexam_users_id_specifically(): void
+    /** Test 5 — a valid shared JWT for a user with no employee_code link at all is safely rejected. */
+    public function test_valid_shared_jwt_with_no_employee_link_is_safely_rejected(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ05');
-        $sharedId   = $this->makeSharedUser('ZSJ05', 'shared-zsj05@gicjp.com');
-        $mockUser   = $this->makeMockUser($employeeId, 'mock-zsj05@gicjp.com');
+        $user = User::create([
+            'employee_code' => null,
+            'name'          => 'Unlinked Account',
+            'email'         => 'unlinked-zsj05@gicjp.com',
+            'password'      => Hash::make('irrelevant'),
+            'role'          => 3,
+            'session_token' => 'session-zsj05',
+        ]);
 
-        $otherEmployeeId = $this->makeEmployee('ZSJ05B');
-        $this->makeMockUser($otherEmployeeId, 'mock-zsj05b@gicjp.com');
+        $jwt = $this->mintSharedJwt($user->id, sid: 'session-zsj05');
 
-        $jwt = $this->mintSharedJwt($sharedId);
+        $response = $this->withSharedCookie($jwt)->getJson('/api/v1/profile');
+
+        $response->assertStatus(401);
+    }
+
+    /** Test 6 — the resolved identity is exactly the linked users.id, not some other one. */
+    public function test_shared_jwt_resolves_the_correct_user_id_specifically(): void
+    {
+        $this->makeEmployee('ZSJ06');
+        $user = $this->makeUser('ZSJ06', 'shared-zsj06@gicjp.com');
+
+        $this->makeEmployee('ZSJ06B');
+        $this->makeUser('ZSJ06B', 'shared-zsj06b@gicjp.com', sessionToken: 'session-zsj06b');
+
+        $jwt = $this->mintSharedJwt($user->id);
 
         $response = $this->withSharedCookie($jwt)->getJson('/api/v1/profile');
 
         $response->assertStatus(200);
-        $response->assertJsonPath('data.id', $mockUser->id);
+        $response->assertJsonPath('data.id', $user->id);
     }
 
-    /** Test 6 — Mock business records still resolve using mockexam_users.id after shared-JWT authentication. */
-    public function test_business_records_still_resolve_via_mockexam_users_id(): void
+    /** Business records still resolve using the shared users.id after shared-JWT authentication. */
+    public function test_business_records_still_resolve_via_shared_users_id(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ06');
-        $sharedId   = $this->makeSharedUser('ZSJ06', 'shared-zsj06@gicjp.com');
-        $mockUser   = $this->makeMockUser($employeeId, 'mock-zsj06@gicjp.com');
+        $this->makeEmployee('ZSJ07');
+        $user = $this->makeUser('ZSJ07', 'shared-zsj07@gicjp.com', sessionToken: 'session-zsj07');
 
         $sessionId = DB::table('exam_sessions')->insertGetId([
-            'user_id'      => $mockUser->id,
+            'user_id'      => $user->id,
             'category'     => 'AWS SAA',
             'is_submitted' => true,
             'completed_at' => now(),
@@ -189,7 +169,7 @@ class SharedJwtAuthTest extends TestCase
         ]);
         DB::table('exam_results')->insert([
             'session_id'      => $sessionId,
-            'user_id'         => $mockUser->id,
+            'user_id'         => $user->id,
             'score'           => 80,
             'total_questions' => 100,
             'passing_score'   => 70,
@@ -199,7 +179,7 @@ class SharedJwtAuthTest extends TestCase
             'updated_at'      => now(),
         ]);
 
-        $jwt = $this->mintSharedJwt($sharedId);
+        $jwt = $this->mintSharedJwt($user->id, sid: 'session-zsj07');
 
         $response = $this->withSharedCookie($jwt)->getJson('/api/v1/results');
 
@@ -207,70 +187,52 @@ class SharedJwtAuthTest extends TestCase
         $this->assertCount(1, $response->json('data'));
     }
 
-    /** Existing Mock admin-only authorization is unaffected by shared-JWT resolution. */
+    /** Existing Mock admin-only authorization is unaffected: a role=1 (admin) account resolved via the shared JWT can reach an admin-only route. */
     public function test_existing_admin_authorization_still_works_via_shared_jwt(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ07');
-        $sharedId   = $this->makeSharedUser('ZSJ07', 'shared-zsj07@gicjp.com');
-        $this->makeMockUser($employeeId, 'mock-zsj07@gicjp.com', role: 1);
+        $this->makeEmployee('ZSJ08');
+        $user = $this->makeUser('ZSJ08', 'shared-zsj08@gicjp.com', role: 1, sessionToken: 'session-zsj08');
 
-        $jwt = $this->mintSharedJwt($sharedId);
+        $jwt = $this->mintSharedJwt($user->id, sid: 'session-zsj08');
 
-        $response = $this->withSharedCookie($jwt)->getJson('/api/v1/admin/users');
+        $response = $this->withSharedCookie($jwt)->getJson('/api/v1/results');
 
         $response->assertStatus(200);
     }
 
-    /** Existing Mock member (non-admin) authorization is still correctly denied via shared-JWT resolution. */
-    public function test_existing_member_authorization_still_denied_via_shared_jwt(): void
+    /** A null role (Main's own "Admin" convention allows NULL, not just 1) is still treated as admin here too. */
+    public function test_null_role_is_treated_as_admin(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ07B');
-        $sharedId   = $this->makeSharedUser('ZSJ07B', 'shared-zsj07b@gicjp.com');
-        $this->makeMockUser($employeeId, 'mock-zsj07b@gicjp.com', role: 2);
+        $this->makeEmployee('ZSJ08B');
+        $user = $this->makeUser('ZSJ08B', 'shared-zsj08b@gicjp.com', role: null, sessionToken: 'session-zsj08b');
 
-        $jwt = $this->mintSharedJwt($sharedId);
+        $jwt = $this->mintSharedJwt($user->id, sid: 'session-zsj08b');
 
-        $response = $this->withSharedCookie($jwt)->getJson('/api/v1/admin/users');
-
-        $response->assertStatus(403);
+        $this->assertTrue($user->isAdmin());
+        $this->withSharedCookie($jwt)->getJson('/api/v1/profile')->assertStatus(200);
     }
 
-    /** The existing legacy/orphan local-login flow (Phase 3's own shared-credential fallback for employee_id=NULL accounts) is completely unaffected by this middleware's addition. */
-    public function test_legacy_local_login_flow_still_works_unaffected(): void
+    /** One-Login migration — the legacy local login/bearer path is retired entirely. */
+    public function test_local_login_is_retired(): void
     {
-        \App\Models\User::create([
-            'email'       => 'mock-zsj08@gicjp.com',
-            'name'        => 'Legacy Login Path',
-            'role'        => 2,
-            'password'    => bcrypt('LegacyPlainPassword123'),
-            'is_active'   => true,
-            'approval_status' => 'approved',
-            'employee_id' => null,
-        ]);
-
         $response = $this->postJson('/api/v1/auth/login', [
-            'email'    => 'mock-zsj08@gicjp.com',
-            'password' => 'LegacyPlainPassword123',
+            'email'    => 'anyone@gicjp.com',
+            'password' => 'whatever',
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(410);
     }
 
     /** Phase 8 — a token that was valid a moment ago is rejected the instant Main's own logout nulls session_token, mirroring Main's own CheckActiveSession. */
     public function test_shared_jwt_rejected_after_main_logout_nulls_session_token(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ09');
-        $sharedId   = $this->makeSharedUser('ZSJ09', 'shared-zsj09@gicjp.com', sessionToken: 'session-before-logout');
-        $this->makeMockUser($employeeId, 'mock-zsj09@gicjp.com');
+        $this->makeEmployee('ZSJ09');
+        $user = $this->makeUser('ZSJ09', 'shared-zsj09@gicjp.com', sessionToken: 'session-before-logout');
 
-        $jwt = $this->mintSharedJwt($sharedId, sid: 'session-before-logout');
+        $jwt = $this->mintSharedJwt($user->id, sid: 'session-before-logout');
 
-        // Simulate Main's own AuthService::logout(): nulls users.session_token, before this
-        // token is ever presented anywhere — a single isolated request, avoiding any
-        // possibility of the test HTTP client's guard state leaking between two sequential
-        // calls in one test (a test-harness-only concern; a real deployment gets a fresh
-        // request/container per HTTP request regardless).
-        DB::table('users')->where('id', $sharedId)->update(['session_token' => null]);
+        // Simulate Main's own AuthService::logout(): nulls users.session_token.
+        $user->update(['session_token' => null]);
 
         $this->withSharedCookie($jwt)->getJson('/api/v1/profile')->assertStatus(401);
     }
@@ -278,14 +240,11 @@ class SharedJwtAuthTest extends TestCase
     /** Phase 8 — a stale sid (e.g. from a previous login, superseded by a newer one) is also rejected, not just a null session_token. */
     public function test_shared_jwt_rejected_when_sid_no_longer_matches_current_session_token(): void
     {
-        $employeeId = $this->makeEmployee('ZSJ10');
-        $sharedId   = $this->makeSharedUser('ZSJ10', 'shared-zsj10@gicjp.com', sessionToken: 'old-session');
-        $this->makeMockUser($employeeId, 'mock-zsj10@gicjp.com');
+        $this->makeEmployee('ZSJ10');
+        $user = $this->makeUser('ZSJ10', 'shared-zsj10@gicjp.com', sessionToken: 'old-session');
 
-        // Token minted for the OLD session, but the user has since logged in again elsewhere,
-        // rotating users.session_token to a new value.
-        $jwt = $this->mintSharedJwt($sharedId, sid: 'old-session');
-        DB::table('users')->where('id', $sharedId)->update(['session_token' => 'new-session-from-another-login']);
+        $jwt = $this->mintSharedJwt($user->id, sid: 'old-session');
+        $user->update(['session_token' => 'new-session-from-another-login']);
 
         $this->withSharedCookie($jwt)->getJson('/api/v1/profile')->assertStatus(401);
     }

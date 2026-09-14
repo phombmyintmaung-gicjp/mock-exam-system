@@ -7,14 +7,20 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+// One-Login migration (2026-09): mockexam_users is retired entirely — this now reads the
+// company-wide shared `users` table directly (Main-owned schema/migrations). Mock may only
+// ever READ this table; it must never create, update, or delete a row here (name/email/
+// password/role are all fully controlled by Main — see AuthController/ProfileController/
+// UserAdminController, all retired to 410 in this app). Identity resolves via
+// `employee_code` (this table's own natural key), not `employee_id` — the shared `users`
+// table has no such column. The old approval_status/is_active/target_certification
+// business fields have no equivalent here and are not replaced — see SharedJwtAuth's own
+// comment for why that feature was retired rather than rehomed.
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory;
 
-    // Database consolidation: renamed from `users` (which now belongs to the Main
-    // system) — this is Mock Exam's own authentication table, distinct from the
-    // shared `employees` identity table. See CLAUDE.md "Database Consolidation".
-    protected $table = 'mockexam_users';
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -25,11 +31,10 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'name',
         'role',
-        'target_certification',
         'password',
-        'is_active',
-        'approval_status',
-        'employee_id',
+        'employee_code',
+        'session_token',
+        'last_active_at',
     ];
 
     /**
@@ -47,27 +52,21 @@ class User extends Authenticatable implements JWTSubject
      * @var array<string, string>
      */
     protected $casts = [
-        'is_active' => 'boolean',
-        'password'  => 'hashed',
+        'password' => 'hashed',
     ];
 
     // -------------------------------------------------------------------------
-    // JWTSubject interface
+    // JWTSubject interface — unused now that this app's own local JWT issuance is
+    // retired (see AuthController::login()), kept only because the class still
+    // implements the interface; harmless to leave in place.
     // -------------------------------------------------------------------------
 
-    /**
-     * Get the identifier that will be stored in the JWT subject claim.
-     */
     public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key-value array of custom claims to be added to the JWT.
-     *
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function getJWTCustomClaims(): array
     {
         return [
@@ -79,10 +78,10 @@ class User extends Authenticatable implements JWTSubject
     // Relationships
     // -------------------------------------------------------------------------
 
-    /** The shared company employee this Mock Exam account belongs to, if linked. */
+    /** The shared company employee this account belongs to, if linked (joined by employee_code, not an id FK). */
     public function employee(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class, 'employee_code', 'employee_code');
     }
 
     public function examSessions(): HasMany
@@ -99,9 +98,11 @@ class User extends Authenticatable implements JWTSubject
     // Helpers
     // -------------------------------------------------------------------------
 
+    // Main's own Admin convention treats a NULL role the same as 1 — see CLAUDE.md's User
+    // model — mirrored here so an admin account isn't misread as a plain member.
     public function isAdmin(): bool
     {
-        return $this->role === 1;
+        return $this->role === 1 || $this->role === null;
     }
 
     public function __toString(): string

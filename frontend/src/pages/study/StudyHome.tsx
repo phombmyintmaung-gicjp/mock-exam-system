@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
+import { isAdminRole } from '@/types/user';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { ArrowLeftIcon, BookOpenIcon, ChevronRightIcon, BookmarkIcon } from '@/components/ui/Icons';
 
@@ -38,7 +39,7 @@ const StudyHome = () => {
   const { t } = useTranslation();
   const token = useAuthStore((s) => s.token);
   const user  = useAuthStore((s) => s.user);
-  const backTo = token ? (user?.role === 1 ? '/admin/dashboard' : '/exam/select') : '/login';
+  const backTo = token ? ((!!user && isAdminRole(user.role)) ? '/admin/dashboard' : '/exam/select') : '/login';
   const backLabel = token ? t('study.backToDashboard') : t('study.backToLogin');
 
   return (

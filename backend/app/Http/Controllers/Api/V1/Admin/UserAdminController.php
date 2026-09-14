@@ -3,207 +3,31 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\StoreUserRequest;
-use App\Http\Requests\Admin\UpdateUserRequest;
-use App\Models\Employee;
-use App\Models\User;
-use App\Services\SharedCredentialService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
+// One-Login migration (2026-09): retired entirely. mockexam_users — and with it, Mock's
+// own independent "create/approve/reject/deactivate/delete a user" admin panel — no longer
+// exists ("ALL USERS come from [Main's] USERS TABLE"). There is nothing left for this app
+// to independently manage: a new employee's access is provisioned by creating/linking
+// their account at the Main Staff Portal's own Admin Users page, and Mock picks up that
+// identity automatically the moment they open it. The former approval_status/is_active
+// workflow existed only because Mock used to self-register accounts pending admin review —
+// now that accounts only exist because Main already created/approved them, that whole
+// workflow is redundant and has been removed, not rehomed.
 class UserAdminController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/admin/users",
-     *     tags={"Admin — Users"},
-     *     summary="List all users",
-     *     operationId="adminListUsers",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(name="role", in="query", required=false, @OA\Schema(type="integer", enum={1,2})),
-     *     @OA\Parameter(name="is_active", in="query", required=false, @OA\Schema(type="boolean")),
-     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Paginated users",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
-     *             @OA\Property(property="count", type="integer"),
-     *             @OA\Property(property="next", type="string", nullable=true),
-     *             @OA\Property(property="previous", type="string", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(response=403, description="Forbidden — admin only")
-     * )
-     */
-    public function index(Request $request): JsonResponse
+    private function retired(): JsonResponse
     {
-        $query = User::query();
-
-        if ($request->filled('role')) {
-            $query->where('role', $request->input('role'));
-        }
-
-        if ($request->filled('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
-        }
-
-        if ($request->filled('approval_status')) {
-            $query->where('approval_status', $request->input('approval_status'));
-        }
-
-        $paginator = $query->orderBy('name')->paginate(perPage: 25);
-
         return response()->json([
-            'data'     => $paginator->items(),
-            'count'    => $paginator->total(),
-            'next'     => $paginator->nextPageUrl(),
-            'previous' => $paginator->previousPageUrl(),
-        ]);
+            'error' => 'User management has moved to the Main Staff Portal\'s Admin Users page.',
+        ], 410);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/admin/users",
-     *     tags={"Admin — Users"},
-     *     summary="Create a new user",
-     *     operationId="adminStoreUser",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name","email","password","role"},
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="email", type="string", format="email"),
-     *             @OA\Property(property="password", type="string", format="password"),
-     *             @OA\Property(property="role", type="integer", enum={1,2}),
-     *             @OA\Property(property="target_certification", type="string", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(response=201, description="User created",
-     *         @OA\JsonContent(@OA\Property(property="data", type="object"))
-     *     ),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
-     */
-    public function store(StoreUserRequest $request): JsonResponse
-    {
-        // Database consolidation: resolve employee_code (already validated to exist)
-        // to the shared employee's id — employee_code itself is not a column here.
-        $validated = $request->validated();
-        $employee  = Employee::where('employee_code', $validated['employee_code'])->first();
-        unset($validated['employee_code']);
-        $validated['employee_id'] = $employee?->id;
-
-        $plainPassword = $validated['password'];
-
-        $user = User::create($validated);
-
-        // Auth unification: route the admin-supplied password through
-        // SharedCredentialService rather than trusting the raw mass-assignment above —
-        // for an employee who already has a shared Main `users` account, login checks
-        // ONLY that shared password (see SharedCredentialService::verifyPassword()), so
-        // leaving mockexam_users.password as the sole write here would silently have no
-        // effect on this user's actual ability to log in.
-        SharedCredentialService::updatePassword($user, $plainPassword);
-
-        return response()->json(['data' => $user->fresh()], 201);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/admin/users/{id}",
-     *     tags={"Admin — Users"},
-     *     summary="Get a user by ID",
-     *     operationId="adminShowUser",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="User detail",
-     *         @OA\JsonContent(@OA\Property(property="data", type="object"))
-     *     ),
-     *     @OA\Response(response=404, description="Not found")
-     * )
-     */
-    public function show(int $id): JsonResponse
-    {
-        $user = User::findOrFail($id);
-
-        return response()->json(['data' => $user]);
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/admin/users/{id}",
-     *     tags={"Admin — Users"},
-     *     summary="Update a user's profile",
-     *     operationId="adminUpdateUser",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="email", type="string", format="email"),
-     *             @OA\Property(property="role", type="integer", enum={1,2}),
-     *             @OA\Property(property="is_active", type="boolean"),
-     *             @OA\Property(property="target_certification", type="string", nullable=true)
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Updated user",
-     *         @OA\JsonContent(@OA\Property(property="data", type="object"))
-     *     ),
-     *     @OA\Response(response=404, description="Not found")
-     * )
-     */
-    public function update(UpdateUserRequest $request, int $id): JsonResponse
-    {
-        $user      = User::findOrFail($id);
-        $validated = $request->validated();
-
-        if (array_key_exists('employee_code', $validated)) {
-            $employee = Employee::where('employee_code', $validated['employee_code'])->first();
-            unset($validated['employee_code']);
-            $validated['employee_id'] = $employee?->id;
-        }
-
-        // Auth unification: password is handled separately via SharedCredentialService
-        // below, not through this mass-assignment — see store() for why.
-        $passwordProvided = array_key_exists('password', $validated);
-        $plainPassword    = $validated['password'] ?? null;
-        unset($validated['password']);
-
-        $user->update($validated);
-
-        if ($passwordProvided) {
-            SharedCredentialService::updatePassword($user, $plainPassword);
-        }
-
-        return response()->json(['data' => $user->fresh()]);
-    }
-
-    public function destroy(int $id): JsonResponse
-    {
-        /** @var \App\Models\User $authUser */
-        $authUser = auth()->user();
-
-        if ($authUser->id === $id) {
-            return response()->json(['error' => 'You cannot delete your own account.'], 422);
-        }
-
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return response()->json(['data' => ['message' => 'User deleted.']], 200);
-    }
-
-    public function approve(int $id): JsonResponse
-    {
-        $user = User::findOrFail($id);
-        $user->update(['approval_status' => 'approved', 'is_active' => true]);
-        return response()->json(['data' => $user]);
-    }
-
-    public function reject(int $id): JsonResponse
-    {
-        $user = User::findOrFail($id);
-        $user->update(['approval_status' => 'rejected', 'is_active' => false]);
-        return response()->json(['data' => $user]);
-    }
+    public function index(): JsonResponse { return $this->retired(); }
+    public function store(): JsonResponse { return $this->retired(); }
+    public function show(int $id): JsonResponse { return $this->retired(); }
+    public function update(int $id): JsonResponse { return $this->retired(); }
+    public function destroy(int $id): JsonResponse { return $this->retired(); }
+    public function approve(int $id): JsonResponse { return $this->retired(); }
+    public function reject(int $id): JsonResponse { return $this->retired(); }
 }
