@@ -38,6 +38,8 @@ services:
       CACHE_STORE: database
       SESSION_DRIVER: database
       QUEUE_CONNECTION: database
+      SHARED_JWT_SECRET: ${SHARED_JWT_SECRET}
+
     volumes:
       - ./backend:/var/www/html
       - /var/www/html/vendor
