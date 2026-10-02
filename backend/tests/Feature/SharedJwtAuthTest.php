@@ -32,16 +32,21 @@ class SharedJwtAuthTest extends TestCase
         ]);
     }
 
+    // Creates a shared account. `$role` keeps the fixture's intent: NULL/1 → Main's Administrator
+    // access group (users.role no longer exists), 3 → no group (not admin).
     private function makeUser(string $employeeCode, string $email, ?int $role = 3, ?string $sessionToken = 'e2e-fixed-test-session-token'): User
     {
-        return User::create([
+        $user = User::create([
             'employee_code' => $employeeCode,
             'name'          => 'Shared Account',
             'email'         => $email,
             'password'      => Hash::make('irrelevant-for-this-suite'),
-            'role'          => $role,
             'session_token' => $sessionToken,
         ]);
+        if ($role === null || $role === 1) {
+            $this->makeAdministrator($user);
+        }
+        return $user;
     }
 
     private function base64UrlEncode(string $data): string
@@ -125,7 +130,6 @@ class SharedJwtAuthTest extends TestCase
             'name'          => 'Unlinked Account',
             'email'         => 'unlinked-zsj05@gicjp.com',
             'password'      => Hash::make('irrelevant'),
-            'role'          => 3,
             'session_token' => 'session-zsj05',
         ]);
 
@@ -200,7 +204,7 @@ class SharedJwtAuthTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** A null role (Main's own "Admin" convention allows NULL, not just 1) is still treated as admin here too. */
+    /** An account in Main's Administrator access group is admin here too (fixture: role null). */
     public function test_null_role_is_treated_as_admin(): void
     {
         $this->makeEmployee('ZSJ08B');

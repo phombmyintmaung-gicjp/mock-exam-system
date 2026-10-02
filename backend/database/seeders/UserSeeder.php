@@ -3,37 +3,14 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
+// Retired. Accounts live in Main's shared `users` table (One-Login migration) and their access in
+// Main's access groups (RBAC, Main feature 30) — this app may only READ them, never seed them.
+// Create accounts in Main instead. Kept as a no-op so DatabaseSeeder's call list still resolves.
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = [
-            [
-                'name'                  => 'Moe Pyae Sone Wai',
-                'email'                 => 'moepyaesonewai@gicjp.com',
-                'password'              => Hash::make('moepyaesonewaigicjp'),
-                'role'                  => 2,
-                'target_certification'  => null,
-                'is_active'             => true,
-            ],
-            [
-                'name'                  => 'Admin User',
-                'email'                 => 'admin@gicjp.com',
-                'password'              => Hash::make('admin1234'),
-                'role'                  => 1,
-                'target_certification'  => null,
-                'is_active'             => true,
-            ],
-        ];
-
-        foreach ($users as $user) {
-            DB::table('users')->insertOrIgnore(array_merge($user, [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]));
-        }
+        $this->command?->warn('UserSeeder is retired: accounts are created in Main, not seeded here.');
     }
 }

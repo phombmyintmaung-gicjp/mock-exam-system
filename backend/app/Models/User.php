@@ -32,7 +32,6 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'email',
         'name',
-        'role',
         'password',
         'employee_code',
         'session_token',
@@ -46,8 +45,8 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
-        // RBAC (Main feature 30): admin-ness is exposed as the server-computed `is_admin` below,
-        // never as the raw legacy role value, so the frontend can't depend on users.role.
+        // Never expose the legacy users.role column (dropped by Main; hidden so a database that
+        // still has it can't leak it) — admin-ness is the server-computed `is_admin` below.
         'role',
     ];
 
@@ -118,8 +117,7 @@ class User extends Authenticatable implements JWTSubject
 
     // True when the user is an Administrator in Main's RBAC (feature 30): their explicit access
     // group is Main's built-in Administrator group (`access_groups.is_system`). An explicit
-    // non-Administrator group means "not admin" whatever users.role says. Users with no explicit
-    // assignment yet fall back to Main's own legacy rule (see legacyRoleIsAdmin()).
+    // non-Administrator group, or no explicit group at all, means "not admin" (Main dropped users.role).
     public function isAdmin(): bool
     {
         if ($this->resolvedIsAdmin !== null) {
@@ -133,9 +131,8 @@ class User extends Authenticatable implements JWTSubject
                 ->value('access_groups.is_system')
             : null;
 
-        return $this->resolvedIsAdmin = $explicitIsSystem !== null
-            ? (bool) $explicitIsSystem
-            : $this->legacyRoleIsAdmin();
+        // No explicit assignment (or no RBAC tables) → not an Administrator; users.role is gone.
+        return $this->resolvedIsAdmin = (bool) $explicitIsSystem;
     }
 
     // Serializes isAdmin() as `is_admin` (used by the frontend for routing / menus only).
@@ -144,16 +141,8 @@ class User extends Authenticatable implements JWTSubject
         return $this->isAdmin();
     }
 
-    // TRANSITIONAL — mirrors Main's PermissionService::baseGroupFor() fallback for accounts that
-    // have no explicit access group yet (users.role NULL/1 = Administrator). Remove together with
-    // Main's fallback once every user has an explicit assignment and users.role is dropped.
-    private function legacyRoleIsAdmin(): bool
-    {
-        return $this->role === 1 || $this->role === null;
-    }
-
     // True when Main's RBAC tables exist here (guards a deploy that lands before Main's RBAC
-    // migrations, or a test database that lacks them — the legacy fallback then applies).
+    // migrations, or a test database that lacks them — then nobody is an Administrator).
     private static function rbacTablesPresent(): bool
     {
         return self::$rbacTablesPresent ??= Schema::hasTable('user_access_groups') && Schema::hasTable('access_groups');

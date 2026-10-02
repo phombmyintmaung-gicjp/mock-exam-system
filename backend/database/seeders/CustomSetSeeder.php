@@ -12,8 +12,14 @@ class CustomSetSeeder extends Seeder
 {
     public function run(): void
     {
-        // Use the first admin user as creator
-        $admin = User::where('role', 1)->first();
+        // Use the first Administrator (Main's Administrator access group) as creator
+        $admin = User::query()
+            ->whereIn('id', \Illuminate\Support\Facades\DB::table('user_access_groups')
+                ->join('access_groups', 'access_groups.id', '=', 'user_access_groups.access_group_id')
+                ->where('access_groups.is_system', true)
+                ->select('user_access_groups.user_id'))
+            ->orderBy('id')
+            ->first();
         if (! $admin) {
             $this->command->warn('No admin user found — skipping CustomSetSeeder.');
             return;

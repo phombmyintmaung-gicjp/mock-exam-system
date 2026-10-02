@@ -11,20 +11,14 @@ use Illuminate\Support\Facades\Schema;
 // `access_groups` / `user_access_groups` to decide admin-ness. The shared `dts_testing` database
 // predates them, so this creates a column-for-column mirror of Main's two tables there when
 // missing. Deliberately NOT a migration: this app's migrations can run against the shared
-// production database, and Main must stay the only owner of these tables. Runs in
-// setUpTraits(), i.e. before DatabaseTransactions opens the per-test transaction, so the DDL's
-// implicit commit can never leak test rows.
+// production database, and Main must stay the only owner of these tables. Used by the base
+// TestCase, whose setUpTraits() runs it before DatabaseTransactions opens the per-test
+// transaction (so the DDL's implicit commit can never leak test rows) and only after verifying
+// the connection is the isolated test database.
 trait ProvisionsMainRbacTables
 {
-    // Creates the mirror tables (if missing) before the per-test transaction starts.
-    protected function setUpTraits()
-    {
-        $this->ensureMainRbacTables();
-        return parent::setUpTraits();
-    }
-
     // Creates Main's access_groups / user_access_groups shape in the test database when absent.
-    private function ensureMainRbacTables(): void
+    protected function ensureMainRbacTables(): void
     {
         if (!Schema::hasTable('access_groups')) {
             Schema::create('access_groups', function (Blueprint $table) {

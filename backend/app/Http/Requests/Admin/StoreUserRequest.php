@@ -22,7 +22,6 @@ class StoreUserRequest extends FormRequest
             'employee_code'         => ['required', 'string', 'exists:employees,employee_code'],
             'email'                 => ['required', 'email', 'max:254', 'unique:mockexam_users,email'],
             'name'                  => ['required', 'string', 'max:150'],
-            'role'                  => ['required', 'integer', 'in:1,2'],
             'target_certification'  => ['nullable', 'string', 'max:200'],
             'password'              => ['required', 'string', 'min:8'],
             'is_active'             => ['sometimes', 'boolean'],

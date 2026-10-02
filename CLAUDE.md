@@ -206,10 +206,8 @@ not an `employee_id` FK — the shared table has no such column).
   workflow — and the `target_certification` profile field — are gone, not rehomed.
 - **Admin comes from Main's RBAC, not `users.role`** (Main CLAUDE.md feature 30) —
   backend `User::isAdmin()` reads Main's `user_access_groups` → `access_groups.is_system`
-  (the built-in Administrator group); an explicit non-Administrator group means not admin.
-  Only accounts with **no** explicit group fall back to Main's legacy rule (`users.role`
-  `NULL`/`1`) — transitional, to be removed with Main's own fallback once every user has an
-  explicit group and `users.role` is dropped. The API serializes `is_admin` (and hides `role`);
+  (the built-in Administrator group); any other group, or no explicit group, means not admin.
+  Main dropped `users.role` — there is no fallback. The API serializes `is_admin` (and hides `role`);
   the frontend uses `isAdminUser(user)` from `frontend/src/types/user.ts`. No role JWT claim.
   Main owns the RBAC tables — never add a migration for them here; tests create a mirror via
   `tests/Concerns/ProvisionsMainRbacTables.php`.
