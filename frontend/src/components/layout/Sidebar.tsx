@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
 import { useExamGuardStore } from '@/store/examGuardStore';
-import { isAdminRole } from '@/types/user';
+import { isAdminUser } from '@/types/user';
 import { logout as logoutApi } from '@/services/authService';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -106,7 +106,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { to: '/profile',            label: t('nav.profile'),   icon: <UserIcon className={si} />, end: true },
   ];
 
-  const isAdmin = !!user && isAdminRole(user.role);
+  const isAdmin = isAdminUser(user);
 
   const renderNavItem = (link: NavLinkItem, accent?: 'amber' | 'rose') => {
     const href = link.to + (link.search ?? '');

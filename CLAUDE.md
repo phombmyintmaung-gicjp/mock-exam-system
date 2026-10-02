@@ -204,11 +204,15 @@ not an `employee_id` FK — the shared table has no such column).
   workflow existed only because this app used to self-register accounts pending admin
   review; now that an account only exists because Main already created/approved it, that
   workflow — and the `target_certification` profile field — are gone, not rehomed.
-- **Role comes directly from Main's `users.role`** — `NULL` or `1` = Admin, `3` = Member,
-  a **different number space** from this app's old local `1`=admin/`2`=employee scheme.
-  **A `NULL` role must be treated as Admin, same as `1`** — never compare `role === 1`
-  alone; always use `isAdminRole()` from `frontend/src/types/user.ts` (backend:
-  `User::isAdmin()`).
+- **Admin comes from Main's RBAC, not `users.role`** (Main CLAUDE.md feature 30) —
+  backend `User::isAdmin()` reads Main's `user_access_groups` → `access_groups.is_system`
+  (the built-in Administrator group); an explicit non-Administrator group means not admin.
+  Only accounts with **no** explicit group fall back to Main's legacy rule (`users.role`
+  `NULL`/`1`) — transitional, to be removed with Main's own fallback once every user has an
+  explicit group and `users.role` is dropped. The API serializes `is_admin` (and hides `role`);
+  the frontend uses `isAdminUser(user)` from `frontend/src/types/user.ts`. No role JWT claim.
+  Main owns the RBAC tables — never add a migration for them here; tests create a mirror via
+  `tests/Concerns/ProvisionsMainRbacTables.php`.
 - `SHARED_JWT_SECRET` in `.env` must match Main's own `JWT_SECRET` exactly — see
   `config/shared_auth.php`.
 
@@ -220,7 +224,7 @@ an external redirect — a user bounced to `/login` while unauthenticated is sen
 on return, lands on the generic default page below, not their original URL. This is a known,
 deliberate simplification from the One-Login migration, not a bug to fix locally.
 
-- `PrivateRoute` (`requiredRole?: 'admin' | 'member'`) gates on `isAdminRole(user.role)` —
+- `PrivateRoute` (`requiredRole?: 'admin' | 'member'`) gates on `isAdminUser(user)` —
   `'admin'` routes redirect non-admins to `/exam/select`; `'member'` routes admit anyone
   authenticated, admins included.
 - Default landing page after the shared cookie resolves: **Admin** → `/admin/dashboard`;

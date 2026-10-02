@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
-import { isAdminRole } from '@/types/user';
+import { isAdminUser } from '@/types/user';
 import { ArrowLeftIcon } from '@/components/ui/Icons';
 
 const NotFound = () => {
@@ -9,7 +9,7 @@ const NotFound = () => {
   const { token, user } = useAuthStore();
 
   const homePath = token
-    ? (!!user && isAdminRole(user.role)) ? '/admin/dashboard' : '/exam/select'
+    ? (isAdminUser(user)) ? '/admin/dashboard' : '/exam/select'
     : '/';
 
   return (

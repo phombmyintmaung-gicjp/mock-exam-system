@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { useAuthStore } from '@/store/authStore';
-import { isAdminRole } from '@/types/user';
+import { isAdminUser } from '@/types/user';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { ArrowLeftIcon } from '@/components/ui/Icons';
 
@@ -16,7 +16,7 @@ const Register = () => {
   const { token, user } = useAuthStore();
 
   if (token && user) {
-    return <Navigate to={isAdminRole(user.role) ? '/admin/dashboard' : '/exam/select'} replace />;
+    return <Navigate to={isAdminUser(user) ? '/admin/dashboard' : '/exam/select'} replace />;
   }
 
   const goToMainRegister = () => {

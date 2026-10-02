@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
-import { isAdminRole } from '@/types/user';
+import { isAdminUser } from '@/types/user';
 
 interface PrivateRouteProps {
   // One-Login migration (2026-09): semantic role names, not raw numbers — Main's own role
@@ -20,7 +20,7 @@ export function PrivateRoute({ requiredRole }: PrivateRouteProps) {
     return <Navigate to="/login" state={{ from: location.pathname + location.search }} replace />;
   }
 
-  const isAdmin = isAdminRole(user.role);
+  const isAdmin = isAdminUser(user);
 
   if (requiredRole === 'admin' && !isAdmin) {
     return <Navigate to="/exam/select" replace />;

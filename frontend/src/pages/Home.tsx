@@ -1,7 +1,7 @@
 import { Navigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/authStore';
-import { isAdminRole } from '@/types/user';
+import { isAdminUser } from '@/types/user';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { ScrollReveal } from '@/components/shared/ScrollReveal';
 import { useThemeStore } from '@/store/themeStore';
@@ -61,7 +61,7 @@ const Home = () => {
   const { theme, toggleTheme } = useThemeStore();
 
   if (token && user) {
-    return <Navigate to={isAdminRole(user.role) ? '/admin/dashboard' : '/exam/select'} replace />;
+    return <Navigate to={isAdminUser(user) ? '/admin/dashboard' : '/exam/select'} replace />;
   }
 
   return (

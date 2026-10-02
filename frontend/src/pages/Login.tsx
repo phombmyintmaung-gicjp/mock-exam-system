@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
-import { isAdminRole } from '@/types/user';
+import { isAdminUser } from '@/types/user';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { ArrowLeftIcon, BookOpenIcon } from '@/components/ui/Icons';
 
@@ -14,7 +14,7 @@ const Login = () => {
   const { token, user } = useAuthStore();
 
   if (token && user) {
-    const defaultPath = isAdminRole(user.role) ? '/admin/dashboard' : '/exam/select';
+    const defaultPath = isAdminUser(user) ? '/admin/dashboard' : '/exam/select';
     return <Navigate to={defaultPath} replace />;
   }
 

@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 // One-Login migration (2026-09): mockexam_users is retired entirely — this now reads the
@@ -44,7 +46,23 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
+        // RBAC (Main feature 30): admin-ness is exposed as the server-computed `is_admin` below,
+        // never as the raw legacy role value, so the frontend can't depend on users.role.
+        'role',
     ];
+
+    /**
+     * Computed attributes added to serialization.
+     *
+     * @var list<string>
+     */
+    protected $appends = ['is_admin'];
+
+    // Per-instance cache of isAdmin() — resolved at most once per request per user object.
+    private ?bool $resolvedIsAdmin = null;
+
+    // Per-process cache of whether Main's RBAC tables exist in this database.
+    private static ?bool $rbacTablesPresent = null;
 
     /**
      * The attributes that should be cast.
@@ -69,9 +87,9 @@ class User extends Authenticatable implements JWTSubject
     /** @return array<string, mixed> */
     public function getJWTCustomClaims(): array
     {
-        return [
-            'role' => $this->role,
-        ];
+        // No role claim: this app issues no JWTs (it verifies Main's identity-only shared JWT),
+        // and authorization is always resolved server-side from the database.
+        return [];
     }
 
     // -------------------------------------------------------------------------
@@ -98,11 +116,47 @@ class User extends Authenticatable implements JWTSubject
     // Helpers
     // -------------------------------------------------------------------------
 
-    // Main's own Admin convention treats a NULL role the same as 1 — see CLAUDE.md's User
-    // model — mirrored here so an admin account isn't misread as a plain member.
+    // True when the user is an Administrator in Main's RBAC (feature 30): their explicit access
+    // group is Main's built-in Administrator group (`access_groups.is_system`). An explicit
+    // non-Administrator group means "not admin" whatever users.role says. Users with no explicit
+    // assignment yet fall back to Main's own legacy rule (see legacyRoleIsAdmin()).
     public function isAdmin(): bool
     {
+        if ($this->resolvedIsAdmin !== null) {
+            return $this->resolvedIsAdmin;
+        }
+
+        $explicitIsSystem = self::rbacTablesPresent()
+            ? DB::table('user_access_groups')
+                ->join('access_groups', 'access_groups.id', '=', 'user_access_groups.access_group_id')
+                ->where('user_access_groups.user_id', $this->getKey())
+                ->value('access_groups.is_system')
+            : null;
+
+        return $this->resolvedIsAdmin = $explicitIsSystem !== null
+            ? (bool) $explicitIsSystem
+            : $this->legacyRoleIsAdmin();
+    }
+
+    // Serializes isAdmin() as `is_admin` (used by the frontend for routing / menus only).
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    // TRANSITIONAL — mirrors Main's PermissionService::baseGroupFor() fallback for accounts that
+    // have no explicit access group yet (users.role NULL/1 = Administrator). Remove together with
+    // Main's fallback once every user has an explicit assignment and users.role is dropped.
+    private function legacyRoleIsAdmin(): bool
+    {
         return $this->role === 1 || $this->role === null;
+    }
+
+    // True when Main's RBAC tables exist here (guards a deploy that lands before Main's RBAC
+    // migrations, or a test database that lacks them — the legacy fallback then applies).
+    private static function rbacTablesPresent(): bool
+    {
+        return self::$rbacTablesPresent ??= Schema::hasTable('user_access_groups') && Schema::hasTable('access_groups');
     }
 
     public function __toString(): string
